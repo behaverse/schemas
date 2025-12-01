@@ -1,0 +1,118 @@
+{
+  "@context": {
+    "@vocab": "https://behaverse.github.io/schemas/bcsvw#",
+    "bcsvw": "https://behaverse.github.io/schemas/bcsvw#",
+    "csvw": "http://www.w3.org/ns/csvw#",
+    "dc": "http://purl.org/dc/terms/",
+    "schema": "http://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    
+    "description": {
+      "@id": "dc:description"
+    },
+    "categorical": {
+      "@id": "https://behaverse.github.io/schemas/bcsvw#categorical"
+    },
+    "ordered": {
+      "@id": "https://behaverse.github.io/schemas/bcsvw#ordered"
+    },
+    "levels": {
+      "@id": "https://behaverse.github.io/schemas/bcsvw#levels",
+      "@container": "@list"
+    },
+    "na_strings": {
+      "@id": "https://behaverse.github.io/schemas/bcsvw#na_strings",
+      "@container": "@list"
+    },
+    "unit": {
+      "@id": "https://behaverse.github.io/schemas/bcsvw#unit"
+    },
+    "file_hash": {
+      "@id": "https://behaverse.github.io/schemas/bcsvw#file_hash"
+    },
+    "label": "rdfs:label",
+    "min_length": {
+      "@id": "csvw:minLength",
+      "@type": "xsd:nonNegativeInteger"
+    },
+    "max_length": {
+      "@id": "csvw:maxLength",
+      "@type": "xsd:nonNegativeInteger"
+    },
+    
+    "Table": "csvw:Table",
+    "Schema": "csvw:Schema",
+    "Column": "csvw:Column",
+    "Datatype": "csvw:Datatype",
+    
+    "tableSchema": {
+      "@id": "csvw:tableSchema",
+      "@type": "@id"
+    },
+    "columns": {
+      "@id": "csvw:column",
+      "@type": "@id",
+      "@container": "@list"
+    },
+    "datatype": {
+      "@id": "csvw:datatype",
+      "@type": "@id"
+    },
+    "name": "csvw:name",
+    "propertyUrl": {
+      "@id": "csvw:propertyUrl",
+      "@type": "@id"
+    },
+    "valueUrl": {
+      "@id": "csvw:valueUrl",
+      "@type": "@id"
+    },
+    "aboutUrl": {
+      "@id": "csvw:aboutUrl",
+      "@type": "@id"
+    },
+    "url": {
+      "@id": "csvw:url",
+      "@type": "@id"
+    },
+    "null": "csvw:null",
+    "default": "csvw:default",
+    "separator": "csvw:separator",
+    "virtual": {
+      "@id": "csvw:virtual",
+      "@type": "xsd:boolean"
+    },
+    "suppressOutput": {
+      "@id": "csvw:suppressOutput",
+      "@type": "xsd:boolean"
+    },
+    "required": {
+      "@id": "csvw:required",
+      "@type": "xsd:boolean"
+    },
+    "primaryKey": "csvw:primaryKey",
+    "foreignKeys": {
+      "@id": "csvw:foreignKey",
+      "@container": "@list"
+    },
+    "rowTitles": "csvw:rowTitle",
+    "base": "csvw:base",
+    "format": "csvw:format",
+    "minimum": "csvw:minInclusive",
+    "maximum": "csvw:maxInclusive",
+    "minLength": {
+      "@id": "csvw:minLength",
+      "@type": "xsd:nonNegativeInteger"
+    },
+    "maxLength": {
+      "@id": "csvw:maxLength",
+      "@type": "xsd:nonNegativeInteger"
+    },
+    "length": {
+      "@id": "csvw:length",
+      "@type": "xsd:nonNegativeInteger"
+    }
+  }
+}
