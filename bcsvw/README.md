@@ -28,6 +28,7 @@ BCSVW maintains compatibility with standard CSVW while making CSV files self-doc
 
 CSVW defines the following built-in data types: `string`, `integer`, `number`, `boolean`, `date`, `datetime`, `time`, `duration`, `binary`, `hexBinary`, `anyURI`, `json`, and `xml`. However, it lacks native support for **categorical variables** (factors, ordered and unordered) which are fundamental in data science. BCSVW adds thus adds two new data types to fill this gap:
 
+
 | Data Type | Description | Example Use |
 |-----------|-------------|-------------|
 | `categorical` | Unordered categorical variable (factor) | Gender, color, treatment group |
@@ -38,7 +39,7 @@ These types map directly to R's `factor()` and `ordered()` functions, and Python
 #### Additional Properties
 
 | Property | Type | Description | Example |
-|----------|------|-------------|---------|----------|
+|----------|------|-------------|---------|
 | `levels` | array | Factor levels (in order for `ordered` type) | `["low", "medium", "high"]` |
 | `na_strings` | array | Additional missing value codes | `["NA", "N/A", "missing"]` |
 | `unit` | string | Unit of measurement | `"kg"`, `"°C"`, `"mol/L"` |
