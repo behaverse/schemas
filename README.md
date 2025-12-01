@@ -170,3 +170,9 @@ These schemas build upon and reference established standards including:
 - [Dublin Core](https://www.dublincore.org/)
 - [BIDS](https://bids-specification.readthedocs.io/)
 - [DataCite](https://schema.datacite.org/)
+
+
+
+## AI Usage Disclosure 
+
+This document was created with assistance from AI tools.

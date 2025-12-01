@@ -413,3 +413,8 @@ Issues and suggestions can be submitted to the [GitHub repository](https://githu
 ## License
 
 This schema is licensed under [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+
+
+## AI Usage Disclosure 
+
+This document was created with assistance from AI tools.
