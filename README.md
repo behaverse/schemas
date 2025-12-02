@@ -13,8 +13,9 @@ This repository hosts machine-readable schemas and vocabularies for organizing, 
 ## Schemas
 
 ### dataset
-Metadata schema for describing cognitive science related datasets.
+Metadata schema for describing cognitive science datasets with comprehensive coverage of participant demographics, measurement techniques, cognitive tasks, and data access information.
 
+- **Version**: v25.1201
 - **Namespace**: `https://behaverse.org/schemas/dataset#`
 - **Context**: [`dataset/context.jsonld`](dataset/context.jsonld)
 - **JSON Schema**: [`dataset/schema.json`](dataset/schema.json)
@@ -22,19 +23,10 @@ Metadata schema for describing cognitive science related datasets.
 
 **Example property reference**: `https://behaverse.org/schemas/dataset#sample_size`
 
-### bcsvw (Behaverse CSV for the Web)
-Extension of W3C CSVW with support for R/Python data types (factors, ordered factors, missing values, units).
-
-- **Namespace**: `https://behaverse.org/schemas/bcsvw#`
-- **Context**: [`bcsvw/context.jsonld`](bcsvw/context.jsonld)
-- **JSON Schema**: [`bcsvw/schema.json`](bcsvw/schema.json)
-- **Documentation**: [`bcsvw/README.md`](bcsvw/README.md)
-
-**Example property reference**: `https://behaverse.org/schemas/bcsvw#ordered_factor`
-
 ### collection 
-Schema for describing thematic collections of datasets.
+Metadata schema for describing thematic collections of datasets that share specific characteristics or serve particular research applications. Extends schema.org/Collection.
 
+- **Version**: v25.1202
 - **Namespace**: `https://behaverse.org/schemas/collection#`
 - **Context**: [`collection/context.jsonld`](collection/context.jsonld)
 - **JSON Schema**: [`collection/schema.json`](collection/schema.json)
@@ -42,55 +34,16 @@ Schema for describing thematic collections of datasets.
 
 **Example property reference**: `https://behaverse.org/schemas/collection#inclusion_criteria`
 
+### bcsvw (Behaverse CSV for the Web)
+Extension of W3C CSVW with support for R/Python data types including categorical and ordered factors, missing value codes, units of measurement, and file integrity verification.
 
+- **Version**: v25.1201
+- **Namespace**: `https://behaverse.org/schemas/bcsvw#`
+- **Context**: [`bcsvw/context.jsonld`](bcsvw/context.jsonld)
+- **JSON Schema**: [`bcsvw/schema.json`](bcsvw/schema.json)
+- **Documentation**: [`bcsvw/README.md`](bcsvw/README.md)
 
-## Using These Schemas
-
-### In JSON-LD
-
-Reference the context file to use short property names:
-
-```json
-{
-  "@context": "https://behaverse.org/schemas/dataset/context.jsonld",
-  "dataset_name": "my-cognitive-dataset",
-  "description": "A study of working memory",
-  "sample_size": 100,
-  "cognitive_domains": ["working_memory", "attention"]
-}
-```
-
-### In YAML (HuggingFace Dataset Cards)
-
-Use simple field names--the JSON-LD context handles semantic mapping:
-
-```yaml
-dataset_name: my-cognitive-dataset
-description: "A study of working memory"
-sample_size: 100
-cognitive_domains:
-  - working_memory
-  - attention
-```
-
-### For Validation
-
-Validate your data against the JSON Schema:
-
-```bash
-# Using ajv-cli
-ajv validate -s https://behaverse.org/schemas/dataset/schema.json -d your-dataset.json
-```
-
-### Referencing Individual Properties
-
-Properties can be referenced like Schema.org terms:
-
-```
-https://behaverse.org/schemas/dataset#sample_size
-https://behaverse.org/schemas/dataset#cognitive_domains
-https://behaverse.org/schemas/bcsvw#ordered_factor
-```
+**Example property reference**: `https://behaverse.org/schemas/bcsvw#ordered`
 
 ## Versioning
 
@@ -134,14 +87,6 @@ behaverse/schemas/
 └── README.md
 ```
 
-
-
-## Related Projects
-
-- **[behaverse-data-catalog](https://github.com/behaverse/behaverse-data-catalog)**: Curated collection of cognitive science datasets using these schemas
-- **[csvw](https://github.com/behaverse/csvw)**: Tools and examples for working with bcsvw
-
-
 ## License
 
 These schemas are licensed under [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
@@ -152,9 +97,6 @@ You are free to:
 
 Under the following terms:
 - **Attribution**: Give appropriate credit to Behaverse
-
-
-
 
 ## Contact
 
@@ -170,8 +112,6 @@ These schemas build upon and reference established standards including:
 - [Dublin Core](https://www.dublincore.org/)
 - [BIDS](https://bids-specification.readthedocs.io/)
 - [DataCite](https://schema.datacite.org/)
-
-
 
 ## AI Usage Disclosure 
 
