@@ -1,0 +1,122 @@
+{
+  "@context": "https://behaverse.org/schemas/dataset/context.jsonld",
+  "name": "stroop-task-fmri",
+  "pretty_name": "Stroop Task fMRI Dataset",
+  "description": "Functional MRI data collected from 30 healthy adult participants performing a classic Stroop color-word interference task. Participants viewed color words printed in congruent or incongruent ink colors and pressed buttons to indicate the ink color. The dataset includes whole-brain BOLD signal data, behavioral responses, and stimulus presentation logs.",
+  "version": "1.2.0",
+  "license": "CC-BY-4.0",
+  "url": "https://example.org/datasets/stroop-fmri",
+  "doi": "10.5281/zenodo.1234567",
+  "keywords": [
+    "fMRI",
+    "Stroop task",
+    "executive function",
+    "attention",
+    "cognitive control",
+    "interference"
+  ],
+  "language": ["en"],
+  "date_created": "2023-06-15",
+  "date_published": "2023-09-01",
+  "date_modified": "2024-03-15",
+  "date_added": "2025-01-15",
+  "creator": [
+    {
+      "name": "Sarah Chen",
+      "email": "sarah.chen@university.edu",
+      "orcid": "0000-0002-1234-5678",
+      "affiliation": "Department of Psychology, Example University"
+    },
+    {
+      "name": "Michael Rodriguez",
+      "email": "m.rodriguez@university.edu",
+      "orcid": "0000-0003-8765-4321",
+      "affiliation": "Department of Neuroscience, Example University"
+    }
+  ],
+  "citation": [
+    {
+      "type": "article",
+      "doi": "10.1016/j.neuroimage.2023.123456",
+      "text": "Chen, S., & Rodriguez, M. (2023). Neural correlates of Stroop interference: An fMRI investigation. NeuroImage, 275, 120123.",
+      "url": "https://doi.org/10.1016/j.neuroimage.2023.123456"
+    }
+  ],
+  "sample_size": 30,
+  "age_range": [18, 35],
+  "age_mean": 24.5,
+  "age_std": 4.2,
+  "sex_distribution": {
+    "female": 15,
+    "male": 14,
+    "non_binary": 1
+  },
+  "age_category": ["adult"],
+  "population_category": ["healthy", "neurotypical"],
+  "inclusion_criteria": [
+    "Age 18-35 years",
+    "Native English speaker",
+    "Normal or corrected-to-normal vision",
+    "Right-handed",
+    "No history of neurological or psychiatric disorders"
+  ],
+  "exclusion_criteria": [
+    "MRI contraindications (metal implants, claustrophobia)",
+    "Current psychiatric medication",
+    "History of head injury with loss of consciousness",
+    "Color blindness"
+  ],
+  "spatial_coverage": "Boston, MA, USA",
+  "temporal_coverage": "2023-06 to 2023-08",
+  "measurement_technique": [
+    {
+      "type": "neuroimaging",
+      "technique": "fMRI",
+      "field_strength": 3.0,
+      "tr": 2000,
+      "te": 30,
+      "manufacturer": "Siemens Prisma",
+      "details": "flip angle=90°, voxel size=2×2×2mm, 36 axial slices"
+    },
+    {
+      "type": "behavior",
+      "technique": "behavior",
+      "response_type": ["button-press"],
+      "details": "4-button response box, millisecond timing accuracy"
+    }
+  ],
+  "constructs_measured": [
+    "executive_function",
+    "attention",
+    "response_inhibition",
+    "conflict_resolution"
+  ],
+  "activity": [
+    {
+      "name": "Stroop Task",
+      "type": "task",
+      "measurements": ["fMRI", "behavior"],
+      "trials": 120,
+      "duration": 6,
+      "conditions": ["congruent", "incongruent", "neutral"],
+      "measures": ["BOLD signal", "reaction_time", "accuracy"],
+      "constructs": ["executive_function", "attention", "response_inhibition"]
+    }
+  ],
+  "study_design_type": "cross-sectional",
+  "session_count": 1,
+  "session_description": "Single session with fMRI and behavioral tasks",
+  "data_formats": ["NIfTI", "TSV", "JSON"],
+  "download_url": "https://example.org/downloads/stroop-fmri-v1.2.zip",
+  "ethical_approval": {
+    "obtained": true,
+    "institution": "Example University IRB",
+    "protocol": "IRB-2023-456"
+  },
+  "access_conditions": {
+    "is_free": true,
+    "requirements": "Publicly available with data use agreement"
+  },
+  "task_categories": ["attention", "cognitive-control"],
+  "size_category": "n<1K"
+}

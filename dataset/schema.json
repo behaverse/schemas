@@ -1,0 +1,684 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://behaverse.org/schemas/dataset/v25.1201/schema.json",
+  "title": "Behaverse Dataset Schema",
+  "description": "A metadata schema for cognitive science and neuroscience datasets with mappings to Schema.org, DataCite, BIDS, and other standards",
+  "version": "25.1201",
+  "type": "object",
+  "required": [
+    "name",
+    "description",
+    "license",
+    "date_added",
+    "sample_size"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name",
+      "description": "Short URL-friendly identifier",
+      "equivalentProperty": [
+        "https://schema.org/name",
+        "http://purl.org/dc/terms/identifier"
+      ],
+      "pattern": "^[a-z0-9-_]+$"
+    },
+    "pretty_name": {
+      "type": "string",
+      "title": "Pretty Name",
+      "description": "Human-readable display title",
+      "equivalentProperty": "https://huggingface.co/docs/hub/datasets-cards#pretty_name"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "description": "Comprehensive dataset description",
+      "equivalentProperty": [
+        "https://schema.org/description",
+        "http://purl.org/dc/terms/description"
+      ],
+      "minLength": 10
+    },
+    "version": {
+      "type": "string",
+      "title": "Version",
+      "description": "Dataset version (semantic versioning)",
+      "equivalentProperty": "https://schema.org/version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "license": {
+      "type": "string",
+      "title": "License",
+      "description": "License identifier in SPDX format",
+      "equivalentProperty": [
+        "https://schema.org/license",
+        "http://purl.org/dc/terms/rights"
+      ],
+      "enum": [
+        "cc-by-4.0",
+        "cc-by-sa-4.0",
+        "cc-by-nc-4.0",
+        "cc-by-nc-sa-4.0",
+        "cc0-1.0",
+        "mit",
+        "apache-2.0",
+        "gpl-3.0",
+        "other"
+      ]
+    },
+    "url": {
+      "type": "string",
+      "title": "Url",
+      "description": "Dataset homepage or landing page",
+      "equivalentProperty": "https://schema.org/url",
+      "format": "uri"
+    },
+    "doi": {
+      "type": "string",
+      "title": "Doi",
+      "description": "Digital Object Identifier",
+      "equivalentProperty": [
+        "https://schema.org/identifier",
+        "http://purl.org/dc/terms/identifier"
+      ],
+      "pattern": "^10\\.\\d{4,}/[-._;()/:A-Za-z0-9]+$"
+    },
+    "keywords": {
+      "type": "array",
+      "title": "Keywords",
+      "description": "Keywords for discovery",
+      "equivalentProperty": [
+        "https://schema.org/keywords",
+        "http://purl.org/dc/terms/subject"
+      ],
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "language": {
+      "type": "array",
+      "title": "Language",
+      "description": "ISO 639-1 language codes",
+      "equivalentProperty": "https://schema.org/inLanguage",
+      "pattern": "^[a-z]{2}$",
+      "items": {
+        "type": "string"
+      }
+    },
+    "date_created": {
+      "type": "string",
+      "title": "Date Created",
+      "description": "Date dataset was originally created (ISO 8601)",
+      "equivalentProperty": "https://schema.org/dateCreated",
+      "format": "date"
+    },
+    "date_published": {
+      "type": "string",
+      "title": "Date Published",
+      "description": "Date first published (ISO 8601)",
+      "equivalentProperty": "https://schema.org/datePublished",
+      "format": "date"
+    },
+    "date_modified": {
+      "type": "string",
+      "title": "Date Modified",
+      "description": "Date of last modification (ISO 8601)",
+      "equivalentProperty": "https://schema.org/dateModified",
+      "format": "date"
+    },
+    "date_added": {
+      "type": "string",
+      "title": "Date Added",
+      "description": "Date added to catalog (ISO 8601, internal)",
+      "equivalentProperty": "https://behaverse.org/schemas/dataset#dateAdded",
+      "format": "date"
+    },
+    "last_verified": {
+      "type": "string",
+      "title": "Last Verified",
+      "description": "Date metadata was last verified (ISO 8601, internal)",
+      "equivalentProperty": "https://behaverse.org/schemas/dataset#lastVerified",
+      "format": "date"
+    },
+    "creator": {
+      "type": "array",
+      "title": "Creator",
+      "description": "Primary dataset creators/authors",
+      "equivalentProperty": "https://schema.org/creator",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Creator full name"
+          },
+          "email": {
+            "type": "string",
+            "description": "Creator email address",
+            "format": "email"
+          },
+          "orcid": {
+            "type": "string",
+            "description": "ORCID identifier",
+            "pattern": "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
+          },
+          "affiliation": {
+            "type": "string",
+            "description": "Institutional affiliation"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    },
+    "curator": {
+      "type": "array",
+      "title": "Curator",
+      "description": "Dataset curators responsible for maintenance and quality",
+      "equivalentProperty": [
+        "https://schema.org/maintainer",
+        "https://schema.org/editor"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "orcid": {
+            "type": "string"
+          },
+          "affiliation": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    },
+    "citation": {
+      "type": "array",
+      "title": "Citation",
+      "description": "Published papers or references",
+      "equivalentProperty": "https://schema.org/citation",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Citation type",
+            "enum": [
+              "primary",
+              "methods",
+              "related",
+              "preprint"
+            ]
+          },
+          "doi": {
+            "type": "string",
+            "description": "DOI of cited paper"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL of cited resource"
+          },
+          "text": {
+            "type": "string",
+            "description": "Full citation text"
+          },
+          "arxiv_id": {
+            "type": "string",
+            "description": "ArXiv preprint ID"
+          }
+        }
+      }
+    },
+    "sample_size": {
+      "type": "integer",
+      "title": "Sample Size",
+      "description": "Total number of participants",
+      "equivalentProperty": [
+        "https://ddialliance.org/Specification/DDI-Lifecycle/3.3/XMLSchema/FieldLevelDocumentation/schemas/datacollection_xsd/elements/Universe.html",
+        "https://bids-specification.readthedocs.io/en/stable/modality-agnostic-files.html#participants-file",
+        "https://clinicaltrials.gov/data-api/about-api/schema#enrollment"
+      ],
+      "minimum": 1
+    },
+    "age_range": {
+      "type": "array",
+      "title": "Age Range",
+      "description": "[min, max] age in years",
+      "equivalentProperty": "https://www.cdisc.org/standards/foundational/sdtm#AGE",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "number"
+      }
+    },
+    "age_mean": {
+      "type": "number",
+      "title": "Age Mean",
+      "description": "Mean participant age",
+      "equivalentProperty": "https://www.cdisc.org/standards/foundational/sdtm#AGE",
+      "minimum": 0
+    },
+    "age_std": {
+      "type": "number",
+      "title": "Age Std",
+      "description": "Standard deviation of age",
+      "minimum": 0
+    },
+    "sex_distribution": {
+      "type": "object",
+      "title": "Sex Distribution",
+      "description": "Participant counts by sex",
+      "equivalentProperty": "https://www.cdisc.org/standards/foundational/sdtm#SEX",
+      "properties": {
+        "female": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "male": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "other": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "not_reported": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "age_category": {
+      "type": "array",
+      "title": "Age Category",
+      "description": "Age group classification",
+      "equivalentProperty": "https://behaverse.org/schemas/dataset#ageCategory",
+      "enum": [
+        "children",
+        "adolescent",
+        "adult",
+        "elderly"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "population_category": {
+      "type": "string",
+      "title": "Population Category",
+      "description": "Population type (clinical vs healthy)",
+      "equivalentProperty": "https://schema.org/healthCondition",
+      "enum": [
+        "healthy",
+        "clinical",
+        "patient",
+        "mixed"
+      ]
+    },
+    "inclusion_criteria": {
+      "type": "array",
+      "title": "Inclusion Criteria",
+      "description": "Participant inclusion criteria",
+      "equivalentProperty": "https://clinicaltrials.gov/data-api/about-api/schema#eligibility",
+      "items": {
+        "type": "string"
+      }
+    },
+    "exclusion_criteria": {
+      "type": "array",
+      "title": "Exclusion Criteria",
+      "description": "Participant exclusion criteria",
+      "equivalentProperty": "https://clinicaltrials.gov/data-api/about-api/schema#eligibility",
+      "items": {
+        "type": "string"
+      }
+    },
+    "spatial_coverage": {
+      "type": "string",
+      "title": "Spatial Coverage",
+      "description": "Geographic location/region",
+      "equivalentProperty": "https://schema.org/spatialCoverage"
+    },
+    "temporal_coverage": {
+      "type": "string",
+      "title": "Temporal Coverage",
+      "description": "Time period data covers",
+      "equivalentProperty": "https://schema.org/temporalCoverage"
+    },
+    "measurement_technique": {
+      "type": "array",
+      "title": "Measurement Technique",
+      "description": "Measurement techniques used with optional detailed specifications",
+      "equivalentProperty": "https://schema.org/measurementTechnique",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "High-level category of measurement",
+            "enum": [
+              "behavior",
+              "neuroimaging",
+              "electrophysiology",
+              "physiological",
+              "video",
+              "audio",
+              "other"
+            ]
+          },
+          "technique": {
+            "type": "string",
+            "description": "Specific measurement technique",
+            "enum": [
+              "EEG",
+              "MEG",
+              "iEEG",
+              "fMRI",
+              "T1w",
+              "T2w",
+              "DWI",
+              "ASL",
+              "PET",
+              "NIRS",
+              "behavior",
+              "voice",
+              "eye-tracking",
+              "key-presses",
+              "mouse-tracking",
+              "motion-capture",
+              "video",
+              "audio",
+              "heart-rate",
+              "GSR",
+              "EDA",
+              "ECG",
+              "EMG",
+              "other"
+            ]
+          },
+          "channels": {
+            "type": "integer",
+            "description": "Number of channels/electrodes (for EEG, MEG)",
+            "minimum": 1
+          },
+          "sampling_rate": {
+            "type": "number",
+            "description": "Sampling rate in Hz (for EEG, MEG, physiological)",
+            "minimum": 0
+          },
+          "reference": {
+            "type": "string",
+            "description": "Reference type (for EEG, MEG)"
+          },
+          "manufacturer": {
+            "type": "string",
+            "description": "Equipment manufacturer/system"
+          },
+          "field_strength": {
+            "type": "number",
+            "description": "Magnetic field strength in Tesla (for MRI)",
+            "minimum": 0
+          },
+          "tr": {
+            "type": "number",
+            "description": "Repetition time in ms (for fMRI)",
+            "minimum": 0
+          },
+          "te": {
+            "type": "number",
+            "description": "Echo time in ms (for MRI)",
+            "minimum": 0
+          },
+          "details": {
+            "type": "string",
+            "description": "Additional technique-specific details"
+          },
+          "response_type": {
+            "type": "array",
+            "description": "Types of behavior responses (applies when technique is behavior)",
+            "enum": [
+              "button-press",
+              "key-press",
+              "mouse",
+              "voice",
+              "eye-gaze",
+              "touchscreen"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "description": "File format for this specific measurement (e.g., edf, bdf, nii, csv)"
+          },
+          "granularity": {
+            "type": "string",
+            "description": "Granularity of the measurement (e.g., per trial, per subject, per session)",
+            "enum": [
+              "event-data",
+              "timecourse-data",
+              "trial-data",
+              "construct-data",
+              "aggregate-data"
+            ]
+          }
+        },
+        "required": [
+          "technique"
+        ]
+      }
+    },
+    "constructs_measured": {
+      "type": "array",
+      "title": "Constructs Measured",
+      "description": "Cognitive or psychological constructs measured in the dataset",
+      "equivalentProperty": "https://schema.org/variableMeasured",
+      "items": {
+        "type": "string"
+      }
+    },
+    "activity": {
+      "type": "array",
+      "title": "Activity",
+      "description": "Activities or tasks performed by participants with associated measurements",
+      "equivalentProperty": "http://www.cognitiveatlas.org/task/",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Activity/task name"
+          },
+          "type": {
+            "type": "string",
+            "description": "Activity type/category",
+            "enum": [
+              "task",
+              "rest",
+              "stimulus-presentation",
+              "free-viewing",
+              "interview",
+              "other"
+            ]
+          },
+          "measurements": {
+            "type": "array",
+            "description": "List of measurement techniques collected during this activity (reference by technique name)"
+          },
+          "trials": {
+            "type": "integer",
+            "description": "Number of trials",
+            "minimum": 1
+          },
+          "duration": {
+            "type": "number",
+            "description": "Typical duration in minutes",
+            "minimum": 0
+          },
+          "conditions": {
+            "type": "array",
+            "description": "Experimental conditions"
+          },
+          "measures": {
+            "type": "array",
+            "description": "Primary dependent variables"
+          },
+          "constructs": {
+            "type": "array",
+            "description": "Constructs measured"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    },
+    "study_design_type": {
+      "type": "string",
+      "title": "Study Design Type",
+      "description": "Study design category",
+      "equivalentProperty": "https://schema.org/MedicalStudy",
+      "enum": [
+        "cross-sectional",
+        "longitudinal",
+        "intervention",
+        "observational"
+      ]
+    },
+    "intervention_type": {
+      "type": "array",
+      "title": "Intervention Type",
+      "description": "Type(s) of intervention (applies when study_design_type is intervention)",
+      "equivalentProperty": "https://clinicaltrials.gov/data-api/about-api/schema#interventionType",
+      "enum": [
+        "behavioral",
+        "pharmacological",
+        "device",
+        "procedure",
+        "other"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "session_count": {
+      "type": "integer",
+      "title": "Session Count",
+      "description": "Number of experimental sessions per participant",
+      "equivalentProperty": "https://bids-specification.readthedocs.io/en/stable/common-principles.html#sessions",
+      "minimum": 1
+    },
+    "session_description": {
+      "type": "string",
+      "title": "Session Description",
+      "description": "Brief description of session structure (if multi-session)"
+    },
+    "data_formats": {
+      "type": "array",
+      "title": "Data Formats",
+      "description": "File formats (csv, json, edf, etc.)",
+      "equivalentProperty": "https://schema.org/encodingFormat",
+      "items": {
+        "type": "string"
+      }
+    },
+    "data_size_gb": {
+      "type": "number",
+      "title": "Data Size Gb",
+      "description": "Total dataset size (GB)",
+      "equivalentProperty": "https://schema.org/contentSize",
+      "minimum": 0
+    },
+    "data_structure": {
+      "type": "string",
+      "title": "Data Structure",
+      "description": "Organization of data files",
+      "equivalentProperty": "https://behaverse.org/schemas/dataset#dataStructure"
+    },
+    "download_url": {
+      "type": "string",
+      "title": "Download Url",
+      "description": "Direct URL to download dataset files (e.g., .zip archive or direct file download)",
+      "equivalentProperty": "https://schema.org/contentUrl",
+      "format": "uri"
+    },
+    "access_url": {
+      "type": "string",
+      "title": "Access Url",
+      "description": "URL to dataset landing page with documentation, access instructions, and metadata (not direct download)",
+      "equivalentProperty": "https://schema.org/url",
+      "format": "uri"
+    },
+    "access_conditions": {
+      "type": "object",
+      "title": "Access Conditions",
+      "description": "Access requirements and restrictions for the dataset",
+      "equivalentProperty": "https://schema.org/conditionsOfAccess",
+      "properties": {
+        "is_free": {
+          "type": "boolean",
+          "description": "Whether the dataset is freely accessible without cost"
+        },
+        "requirements": {
+          "type": "string",
+          "description": "Access restrictions or requirements (e.g., registration, data use agreement)"
+        }
+      }
+    },
+    "ethical_approval": {
+      "type": "object",
+      "title": "Ethical Approval",
+      "description": "Ethical approval and IRB information",
+      "properties": {
+        "obtained": {
+          "type": "boolean",
+          "description": "Whether ethics approval was obtained"
+        },
+        "institution": {
+          "type": "string",
+          "description": "IRB or ethics board institution"
+        },
+        "protocol": {
+          "type": "string",
+          "description": "Protocol or approval number"
+        }
+      }
+    },
+    "size_category": {
+      "type": "string",
+      "title": "Size Category",
+      "description": "HF size bucket",
+      "equivalentProperty": "https://huggingface.co/docs/hub/datasets-cards#size_categories",
+      "enum": [
+        "n<1K",
+        "1K<n<10K",
+        "10K<n<100K",
+        "100K<n<1M",
+        "1M<n<10M",
+        "10M<n<100M",
+        "100M<n<1B",
+        "1B<n<10B",
+        "10B<n<100B",
+        "100B<n<1T",
+        "n>1T"
+      ]
+    },
+    "task_categories": {
+      "type": "array",
+      "title": "Task Categories",
+      "description": "ML task types",
+      "equivalentProperty": "https://huggingface.co/docs/hub/datasets-cards#task_categories",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

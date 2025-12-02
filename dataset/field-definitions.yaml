@@ -1,0 +1,985 @@
+# Behaverse Dataset Schema - Field Definitions
+# This is the source of truth for all fields in the schema
+# Edit this file, then run: python scripts/generate_schema_files.py
+
+schema_metadata:
+  name: Behaverse Dataset Schema
+  version: "25.1201"
+  namespace: https://behaverse.org/schemas/dataset
+  description: A metadata schema for cognitive science and neuroscience datasets with mappings to Schema.org, DataCite, BIDS, and other standards
+
+# Field groups define categories for organization
+field_groups:
+  - id: core_metadata
+    name: Core Metadata
+    description: Essential fields for dataset identification
+    
+  - id: dates
+    name: Dates
+    description: Temporal metadata
+    
+  - id: people
+    name: People & Organizations
+    description: Creator and contributor information
+    
+  - id: citations
+    name: Citations & References
+    description: Published papers and references
+    
+  - id: population
+    name: Population & Sample
+    description: Aggregate-level population demographics and coverage
+    
+  - id: measurements
+    name: Data Modalities & Measurement
+    description: Types of data collected and measurement techniques
+    
+  - id: activities
+    name: Activities & Paradigms
+    description: Cognitive tasks and experimental paradigms
+    
+  - id: study_design
+    name: Study Design
+    description: Study design and methodology
+    
+  - id: data_files
+    name: Data Files & Distribution
+    description: File formats and access information
+    
+  - id: ethics
+    name: Ethics & Quality
+    description: Ethical approval and data quality
+    
+  - id: huggingface
+    name: HuggingFace-Specific
+    description: ML dataset metadata
+
+# Field definitions
+# Each field has:
+#   - name: snake_case field name
+#   - group: which field_group it belongs to
+#   - type: data type (string, integer, number, boolean, array, object)
+#   - status: required, recommended, or optional
+#   - description: human-readable description
+#   - mappings: list of standard equivalences (schema.org, datacite, bids, etc.)
+#   - constraints: (optional) validation rules
+#   - examples: (optional) example values
+
+fields:
+  # Core Metadata
+  - name: name
+    group: core_metadata
+    type: string
+    status: required
+    description: Short URL-friendly identifier
+    mappings:
+      - standard: schema.org
+        property: name
+        url: https://schema.org/name
+      - standard: datacite
+        property: Identifier
+        url: http://purl.org/dc/terms/identifier
+    constraints:
+      pattern: "^[a-z0-9-_]+$"
+    examples:
+      - axon-game-eeg
+      - resting-state-fmri
+      
+  - name: pretty_name
+    group: core_metadata
+    type: string
+    status: recommended
+    description: Human-readable display title
+    mappings:
+      - standard: huggingface
+        property: pretty_name
+        url: https://huggingface.co/docs/hub/datasets-cards#pretty_name
+    examples:
+      - Axon Game EEG Dataset
+      - Resting State fMRI Study
+      
+  - name: description
+    group: core_metadata
+    type: string
+    status: required
+    description: Comprehensive dataset description
+    mappings:
+      - standard: schema.org
+        property: description
+        url: https://schema.org/description
+      - standard: datacite
+        property: Description
+        url: http://purl.org/dc/terms/description
+    constraints:
+      min_length: 10
+    examples:
+      - EEG recordings from 100 young adults performing cognitive gaming tasks
+      
+  - name: version
+    group: core_metadata
+    type: string
+    status: recommended
+    description: Dataset version (semantic versioning)
+    mappings:
+      - standard: schema.org
+        property: version
+        url: https://schema.org/version
+      - standard: datacite
+        property: Version
+    constraints:
+      pattern: "^\\d+\\.\\d+\\.\\d+$"
+    examples:
+      - "1.0.0"
+      - "2.1.3"
+      
+  - name: license
+    group: core_metadata
+    type: string
+    status: required
+    description: License identifier in SPDX format
+    mappings:
+      - standard: schema.org
+        property: license
+        url: https://schema.org/license
+      - standard: datacite
+        property: Rights
+        url: http://purl.org/dc/terms/rights
+      - standard: huggingface
+        property: license
+    constraints:
+      enum:
+        - cc-by-4.0
+        - cc-by-sa-4.0
+        - cc-by-nc-4.0
+        - cc-by-nc-sa-4.0
+        - cc0-1.0
+        - mit
+        - apache-2.0
+        - gpl-3.0
+        - other
+    examples:
+      - cc-by-4.0
+      - mit
+      
+  - name: url
+    group: core_metadata
+    type: string
+    status: recommended
+    description: Dataset homepage or landing page
+    mappings:
+      - standard: schema.org
+        property: url
+        url: https://schema.org/url
+      - standard: datacite
+        property: AlternateIdentifier
+    constraints:
+      format: uri
+    examples:
+      - https://example.org/datasets/axon-game
+      
+  - name: doi
+    group: core_metadata
+    type: string
+    status: recommended
+    description: Digital Object Identifier
+    mappings:
+      - standard: schema.org
+        property: identifier
+        url: https://schema.org/identifier
+      - standard: datacite
+        property: Identifier
+        url: http://purl.org/dc/terms/identifier
+    constraints:
+      pattern: "^10\\.\\d{4,}/[-._;()/:A-Za-z0-9]+$"
+    examples:
+      - 10.1234/example.2024
+      
+  - name: keywords
+    group: core_metadata
+    type: array
+    item_type: string
+    status: recommended
+    description: Keywords for discovery
+    mappings:
+      - standard: schema.org
+        property: keywords
+        url: https://schema.org/keywords
+      - standard: datacite
+        property: Subject
+        url: http://purl.org/dc/terms/subject
+      - standard: huggingface
+        property: tags
+    constraints:
+      min_items: 1
+    examples:
+      - ["neuroscience", "eeg", "attention", "working-memory"]
+      
+  - name: language
+    group: core_metadata
+    type: array
+    item_type: string
+    status: optional
+    description: ISO 639-1 language codes
+    mappings:
+      - standard: schema.org
+        property: inLanguage
+        url: https://schema.org/inLanguage
+      - standard: huggingface
+        property: language
+    constraints:
+      pattern: "^[a-z]{2}$"
+    examples:
+      - ["en"]
+      - ["en", "de"]
+
+  # Dates
+  - name: date_created
+    group: dates
+    type: string
+    status: recommended
+    description: Date dataset was originally created (ISO 8601)
+    mappings:
+      - standard: schema.org
+        property: dateCreated
+        url: https://schema.org/dateCreated
+      - standard: datacite
+        property: Date(Created)
+    constraints:
+      format: date
+    examples:
+      - "2024-01-01"
+      
+  - name: date_published
+    group: dates
+    type: string
+    status: recommended
+    description: Date first published (ISO 8601)
+    mappings:
+      - standard: schema.org
+        property: datePublished
+        url: https://schema.org/datePublished
+      - standard: datacite
+        property: PublicationYear
+    constraints:
+      format: date
+    examples:
+      - "2024-06-15"
+      
+  - name: date_modified
+    group: dates
+    type: string
+    status: optional
+    description: Date of last modification (ISO 8601)
+    mappings:
+      - standard: schema.org
+        property: dateModified
+        url: https://schema.org/dateModified
+      - standard: datacite
+        property: Date(Updated)
+    constraints:
+      format: date
+    examples:
+      - "2024-11-20"
+      
+  - name: date_added
+    group: dates
+    type: string
+    status: required
+    description: Date added to catalog (ISO 8601, internal)
+    mappings:
+      - standard: behaverse
+        property: dateAdded
+    constraints:
+      format: date
+    examples:
+      - "2024-07-01"
+      
+  - name: last_verified
+    group: dates
+    type: string
+    status: optional
+    description: Date metadata was last verified (ISO 8601, internal)
+    mappings:
+      - standard: behaverse
+        property: lastVerified
+    constraints:
+      format: date
+    examples:
+      - "2024-11-15"
+
+  # People & Organizations
+  - name: creator
+    group: people
+    type: array
+    item_type: object
+    status: recommended
+    description: Primary dataset creators/authors
+    mappings:
+      - standard: schema.org
+        property: creator
+        url: https://schema.org/creator
+      - standard: datacite
+        property: Creator
+    object_properties:
+      - name: name
+        type: string
+        required: true
+        description: Creator full name
+      - name: email
+        type: string
+        required: false
+        description: Creator email address
+        constraints:
+          format: email
+      - name: orcid
+        type: string
+        required: false
+        description: ORCID identifier
+        constraints:
+          pattern: "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
+      - name: affiliation
+        type: string
+        required: false
+        description: Institutional affiliation
+    examples:
+      - [{"name": "Jane Researcher", "email": "jane@university.edu", "orcid": "0000-0001-2345-6789", "affiliation": "University Psychology Department"}]
+      
+  - name: curator
+    group: people
+    type: array
+    item_type: object
+    status: optional
+    description: Dataset curators responsible for maintenance and quality
+    mappings:
+      - standard: schema.org
+        property: maintainer
+        url: https://schema.org/maintainer
+      - standard: schema.org
+        property: editor
+        url: https://schema.org/editor
+      - standard: datacite
+        property: Contributor
+    object_properties:
+      - name: name
+        type: string
+        required: true
+      - name: email
+        type: string
+        required: false
+      - name: orcid
+        type: string
+        required: false
+      - name: affiliation
+        type: string
+        required: false
+        
+  # Citations
+  - name: citation
+    group: citations
+    type: array
+    item_type: object
+    status: recommended
+    description: Published papers or references
+    mappings:
+      - standard: schema.org
+        property: citation
+        url: https://schema.org/citation
+      - standard: datacite
+        property: RelatedIdentifier
+    object_properties:
+      - name: type
+        type: string
+        required: false
+        description: Citation type
+        constraints:
+          enum: ["primary", "methods", "related", "preprint"]
+      - name: doi
+        type: string
+        required: false
+        description: DOI of cited paper
+      - name: url
+        type: string
+        required: false
+        description: URL of cited resource
+      - name: text
+        type: string
+        required: false
+        description: Full citation text
+      - name: arxiv_id
+        type: string
+        required: false
+        description: ArXiv preprint ID
+
+  # Population & Sample
+  - name: sample_size
+    group: population
+    type: integer
+    status: required
+    description: Total number of participants
+    mappings:
+      - standard: ddi
+        property: Universe
+        url: https://ddialliance.org/Specification/DDI-Lifecycle/3.3/XMLSchema/FieldLevelDocumentation/schemas/datacollection_xsd/elements/Universe.html
+      - standard: bids
+        property: participants.tsv
+        url: https://bids-specification.readthedocs.io/en/stable/modality-agnostic-files.html#participants-file
+      - standard: clinicaltrials.gov
+        property: enrollment
+        url: https://clinicaltrials.gov/data-api/about-api/schema#enrollment
+    constraints:
+      minimum: 1
+    examples:
+      - 100
+      - 250
+      
+  - name: age_range
+    group: population
+    type: array
+    item_type: number
+    status: recommended
+    description: "[min, max] age in years"
+    mappings:
+      - standard: cdisc
+        property: AGEU
+        url: https://www.cdisc.org/standards/foundational/sdtm#AGE
+      - standard: omop
+        property: year_of_birth
+    constraints:
+      min_items: 2
+      max_items: 2
+    examples:
+      - [18, 35]
+      - [20.5, 65.2]
+      
+  - name: age_mean
+    group: population
+    type: number
+    status: optional
+    description: Mean participant age
+    mappings:
+      - standard: cdisc
+        property: AGE
+        url: https://www.cdisc.org/standards/foundational/sdtm#AGE
+      - standard: ddi
+        property: SummaryStatistic
+    constraints:
+      minimum: 0
+    examples:
+      - 23.5
+      - 45.2
+      
+  - name: age_std
+    group: population
+    type: number
+    status: optional
+    description: Standard deviation of age
+    mappings:
+      - standard: ddi
+        property: SummaryStatistic
+    constraints:
+      minimum: 0
+    examples:
+      - 4.2
+      - 12.8
+      
+  - name: sex_distribution
+    group: population
+    type: object
+    status: recommended
+    description: Participant counts by sex
+    mappings:
+      - standard: cdisc
+        property: SEX
+        url: https://www.cdisc.org/standards/foundational/sdtm#SEX
+      - standard: omop
+        property: gender_concept_id
+    object_properties:
+      - name: female
+        type: integer
+        required: false
+        constraints:
+          minimum: 0
+      - name: male
+        type: integer
+        required: false
+        constraints:
+          minimum: 0
+      - name: other
+        type: integer
+        required: false
+        constraints:
+          minimum: 0
+      - name: not_reported
+        type: integer
+        required: false
+        constraints:
+          minimum: 0
+    examples:
+      - {"female": 52, "male": 45, "other": 2, "not_reported": 1}
+      
+  - name: age_category
+    group: population
+    type: array
+    item_type: string
+    status: optional
+    description: Age group classification
+    mappings:
+      - standard: behaverse
+        property: ageCategory
+    constraints:
+      enum: ["children", "adolescent", "adult", "elderly"]
+    examples:
+      - ["adult"]
+      - ["children", "adolescent"]
+      
+  - name: population_category
+    group: population
+    type: string
+    status: optional
+    description: Population type (clinical vs healthy)
+    mappings:
+      - standard: schema.org
+        property: healthCondition
+        url: https://schema.org/healthCondition
+      - standard: clinicaltrials.gov
+        property: condition
+    constraints:
+      enum: ["healthy", "clinical", "patient", "mixed"]
+    examples:
+      - healthy
+      - clinical
+      
+  - name: inclusion_criteria
+    group: population
+    type: array
+    item_type: string
+    status: optional
+    description: Participant inclusion criteria
+    mappings:
+      - standard: clinicaltrials.gov
+        property: eligibility
+        url: https://clinicaltrials.gov/data-api/about-api/schema#eligibility
+      - standard: ddi
+        property: Coverage
+    examples:
+      - ["Age 18-35 years", "Native English speaker", "Normal or corrected-to-normal vision"]
+      
+  - name: exclusion_criteria
+    group: population
+    type: array
+    item_type: string
+    status: optional
+    description: Participant exclusion criteria
+    mappings:
+      - standard: clinicaltrials.gov
+        property: eligibility
+        url: https://clinicaltrials.gov/data-api/about-api/schema#eligibility
+    examples:
+      - ["MRI contraindications", "Current psychiatric medication", "History of head injury"]
+
+  # Coverage & Context
+  - name: spatial_coverage
+    group: population
+    type: string
+    status: optional
+    description: Geographic location/region
+    mappings:
+      - standard: schema.org
+        property: spatialCoverage
+        url: https://schema.org/spatialCoverage
+      - standard: datacite
+        property: GeoLocation
+    examples:
+      - United States
+      - Europe
+      
+  - name: temporal_coverage
+    group: population
+    type: string
+    status: optional
+    description: Time period data covers
+    mappings:
+      - standard: schema.org
+        property: temporalCoverage
+        url: https://schema.org/temporalCoverage
+      - standard: ddi
+        property: TimePeriod
+    examples:
+      - "2023-2024"
+      - January 2024
+
+  # Measurement Techniques
+  - name: measurement_technique
+    group: measurements
+    type: array
+    item_type: object
+    status: recommended
+    description: Measurement techniques used with optional detailed specifications
+    mappings:
+      - standard: schema.org
+        property: measurementTechnique
+        url: https://schema.org/measurementTechnique
+      - standard: bids
+        property: modality
+    object_properties:
+      - name: type
+        type: string
+        required: false
+        description: High-level category of measurement
+        constraints:
+          enum: ["behavior", "neuroimaging", "electrophysiology",  "physiological", "video", "audio", "other"]
+      - name: technique
+        type: string
+        required: true
+        description: Specific measurement technique
+        constraints:
+          enum: ["EEG", "MEG", "iEEG", "fMRI", "T1w", "T2w", "DWI", "ASL", "PET", "NIRS", "behavior", "voice", "eye-tracking", "key-presses", "mouse-tracking", "motion-capture", "video", "audio", "heart-rate", "GSR", "EDA", "ECG", "EMG", "other"]
+
+      - name: channels
+        type: integer
+        required: false
+        description: Number of channels/electrodes (for EEG, MEG)
+        constraints:
+          minimum: 1
+      - name: sampling_rate
+        type: number
+        required: false
+        description: Sampling rate in Hz (for EEG, MEG, physiological)
+        constraints:
+          minimum: 0
+      - name: reference
+        type: string
+        required: false
+        description: Reference type (for EEG, MEG)
+      - name: manufacturer
+        type: string
+        required: false
+        description: Equipment manufacturer/system
+      - name: field_strength
+        type: number
+        required: false
+        description: Magnetic field strength in Tesla (for MRI)
+        constraints:
+          minimum: 0
+      - name: tr
+        type: number
+        required: false
+        description: Repetition time in ms (for fMRI)
+        constraints:
+          minimum: 0
+      - name: te
+        type: number
+        required: false
+        description: Echo time in ms (for MRI)
+        constraints:
+          minimum: 0
+      - name: details
+        type: string
+        required: false
+        description: Additional technique-specific details
+      - name: response_type
+        type: array
+        item_type: string
+        required: false
+        description: Types of behavior responses (applies when technique is behavior)
+        constraints:
+          enum: ["button-press", "key-press", "mouse", "voice", "eye-gaze", "touchscreen"]
+      - name: format
+        type: string
+        required: false
+        description: File format for this specific measurement (e.g., edf, bdf, nii, csv)
+      - name: granularity
+        type: string
+        required: false
+        description: Granularity of the measurement (e.g., per trial, per subject, per session)
+        constraints:
+          enum: ["event-data", "timecourse-data", "trial-data", "construct-data", "aggregate-data"]
+    examples:
+      - [{"type": "electrophysiology", "technique": "EEG", "channels": 64, "sampling_rate": 512, "reference": "average", "manufacturer": "BioSemi", "granularity": "event-data"}]
+      - [{"type": "neuroimaging", "technique": "fMRI", "field_strength": 3.0, "tr": 2000, "te": 30}, {"type": "behavior", "technique": "eye-tracking", "sampling_rate": 120}]
+
+  # Constructs Measured  
+  - name: constructs_measured
+    group: measurements
+    type: array
+    item_type: string
+    status: optional
+    description: Cognitive or psychological constructs measured in the dataset
+    mappings:
+      - standard: schema.org
+        property: variableMeasured
+        url: https://schema.org/variableMeasured
+      - standard: ddi
+        property: Variable
+    examples:
+      - ["working memory", "depression", "decision-making"]
+
+  # Activities
+  - name: activity
+    group: activities
+    type: array
+    item_type: object
+    status: recommended
+    description: Activities or tasks performed by participants with associated measurements
+    mappings:
+      - standard: cogatlas
+        property: task
+        url: http://www.cognitiveatlas.org/task/
+      - standard: schema.org
+        property: variableMeasured
+    object_properties:
+      - name: name
+        type: string
+        required: true
+        description: Activity/task name
+      - name: type
+        type: string
+        required: false
+        description: Activity type/category
+        constraints:
+          enum: ["task", "rest", "stimulus-presentation", "free-viewing", "interview", "other"]
+      - name: measurements
+        type: array
+        item_type: string
+        required: false
+        description: List of measurement techniques collected during this activity (reference by technique name)
+      - name: trials
+        type: integer
+        required: false
+        description: Number of trials
+        constraints:
+          minimum: 1
+      - name: duration
+        type: number
+        required: false
+        description: Typical duration in minutes
+        constraints:
+          minimum: 0
+      - name: conditions
+        type: array
+        item_type: string
+        required: false
+        description: Experimental conditions
+      - name: measures
+        type: array
+        item_type: string
+        required: false
+        description: Primary dependent variables
+      - name: constructs
+        type: array
+        item_type: string
+        required: false
+        description: Constructs measured
+    examples:
+      - [{"name": "N-Back", "type": "task", "measurements": ["EEG", "eye-tracking", "response-device"], "trials": 150, "duration": 20, "conditions": ["0-back", "2-back"], "measures": ["d_prime", "reaction_time"], "constructs": ["working memory"]}]
+      - [{"name": "resting-state", "type": "rest", "measurements": ["fMRI"], "duration": 5}]
+
+  # Study Design
+  - name: study_design_type
+    group: study_design
+    type: string
+    status: recommended
+    description: Study design category
+    mappings:
+      - standard: schema.org
+        property: studyDesign
+        url: https://schema.org/MedicalStudy
+      - standard: clinicaltrials.gov
+        property: studyType
+    constraints:
+      enum: ["cross-sectional", "longitudinal", "intervention", "observational"]
+    examples:
+      - cross-sectional
+      - longitudinal
+
+  - name: intervention_type
+    group: study_design
+    type: array
+    item_type: string
+    status: optional
+    description: Type(s) of intervention (applies when study_design_type is intervention)
+    mappings:
+      - standard: clinicaltrials.gov
+        property: interventionType
+        url: https://clinicaltrials.gov/data-api/about-api/schema#interventionType
+    constraints:
+      enum: ["behavioral", "pharmacological", "device", "procedure", "other"]
+    examples:
+      - ["behavioral"]
+      - ["pharmacological", "behavioral"]
+
+  - name: session_count
+    group: study_design
+    type: integer
+    status: optional
+    description: Number of experimental sessions per participant
+    mappings:
+      - standard: bids
+        property: session
+        url: https://bids-specification.readthedocs.io/en/stable/common-principles.html#sessions
+    constraints:
+      minimum: 1
+    examples:
+      - 1
+      - 3
+      
+  - name: session_description
+    group: study_design
+    type: string
+    status: optional
+    description: Brief description of session structure (if multi-session)
+    examples:
+      - "Single session with EEG and behavioral tasks"
+      - "Three sessions: baseline, intervention, follow-up"
+      - "Two sessions: fMRI session and behavioral session on separate days"
+
+
+# the following should perhaps be at the measurement level?
+  # Data Files
+  - name: data_formats
+    group: data_files
+    type: array
+    item_type: string
+    status: recommended
+    description: File formats (csv, json, edf, etc.)
+    mappings:
+      - standard: schema.org
+        property: encodingFormat
+        url: https://schema.org/encodingFormat
+      - standard: datacite
+        property: Format
+    examples:
+      - ["csv", "json", "edf"]
+
+  - name: data_size_gb
+    group: data_files
+    type: number
+    status: optional
+    description: Total dataset size (GB)
+    mappings:
+      - standard: schema.org
+        property: contentSize
+        url: https://schema.org/contentSize
+    constraints:
+      minimum: 0
+    examples:
+      - 2.5
+      - 150
+      
+  - name: data_structure
+    group: data_files
+    type: string
+    status: optional
+    description: Organization of data files
+    mappings:
+      - standard: behaverse
+        property: dataStructure
+    examples:
+      - BIDS-compliant
+      - One CSV per participant
+      
+  - name: download_url
+    group: data_files
+    type: string
+    status: optional
+    description: Direct URL to download dataset files (e.g., .zip archive or direct file download)
+    mappings:
+      - standard: schema.org
+        property: contentUrl
+        url: https://schema.org/contentUrl
+      - standard: datacite
+        property: AlternateIdentifier
+    constraints:
+      format: uri
+    examples:
+      - https://example.org/download/dataset.zip
+      
+  - name: access_url
+    group: data_files
+    type: string
+    status: optional
+    description: URL to dataset landing page with documentation, access instructions, and metadata (not direct download)
+    mappings:
+      - standard: schema.org
+        property: url
+        url: https://schema.org/url
+    constraints:
+      format: uri
+    examples:
+      - https://example.org/access/dataset
+      
+  - name: access_conditions
+    group: data_files
+    type: object
+    status: optional
+    description: Access requirements and restrictions for the dataset
+    mappings:
+      - standard: schema.org
+        property: conditionsOfAccess
+        url: https://schema.org/conditionsOfAccess
+    object_properties:
+      - name: is_free
+        type: boolean
+        required: false
+        description: Whether the dataset is freely accessible without cost
+      - name: requirements
+        type: string
+        required: false
+        description: Access restrictions or requirements (e.g., registration, data use agreement)
+    examples:
+      - {"is_free": true, "requirements": "Publicly available"}
+      - {"is_free": false, "requirements": "Requires institutional login and signed DUA"}
+
+  # Ethics & Quality
+  - name: ethical_approval
+    group: ethics
+    type: object
+    status: optional
+    description: Ethical approval and IRB information
+    mappings:
+      - standard: ico
+        property: consent
+    object_properties:
+      - name: obtained
+        type: boolean
+        required: false
+        description: Whether ethics approval was obtained
+      - name: institution
+        type: string
+        required: false
+        description: IRB or ethics board institution
+      - name: protocol
+        type: string
+        required: false
+        description: Protocol or approval number
+    examples:
+      - {"obtained": true, "institution": "University IRB", "protocol": "IRB-2024-001"}
+      - {"obtained": true}
+
+  # HuggingFace-Specific
+  - name: size_category
+    group: huggingface
+    type: string
+    status: optional
+    description: HF size bucket
+    mappings:
+      - standard: huggingface
+        property: size_categories
+        url: https://huggingface.co/docs/hub/datasets-cards#size_categories
+    constraints:
+      enum: ["n<1K", "1K<n<10K", "10K<n<100K", "100K<n<1M", "1M<n<10M", "10M<n<100M", "100M<n<1B", "1B<n<10B", "10B<n<100B", "100B<n<1T", "n>1T"]
+    examples:
+      - "10K<n<100K"
+      
+  - name: task_categories
+    group: huggingface
+    type: array
+    item_type: string
+    status: optional
+    description: ML task types
+    mappings:
+      - standard: huggingface
+        property: task_categories
+        url: https://huggingface.co/docs/hub/datasets-cards#task_categories
+    examples:
+      - ["time-series-forecasting", "reinforcement-learning"]
