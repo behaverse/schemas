@@ -1,5 +1,5 @@
 {
-  "@context": "https://behaverse.github.io/schemas/bcsvw/context.jsonld",
+  "@context": "https://behaverse.org/schemas/bcsvw/context.jsonld",
   "title": "Laboratory Measurements Dataset",
   "description": "Chemical analysis measurements from environmental samples across different site types",
   "created": "2025-01-15",

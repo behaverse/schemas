@@ -1,7 +1,7 @@
 {
   "@context": {
-    "@vocab": "https://behaverse.github.io/schemas/bcsvw#",
-    "bcsvw": "https://behaverse.github.io/schemas/bcsvw#",
+    "@vocab": "https://behaverse.org/schemas/bcsvw#",
+    "bcsvw": "https://behaverse.org/schemas/bcsvw#",
     "csvw": "http://www.w3.org/ns/csvw#",
     "dc": "http://purl.org/dc/terms/",
     "schema": "http://schema.org/",
@@ -13,24 +13,24 @@
       "@id": "dc:description"
     },
     "categorical": {
-      "@id": "https://behaverse.github.io/schemas/bcsvw#categorical"
+      "@id": "https://behaverse.org/schemas/bcsvw#categorical"
     },
     "ordered": {
-      "@id": "https://behaverse.github.io/schemas/bcsvw#ordered"
+      "@id": "https://behaverse.org/schemas/bcsvw#ordered"
     },
     "levels": {
-      "@id": "https://behaverse.github.io/schemas/bcsvw#levels",
+      "@id": "https://behaverse.org/schemas/bcsvw#levels",
       "@container": "@list"
     },
     "na_strings": {
-      "@id": "https://behaverse.github.io/schemas/bcsvw#na_strings",
+      "@id": "https://behaverse.org/schemas/bcsvw#na_strings",
       "@container": "@list"
     },
     "unit": {
-      "@id": "https://behaverse.github.io/schemas/bcsvw#unit"
+      "@id": "https://behaverse.org/schemas/bcsvw#unit"
     },
     "file_hash": {
-      "@id": "https://behaverse.github.io/schemas/bcsvw#file_hash"
+      "@id": "https://behaverse.org/schemas/bcsvw#file_hash"
     },
     "label": "rdfs:label",
     "min_length": {

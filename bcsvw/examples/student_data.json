@@ -1,5 +1,5 @@
 {
-  "@context": "https://behaverse.github.io/schemas/bcsvw/context.jsonld",
+  "@context": "https://behaverse.org/schemas/bcsvw/context.jsonld",
   "title": "Student Test Results",
   "description": "Test results for students including scores and grades",
   "created": "2025-11-29",

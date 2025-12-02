@@ -17,8 +17,8 @@ BCSVW maintains compatibility with standard CSVW while making CSV files self-doc
 
 ## Namespace
 
-- **Base namespace**: `https://behaverse.github.io/schemas/bcsvw#`
-- **Context file**: `https://behaverse.github.io/schemas/bcsvw/context.jsonld`
+- **Base namespace**: `https://behaverse.org/schemas/bcsvw#`
+- **Context file**: `https://behaverse.org/schemas/bcsvw/context.jsonld`
 
 ## Key Properties
 
@@ -85,7 +85,7 @@ subject_id,name,age,treatment,severity,temperature,response_time
 **experiment_data.json:**
 ```json
 {
-  "@context": "https://behaverse.github.io/schemas/bcsvw/context.jsonld",
+  "@context": "https://behaverse.org/schemas/bcsvw/context.jsonld",
   "url": "experiment_data.csv",
   "tableSchema": {
     "columns": [
@@ -289,7 +289,7 @@ The Python version of this code should be very similar.
 
 ### Data Type: `categorical`
 
-**URI**: `https://behaverse.github.io/schemas/bcsvw#categorical`  
+**URI**: `https://behaverse.org/schemas/bcsvw#categorical`  
 **Description**: Unordered categorical variable (factor). Use with `levels` property to define valid categories.
 
 **Example**:
@@ -303,7 +303,7 @@ The Python version of this code should be very similar.
 
 ### Data Type: `ordered`
 
-**URI**: `https://behaverse.github.io/schemas/bcsvw#ordered`  
+**URI**: `https://behaverse.org/schemas/bcsvw#ordered`  
 **Description**: Ordered categorical variable. Use with `levels` property to define categories in order.
 
 **Example**:
@@ -317,13 +317,13 @@ The Python version of this code should be very similar.
 
 ### `levels`
 
-**URI**: `https://behaverse.github.io/schemas/bcsvw#levels`  
+**URI**: `https://behaverse.org/schemas/bcsvw#levels`  
 **Type**: Array of strings  
 **Description**: Defines the levels (categories) of a categorical or ordered variable. For `ordered` type, the array defines the order from lowest to highest.
 
 ### `na_strings`
 
-**URI**: `https://behaverse.github.io/schemas/bcsvw#na_strings`  
+**URI**: `https://behaverse.org/schemas/bcsvw#na_strings`  
 **Type**: Array of strings  
 **Description**: Additional strings to treat as missing values beyond CSVW's `null`
 
@@ -338,13 +338,13 @@ The Python version of this code should be very similar.
 
 ### `unit`
 
-**URI**: `https://behaverse.github.io/schemas/bcsvw#unit`  
+**URI**: `https://behaverse.org/schemas/bcsvw#unit`  
 **Type**: String  
 **Description**: Unit of measurement for the column (e.g., "kg", "°C", "m/s")
 
 ### `file_hash`
 
-**URI**: `https://behaverse.github.io/schemas/bcsvw#file_hash`  
+**URI**: `https://behaverse.org/schemas/bcsvw#file_hash`  
 **Type**: String  
 **Description**: SHA-256 hash of the CSV file for integrity verification. Ensures that the metadata corresponds to the correct version of the data file.
 
@@ -358,7 +358,7 @@ The Python version of this code should be very similar.
 
 ### `min_length`
 
-**URI**: `https://behaverse.github.io/schemas/bcsvw#min_length` (maps to `csvw:minLength`)  
+**URI**: `https://behaverse.org/schemas/bcsvw#min_length` (maps to `csvw:minLength`)  
 **Type**: Integer  
 **Description**: Minimum string length for the column value
 
@@ -374,7 +374,7 @@ The Python version of this code should be very similar.
 
 ### `max_length`
 
-**URI**: `https://behaverse.github.io/schemas/bcsvw#max_length` (maps to `csvw:maxLength`)  
+**URI**: `https://behaverse.org/schemas/bcsvw#max_length` (maps to `csvw:maxLength`)  
 **Type**: Integer  
 **Description**: Maximum string length for the column value
 

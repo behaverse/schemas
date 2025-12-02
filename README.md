@@ -8,39 +8,39 @@
 
 This repository hosts machine-readable schemas and vocabularies for organizing, documenting, and sharing cognitive science data. All schemas are publicly accessible via GitHub Pages and aim to follow semantic web best practices.
 
-**Base URL**: `https://behaverse.github.io/schemas/`
+**Base URL**: `https://behaverse.org/schemas/`
 
 ## Schemas
 
 ### dataset
 Metadata schema for describing cognitive science related datasets.
 
-- **Namespace**: `https://behaverse.github.io/schemas/dataset#`
+- **Namespace**: `https://behaverse.org/schemas/dataset#`
 - **Context**: [`dataset/context.jsonld`](dataset/context.jsonld)
 - **JSON Schema**: [`dataset/schema.json`](dataset/schema.json)
 - **Documentation**: [`dataset/README.md`](dataset/README.md)
 
-**Example property reference**: `https://behaverse.github.io/schemas/dataset#sample_size`
+**Example property reference**: `https://behaverse.org/schemas/dataset#sample_size`
 
 ### BCSVW (Behaverse CSV for the Web)
 Extension of W3C CSVW with support for R/Python data types (factors, ordered factors, missing values, units).
 
-- **Namespace**: `https://behaverse.github.io/schemas/bcsvw#`
+- **Namespace**: `https://behaverse.org/schemas/bcsvw#`
 - **Context**: [`bcsvw/context.jsonld`](bcsvw/context.jsonld)
 - **JSON Schema**: [`bcsvw/schema.json`](bcsvw/schema.json)
 - **Documentation**: [`bcsvw/README.md`](bcsvw/README.md)
 
-**Example property reference**: `https://behaverse.github.io/schemas/bcsvw#ordered_factor`
+**Example property reference**: `https://behaverse.org/schemas/bcsvw#ordered_factor`
 
 ### collection 
 Schema for describing thematic collections of datasets.
 
-- **Namespace**: `https://behaverse.github.io/schemas/collection#`
+- **Namespace**: `https://behaverse.org/schemas/collection#`
 - **Context**: [`collection/context.jsonld`](collection/context.jsonld)
 - **JSON Schema**: [`collection/schema.json`](collection/schema.json)
 - **Documentation**: [`collection/README.md`](collection/README.md)
 
-**Example property reference**: `https://behaverse.github.io/schemas/collection#inclusion_criteria`
+**Example property reference**: `https://behaverse.org/schemas/collection#inclusion_criteria`
 
 
 
@@ -52,7 +52,7 @@ Reference the context file to use short property names:
 
 ```json
 {
-  "@context": "https://behaverse.github.io/schemas/dataset/context.jsonld",
+  "@context": "https://behaverse.org/schemas/dataset/context.jsonld",
   "dataset_name": "my-cognitive-dataset",
   "description": "A study of working memory",
   "sample_size": 100,
@@ -79,7 +79,7 @@ Validate your data against the JSON Schema:
 
 ```bash
 # Using ajv-cli
-ajv validate -s https://behaverse.github.io/schemas/dataset/schema.json -d your-dataset.json
+ajv validate -s https://behaverse.org/schemas/dataset/schema.json -d your-dataset.json
 ```
 
 ### Referencing Individual Properties
@@ -87,9 +87,9 @@ ajv validate -s https://behaverse.github.io/schemas/dataset/schema.json -d your-
 Properties can be referenced like Schema.org terms:
 
 ```
-https://behaverse.github.io/schemas/dataset#sample_size
-https://behaverse.github.io/schemas/dataset#cognitive_domains
-https://behaverse.github.io/schemas/bcsvw#ordered_factor
+https://behaverse.org/schemas/dataset#sample_size
+https://behaverse.org/schemas/dataset#cognitive_domains
+https://behaverse.org/schemas/bcsvw#ordered_factor
 ```
 
 ## Versioning
@@ -107,7 +107,7 @@ Example:
 
 ### Stability Promise
 
-Property URIs remain stable across versions. For example, `https://behaverse.github.io/schemas/dataset#sample_size` will always refer to the same concept, even as the schema evolves.
+Property URIs remain stable across versions. For example, `https://behaverse.org/schemas/dataset#sample_size` will always refer to the same concept, even as the schema evolves.
 
 ## Repository Structure
 
