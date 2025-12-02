@@ -1,12 +1,12 @@
 {
   "@context": "https://behaverse.org/schemas/dataset/context.jsonld",
-  "name": "stroop-task-fmri",
-  "pretty_name": "Stroop Task fMRI Dataset",
-  "description": "Functional MRI data collected from 30 healthy adult participants performing a classic Stroop color-word interference task. Participants viewed color words printed in congruent or incongruent ink colors and pressed buttons to indicate the ink color. The dataset includes whole-brain BOLD signal data, behavioral responses, and stimulus presentation logs.",
-  "version": "1.2.0",
+  "name": "demo-dataset",
+  "pretty_name": "Demo Dataset (Example)",
+  "description": "This is a demonstration dataset showing how to structure metadata. In a real dataset, provide a comprehensive description of the actual data collection, experimental procedures, and dataset contents.",
+  "version": "1.0.0",
   "license": "CC-BY-4.0",
-  "url": "https://example.org/datasets/stroop-fmri",
-  "doi": "10.5281/zenodo.1234567",
+  "url": "https://example.org/datasets/demo-dataset",
+  "doi": "10.5555/example.doi",
   "keywords": [
     "fMRI",
     "Stroop task",
@@ -22,24 +22,24 @@
   "date_added": "2025-01-15",
   "creator": [
     {
-      "name": "Sarah Chen",
-      "email": "sarah.chen@university.edu",
-      "orcid": "0000-0002-1234-5678",
-      "affiliation": "Department of Psychology, Example University"
+      "name": "First Author",
+      "email": "first.author@example.edu",
+      "orcid": "0000-0000-0000-0001",
+      "affiliation": "Department Name, Institution Name"
     },
     {
-      "name": "Michael Rodriguez",
-      "email": "m.rodriguez@university.edu",
-      "orcid": "0000-0003-8765-4321",
-      "affiliation": "Department of Neuroscience, Example University"
+      "name": "Second Author",
+      "email": "second.author@example.edu",
+      "orcid": "0000-0000-0000-0002",
+      "affiliation": "Department Name, Institution Name"
     }
   ],
   "citation": [
     {
       "type": "article",
-      "doi": "10.1016/j.neuroimage.2023.123456",
-      "text": "Chen, S., & Rodriguez, M. (2023). Neural correlates of Stroop interference: An fMRI investigation. NeuroImage, 275, 120123.",
-      "url": "https://doi.org/10.1016/j.neuroimage.2023.123456"
+      "doi": "10.5555/example.citation.doi",
+      "text": "Author, F., & Author, S. (2023). Example article title. Journal Name, 100, 1-20.",
+      "url": "https://doi.org/10.5555/example.citation.doi"
     }
   ],
   "sample_size": 30,
@@ -66,8 +66,8 @@
     "History of head injury with loss of consciousness",
     "Color blindness"
   ],
-  "spatial_coverage": "Boston, MA, USA",
-  "temporal_coverage": "2023-06 to 2023-08",
+  "spatial_coverage": "City, State/Region, Country",
+  "temporal_coverage": "YYYY-MM to YYYY-MM",
   "measurement_technique": [
     {
       "type": "neuroimaging",
@@ -107,11 +107,11 @@
   "session_count": 1,
   "session_description": "Single session with fMRI and behavioral tasks",
   "data_formats": ["NIfTI", "TSV", "JSON"],
-  "download_url": "https://example.org/downloads/stroop-fmri-v1.2.zip",
+  "download_url": "https://example.org/downloads/demo-dataset.zip",
   "ethical_approval": {
     "obtained": true,
-    "institution": "Example University IRB",
-    "protocol": "IRB-2023-456"
+    "institution": "Institution IRB",
+    "protocol": "IRB-YYYY-###"
   },
   "access_conditions": {
     "is_free": true,

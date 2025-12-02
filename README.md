@@ -1,4 +1,4 @@
-# Behaverse Schemas
+# Behaverse Schemas (WIP)
 
 **custom schemas for cognitive and behavioral sciences**
 
