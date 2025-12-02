@@ -22,7 +22,7 @@ Metadata schema for describing cognitive science related datasets.
 
 **Example property reference**: `https://behaverse.org/schemas/dataset#sample_size`
 
-### BCSVW (Behaverse CSV for the Web)
+### bcsvw (Behaverse CSV for the Web)
 Extension of W3C CSVW with support for R/Python data types (factors, ordered factors, missing values, units).
 
 - **Namespace**: `https://behaverse.org/schemas/bcsvw#`
@@ -119,7 +119,7 @@ behaverse/schemas/
 │   ├── README.md
 │   ├── examples/
 │   └── versions/
-├── bcsvw/               # BCSVW schema
+├── bcsvw/               # bcsvw schema
 │   ├── context.jsonld
 │   ├── schema.json
 │   ├── README.md
@@ -139,7 +139,7 @@ behaverse/schemas/
 ## Related Projects
 
 - **[behaverse-data-catalog](https://github.com/behaverse/behaverse-data-catalog)**: Curated collection of cognitive science datasets using these schemas
-- **[csvw](https://github.com/behaverse/csvw)**: Tools and examples for working with BCSVW
+- **[csvw](https://github.com/behaverse/csvw)**: Tools and examples for working with bcsvw
 
 
 ## License
