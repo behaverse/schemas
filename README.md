@@ -12,16 +12,16 @@ This repository hosts machine-readable schemas and vocabularies for organizing, 
 
 ## Schemas
 
-### dataset
-Metadata schema for describing cognitive science datasets with comprehensive coverage of participant demographics, measurement techniques, cognitive tasks, and data access information.
+### bcsvw (Behaverse CSV for the Web)
+Extension of W3C CSVW with support for R/Python data types including categorical and ordered factors, missing value codes, units of measurement, and file integrity verification.
 
 - **Version**: v25.1201
-- **Namespace**: `https://behaverse.org/schemas/dataset#`
-- **Context**: [`dataset/context.jsonld`](dataset/context.jsonld)
-- **JSON Schema**: [`dataset/schema.json`](dataset/schema.json)
-- **Documentation**: [`dataset/README.md`](dataset/README.md)
+- **Namespace**: `https://behaverse.org/schemas/bcsvw#`
+- **Context**: [`bcsvw/context.jsonld`](bcsvw/context.jsonld)
+- **JSON Schema**: [`bcsvw/schema.json`](bcsvw/schema.json)
+- **Documentation**: [`bcsvw/README.md`](bcsvw/README.md)
 
-**Example property reference**: `https://behaverse.org/schemas/dataset#sample_size`
+**Example property reference**: `https://behaverse.org/schemas/bcsvw#ordered`
 
 ### collection 
 Metadata schema for describing thematic collections of datasets that share specific characteristics or serve particular research applications. Extends schema.org/Collection.
@@ -34,16 +34,27 @@ Metadata schema for describing thematic collections of datasets that share speci
 
 **Example property reference**: `https://behaverse.org/schemas/collection#inclusion_criteria`
 
-### bcsvw (Behaverse CSV for the Web)
-Extension of W3C CSVW with support for R/Python data types including categorical and ordered factors, missing value codes, units of measurement, and file integrity verification.
+### dataset
+Metadata schema for describing cognitive science datasets with comprehensive coverage of participant demographics, measurement techniques, cognitive tasks, and data access information.
 
 - **Version**: v25.1201
-- **Namespace**: `https://behaverse.org/schemas/bcsvw#`
-- **Context**: [`bcsvw/context.jsonld`](bcsvw/context.jsonld)
-- **JSON Schema**: [`bcsvw/schema.json`](bcsvw/schema.json)
-- **Documentation**: [`bcsvw/README.md`](bcsvw/README.md)
+- **Namespace**: `https://behaverse.org/schemas/dataset#`
+- **Context**: [`dataset/context.jsonld`](dataset/context.jsonld)
+- **JSON Schema**: [`dataset/schema.json`](dataset/schema.json)
+- **Documentation**: [`dataset/README.md`](dataset/README.md)
 
-**Example property reference**: `https://behaverse.org/schemas/bcsvw#ordered`
+**Example property reference**: `https://behaverse.org/schemas/dataset#sample_size`
+
+### studyflow
+Schema for defining the formal structure of studyflow diagrams - sequences of activities and resources designed to facilitate experimental research and data analysis. Used by the Studyflow Modeler app.
+
+- **Version**: v25.0414
+- **Namespace**: `https://behaverse.org/schemas/studyflow#`
+- **Moddle Schema**: [`studyflow/schema.moddle.json`](studyflow/schema.moddle.json)
+- **LinkML Schema**: [`studyflow/schema.linkml.yaml`](studyflow/schema.linkml.yaml)
+- **Documentation**: [`studyflow/README.md`](studyflow/README.md)
+
+**Related**: [Studyflow Modeler Documentation](https://behaverse.org/studyflow-modeler/docs)
 
 ## Versioning
 
@@ -66,24 +77,29 @@ Property URIs remain stable across versions. For example, `https://behaverse.org
 
 ```
 behaverse/schemas/
-├── dataset/              # Dataset metadata schema
-│   ├── context.jsonld
-│   ├── schema.json
-│   ├── README.md
-│   ├── examples/
-│   └── versions/
 ├── bcsvw/               # bcsvw schema
 │   ├── context.jsonld
 │   ├── schema.json
 │   ├── README.md
 │   ├── examples/
 │   └── versions/
-├── collection/          # Collection schema
+├── collection/          # collection schema
 │   ├── context.jsonld
 │   ├── schema.json
 │   ├── README.md
 │   ├── examples/
 │   └── versions/
+├── dataset/             # dataset metadata schema
+│   ├── context.jsonld
+│   ├── schema.json
+│   ├── README.md
+│   ├── examples/
+│   └── versions/
+├── studyflow/           # studyflow schema
+│   ├── schema.moddle.json
+│   ├── schema.linkml.yaml
+│   ├── templates.json
+│   └── README.md
 └── README.md
 ```
 
