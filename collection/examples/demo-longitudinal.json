@@ -1,0 +1,41 @@
+{
+  "@context": "https://behaverse.org/schemas/collection/context.jsonld",
+  "name": "demo-longitudinal",
+  "pretty_name": "Demo: Longitudinal & Test-Retest Studies",
+  "description": "Example collection demonstrating how to define longitudinal dataset collections. This is a demonstration - the criteria and datasets listed are for illustrative purposes only.",
+  "keywords": [
+    "demo-longitudinal",
+    "test-retest",
+    "example",
+    "demonstration"
+  ],
+  "inclusion_criteria": [
+    "Participants must have data from 2 or more time points",
+    "Same or equivalent measures collected at each time point",
+    "Time between measurements can range from minutes (test-retest) to years (longitudinal development)",
+    "Must include sufficient sample overlap across time points (>50% retention recommended)",
+    "Includes developmental studies, intervention studies, and reliability assessments"
+  ],
+  "exclusion_criteria": [
+    "Cross-sectional studies with no repeated measures",
+    "Studies with less than 50% participant retention"
+  ],
+  "datasets": [
+    "https://example.org/datasets/demo-longitudinal-1",
+    "https://example.org/datasets/demo-longitudinal-2",
+    "https://doi.org/10.5555/example.67890"
+  ],
+  "related_collections": [
+    "demo-multi-task",
+    "demo-adolescent-mental-health",
+    "demo-adult-mental-health"
+  ],
+  "dataset_count": 3,
+  "date_created": "2025-12-02",
+  "curator": [
+    {
+      "name": "Example Curator",
+      "email": "curator@example.org"
+    }
+  ]
+}

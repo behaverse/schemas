@@ -1,0 +1,60 @@
+{
+  "@context": {
+    "@vocab": "https://behaverse.org/schemas/collection#",
+    "behaverse": "https://behaverse.org/schemas/collection#",
+    "schema": "https://schema.org/",
+    "dc": "http://purl.org/dc/terms/",
+    "bids": "https://bids-specification.readthedocs.io/en/stable/",
+    "ddi": "https://ddialliance.org/Specification/DDI-Lifecycle/3.3/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "@type": "https://schema.org/Collection",
+    "name": {
+      "@id": "https://schema.org/name",
+      "@type": "xsd:string"
+    },
+    "pretty_name": {
+      "@id": "https://schema.org/name",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "https://schema.org/description",
+      "@type": "xsd:string"
+    },
+    "keywords": {
+      "@id": "https://schema.org/keywords",
+      "@container": "@set"
+    },
+    "inclusion_criteria": {
+      "@id": "behaverse:inclusionCriteria",
+      "@container": "@set"
+    },
+    "exclusion_criteria": {
+      "@id": "behaverse:exclusionCriteria",
+      "@container": "@set"
+    },
+    "datasets": {
+      "@id": "https://schema.org/hasPart",
+      "@container": "@set"
+    },
+    "dataset_count": {
+      "@id": "behaverse:datasetCount",
+      "@type": "xsd:integer"
+    },
+    "related_collections": {
+      "@id": "behaverse:relatedCollections",
+      "@container": "@set"
+    },
+    "date_created": {
+      "@id": "https://schema.org/dateCreated",
+      "@type": "xsd:date"
+    },
+    "date_modified": {
+      "@id": "https://schema.org/dateModified",
+      "@type": "xsd:date"
+    },
+    "curator": {
+      "@id": "https://schema.org/curator",
+      "@container": "@set"
+    }
+  }
+}
