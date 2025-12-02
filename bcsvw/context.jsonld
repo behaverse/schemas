@@ -12,6 +12,16 @@
     "description": {
       "@id": "dc:description"
     },
+    "pretty_name": {
+      "@id": "schema:name"
+    },
+    "date_created": {
+      "@id": "schema:dateCreated",
+      "@type": "xsd:date"
+    },
+    "creator": {
+      "@id": "schema:creator"
+    },
     "categorical": {
       "@id": "https://behaverse.org/schemas/bcsvw#categorical"
     },

@@ -86,6 +86,11 @@ subject_id,name,age,treatment,severity,temperature,response_time
 ```json
 {
   "@context": "https://behaverse.org/schemas/bcsvw/context.jsonld",
+  "name": "experiment-data",
+  "pretty_name": "Experiment Data",
+  "description": "Experimental data with treatment groups and measurements",
+  "date_created": "2025-12-01",
+  "creator": "Research Lab",
   "url": "experiment_data.csv",
   "tableSchema": {
     "columns": [
@@ -175,7 +180,7 @@ Reads a CSV file and applies data types defined in the BCSVW metadata.
 
 **Output:** Data frame with proper types applied (factors, ordered factors, dates, missing values handled)
 
-### `document_bcsvw(csv_filename, data, column_descriptions, title, description)`
+### `document_bcsvw(csv_filename, data, column_descriptions, pretty_name, description)`
 
 Documents a data frame by generating BCSVW metadata and inferring types from the R data frame.
 
@@ -183,7 +188,7 @@ Documents a data frame by generating BCSVW metadata and inferring types from the
 - `csv_filename`: Name of the CSV file this metadata describes
 - `data`: Data frame with properly typed columns (factors, ordered, dates, etc.)
 - `column_descriptions`: Named list with metadata for each column (description, unit, constraints)
-- `title`: Dataset title
+- `pretty_name`: Human-readable dataset title
 - `description`: Dataset description
 
 **Output:** Metadata object (JSON structure) ready for writing
@@ -259,7 +264,7 @@ metadata <- document_bcsvw(
   csv_filename = "experiment_data.csv",
   data = sample_data,
   column_descriptions = column_descriptions,
-  title = "Experiment Data",
+  pretty_name = "Experiment Data",
   description = "Experimental data with treatment groups and measurements"
 )
 
@@ -287,10 +292,131 @@ The Python version of this code should be very similar.
 
 ## Property Reference
 
-### Data Type: `categorical`
+This section documents all properties supported by BCSVW, including BCSVW extensions, inherited CSVW properties, and linked data properties.
 
-**URI**: `https://behaverse.org/schemas/bcsvw#categorical`  
-**Description**: Unordered categorical variable (factor). Use with `levels` property to define valid categories.
+### Table-Level Properties
+
+#### `@context`
+
+**URI**: Standard JSON-LD property  
+**Type**: String (URL)  
+**Description**: URL to the BCSVW JSON-LD context file  
+**Required**: Recommended  
+**Example**: `"https://behaverse.org/schemas/bcsvw/context.jsonld"`
+
+#### `url`
+
+**URI**: `http://www.w3.org/ns/csvw#url`  
+**Type**: String  
+**Description**: Path or URL to the CSV data file  
+**Required**: Yes  
+**Example**: `"experiment_data.csv"`
+
+#### `name`
+
+**URI**: `http://schema.org/name`  
+**Type**: String  
+**Description**: Short URL-friendly identifier (lowercase letters, numbers, hyphens, underscores)  
+**Required**: No  
+**Pattern**: `^[a-z0-9-_]+$`  
+**Example**: `"experiment-results"`
+
+#### `pretty_name`
+
+**URI**: `http://schema.org/name`  
+**Type**: String  
+**Description**: Human-readable title for the table  
+**Required**: No  
+**Example**: `"Experiment Results Dataset"`
+
+#### `description`
+
+**URI**: `http://purl.org/dc/terms/description`  
+**Type**: String  
+**Description**: Detailed description of the table contents  
+**Required**: No  
+**Example**: `"Experimental data with treatment groups and measurements"`
+
+#### `file_hash`
+
+**URI**: `https://behaverse.org/schemas/bcsvw#file_hash`  
+**Type**: String (SHA-256 hash)  
+**Description**: SHA-256 hash of the CSV file for integrity verification. Ensures that the metadata corresponds to the correct version of the data file.  
+**Required**: No  
+**Example**: `"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"`
+
+#### `date_created`
+
+**URI**: `http://schema.org/dateCreated`  
+**Type**: String (date in ISO 8601 format)  
+**Description**: Date the table was created  
+**Required**: No  
+**Example**: `"2025-12-01"`
+
+#### `creator`
+
+**URI**: `http://schema.org/creator`  
+**Type**: String or Array of Objects  
+**Description**: Person or organization that created the table. Can be a simple string or an array of creator objects with detailed information (name, email, orcid, affiliation).  
+**Required**: No  
+**Examples**:  
+- Simple: `"Research Lab Name"`  
+- Detailed: `[{"name": "Jane Researcher", "email": "jane@university.edu", "orcid": "0000-0001-2345-6789", "affiliation": "University Psychology Department"}]`
+
+#### `tableSchema`
+
+**URI**: `http://www.w3.org/ns/csvw#tableSchema`  
+**Type**: Object  
+**Description**: Container for column definitions  
+**Required**: Yes  
+**Contains**: `columns` array (required), `primaryKey` (optional)
+
+### Column-Level Properties
+
+#### `name`
+
+**URI**: `http://www.w3.org/ns/csvw#name`  
+**Type**: String  
+**Description**: Column name (must match CSV header exactly)  
+**Required**: Yes  
+**Example**: `"subject_id"`
+
+#### `label`
+
+**URI**: `http://www.w3.org/2000/01/rdf-schema#label`  
+**Type**: String  
+**Description**: Human-readable label for the column  
+**Required**: No  
+**Example**: `"Subject ID"`
+
+#### `description`
+
+**URI**: `http://purl.org/dc/terms/description`  
+**Type**: String  
+**Description**: Detailed description of the column  
+**Required**: No  
+**Example**: `"Unique identifier for each participant"`
+
+#### `datatype`
+
+**URI**: `http://www.w3.org/ns/csvw#datatype`  
+**Type**: String  
+**Description**: Data type of the column values  
+**Required**: No (defaults to `string`)  
+**Valid values**:
+
+**Standard CSVW types:**
+- `string` - Text data
+- `integer` - Whole numbers
+- `number` - Decimal numbers
+- `boolean` - True/false values
+- `date` - Date (YYYY-MM-DD)
+- `datetime` - Date and time (ISO 8601)
+- `time` - Time of day
+
+**BCSVW extensions:**
+- `categorical` - Unordered categorical variable (factor)
+- `ordered` - Ordered categorical variable (ordered factor)
 
 **Example**:
 ```json
@@ -301,82 +427,110 @@ The Python version of this code should be very similar.
 }
 ```
 
-### Data Type: `ordered`
-
-**URI**: `https://behaverse.org/schemas/bcsvw#ordered`  
-**Description**: Ordered categorical variable. Use with `levels` property to define categories in order.
-
-**Example**:
-```json
-{
-  "name": "education",
-  "datatype": "ordered",
-  "levels": ["high_school", "bachelors", "masters", "doctorate"]
-}
-```
-
-### `levels`
+#### `levels`
 
 **URI**: `https://behaverse.org/schemas/bcsvw#levels`  
 **Type**: Array of strings  
-**Description**: Defines the levels (categories) of a categorical or ordered variable. For `ordered` type, the array defines the order from lowest to highest.
+**Description**: Defines the valid categories for `categorical` or `ordered` datatypes. For `ordered` type, the array defines the order from lowest to highest.  
+**Required**: Required when `datatype` is `categorical` or `ordered`  
+**Example**: `["low", "medium", "high"]`
 
-### `na_strings`
+#### `format`
+
+**URI**: `http://www.w3.org/ns/csvw#format`  
+**Type**: String  
+**Description**: Pattern or format for the values (e.g., date format, regex pattern)  
+**Required**: No  
+**Example**: `"yyyy-MM-dd"` for dates, `"[A-Z]{3}"` for regex
+
+#### `null`
+
+**URI**: `http://www.w3.org/ns/csvw#null`  
+**Type**: String or Array of strings  
+**Description**: String(s) that represent null/missing values in the CSV file  
+**Required**: No (defaults to empty string)  
+**Example**: `["", "NA", "null"]`
+
+#### `na_strings`
 
 **URI**: `https://behaverse.org/schemas/bcsvw#na_strings`  
 **Type**: Array of strings  
-**Description**: Additional strings to treat as missing values beyond CSVW's `null`
+**Description**: Additional missing value codes beyond standard `null`. Useful for domain-specific missing value indicators like "BDL" (Below Detection Limit)  
+**Required**: No  
+**Example**: `["NA", "N/A", "missing", "not recorded", "BDL"]`
 
-**Example**:
-```json
-{
-  "name": "response",
-  "datatype": "string",
-  "na_strings": ["NA", "N/A", "missing", "not recorded"]
-}
-```
-
-### `unit`
+#### `unit`
 
 **URI**: `https://behaverse.org/schemas/bcsvw#unit`  
 **Type**: String  
-**Description**: Unit of measurement for the column (e.g., "kg", "°C", "m/s")
+**Description**: Unit of measurement for numeric columns (e.g., SI units, custom units)  
+**Required**: No  
+**Example**: `"kg"`, `"°C"`, `"mol/L"`, `"ms"`
 
-### `file_hash`
+#### `minimum`
 
-**URI**: `https://behaverse.org/schemas/bcsvw#file_hash`  
-**Type**: String  
-**Description**: SHA-256 hash of the CSV file for integrity verification. Ensures that the metadata corresponds to the correct version of the data file.
+**URI**: `http://www.w3.org/ns/csvw#minInclusive`  
+**Type**: Number  
+**Description**: Minimum allowed value (inclusive) for numeric columns  
+**Required**: No  
+**Example**: `0`
 
-**Example**:
-```json
-{
-  "url": "experiment_data.csv",
-  "file_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-}
-```
+#### `maximum`
 
-### `min_length`
+**URI**: `http://www.w3.org/ns/csvw#maxInclusive`  
+**Type**: Number  
+**Description**: Maximum allowed value (inclusive) for numeric columns  
+**Required**: No  
+**Example**: `100`
+
+#### `min_length`
 
 **URI**: `https://behaverse.org/schemas/bcsvw#min_length` (maps to `csvw:minLength`)  
-**Type**: Integer  
-**Description**: Minimum string length for the column value
+**Type**: Integer (non-negative)  
+**Description**: Minimum string length for the column value  
+**Required**: No  
+**Example**: `2`
 
-**Example**:
-```json
-{
-  "name": "name",
-  "datatype": "string",
-  "min_length": 2,
-  "max_length": 50
-}
-```
-
-### `max_length`
+#### `max_length`
 
 **URI**: `https://behaverse.org/schemas/bcsvw#max_length` (maps to `csvw:maxLength`)  
-**Type**: Integer  
-**Description**: Maximum string length for the column value
+**Type**: Integer (non-negative)  
+**Description**: Maximum string length for the column value  
+**Required**: No  
+**Example**: `50`
+
+#### `required`
+
+**URI**: `http://www.w3.org/ns/csvw#required`  
+**Type**: Boolean  
+**Description**: Whether the column must have a non-null value in every row  
+**Required**: No (defaults to `false`)  
+**Example**: `true`
+
+#### `virtual`
+
+**URI**: `http://www.w3.org/ns/csvw#virtual`  
+**Type**: Boolean  
+**Description**: Whether the column is virtual (exists in metadata but not in CSV file)  
+**Required**: No (defaults to `false`)  
+**Example**: `false`
+
+### Complete Column Example
+
+```json
+{
+  "name": "temperature",
+  "label": "Body Temperature",
+  "description": "Patient body temperature at time of measurement",
+  "datatype": "number",
+  "unit": "°C",
+  "minimum": 35.0,
+  "maximum": 42.0,
+  "null": ["", "NA"],
+  "na_strings": ["not measured", "equipment failure"],
+  "required": false
+}
+```
 
 
 

@@ -1,8 +1,9 @@
 {
   "@context": "https://behaverse.org/schemas/bcsvw/context.jsonld",
-  "title": "Laboratory Measurements Dataset",
+  "name": "laboratory-measurements",
+  "pretty_name": "Laboratory Measurements Dataset",
   "description": "Chemical analysis measurements from environmental samples across different site types",
-  "created": "2025-01-15",
+  "date_created": "2025-01-15",
   "creator": "Lab Team",
   "url": "measurements.csv",
   "tableSchema": {

@@ -10,11 +10,16 @@
       "description": "JSON-LD context URL",
       "default": "https://behaverse.org/schemas/bcsvw/context.jsonld"
     },
+    "name": {
+      "type": "string",
+      "description": "Short URL-friendly identifier",
+      "pattern": "^[a-z0-9-_]+$"
+    },
     "url": {
       "type": "string",
       "description": "URL or path to the CSV file"
     },
-    "title": {
+    "pretty_name": {
       "type": "string",
       "description": "Human-readable title for the table"
     },
@@ -22,14 +27,47 @@
       "type": "string",
       "description": "Detailed description of the table contents"
     },
-    "created": {
+    "date_created": {
       "type": "string",
       "format": "date",
       "description": "Date the table was created"
     },
     "creator": {
-      "type": "string",
-      "description": "Person or organization that created the table"
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Person or organization name (simple format)"
+        },
+        {
+          "type": "array",
+          "description": "Array of creator objects with detailed information",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Creator full name"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "description": "Creator email address"
+              },
+              "orcid": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$",
+                "description": "ORCID identifier"
+              },
+              "affiliation": {
+                "type": "string",
+                "description": "Institutional affiliation"
+              }
+            }
+          }
+        }
+      ],
+      "description": "Person or organization that created the table (string or array of objects)"
     },
     "file_hash": {
       "type": "string",
