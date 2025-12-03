@@ -57,7 +57,7 @@
     "Column": "csvw:Column",
     "Datatype": "csvw:Datatype",
     
-    "tableSchema": {
+    "table_schema": {
       "@id": "csvw:tableSchema",
       "@type": "@id"
     },

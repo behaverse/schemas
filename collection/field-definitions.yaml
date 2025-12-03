@@ -33,7 +33,7 @@ fields:
   - name: name
     group: core_metadata
     type: string
-    status: required
+    requirement: required
     description: Short URL-friendly identifier
     mappings:
       - standard: schema.org
@@ -49,7 +49,7 @@ fields:
   - name: pretty_name
     group: core_metadata
     type: string
-    status: required
+    requirement: required
     description: Human-readable display title
     mappings:
       - standard: schema.org
@@ -62,7 +62,7 @@ fields:
   - name: description
     group: core_metadata
     type: string
-    status: required
+    requirement: required
     description: Comprehensive description of the collection's purpose and scope
     mappings:
       - standard: schema.org
@@ -78,7 +78,7 @@ fields:
     group: core_metadata
     type: array
     item_type: string
-    status: recommended
+    requirement: recommended
     description: Keywords describing the collection's focus areas
     mappings:
       - standard: schema.org
@@ -92,7 +92,7 @@ fields:
     group: definition
     type: array
     item_type: string
-    status: required
+    requirement: required
     description: Specific rules a dataset must meet to be included in this collection (all criteria must be met)
     mappings:
       - standard: behaverse
@@ -104,7 +104,7 @@ fields:
     group: definition
     type: array
     item_type: string
-    status: optional
+    requirement: optional
     description: Criteria that would exclude a dataset from this collection
     mappings:
       - standard: behaverse
@@ -117,7 +117,7 @@ fields:
     group: membership
     type: array
     item_type: string
-    status: optional
+    requirement: optional
     description: List of dataset URLs or DOIs that belong to this collection (use stable identifiers like DOIs or canonical URLs)
     mappings:
       - standard: schema.org
@@ -131,7 +131,7 @@ fields:
   - name: dataset_count
     group: membership
     type: integer
-    status: optional
+    requirement: optional
     description: Number of datasets currently in this collection
     mappings:
       - standard: behaverse
@@ -144,7 +144,7 @@ fields:
     group: relationships
     type: array
     item_type: string
-    status: optional
+    requirement: optional
     description: Names of other collections that frequently overlap with this one
     mappings:
       - standard: behaverse
@@ -156,7 +156,7 @@ fields:
   - name: date_created
     group: core_metadata
     type: string
-    status: recommended
+    requirement: recommended
     description: Date this collection was created (ISO 8601)
     mappings:
       - standard: schema.org
@@ -170,7 +170,7 @@ fields:
   - name: date_modified
     group: core_metadata
     type: string
-    status: optional
+    requirement: optional
     description: Date this collection definition was last modified (ISO 8601)
     mappings:
       - standard: schema.org
@@ -185,12 +185,12 @@ fields:
     group: core_metadata
     type: array
     item_type: object
-    status: recommended
+    requirement: recommended
     description: People or organizations that curate this collection
     mappings:
       - standard: schema.org
-        property: curator
-        url: https://schema.org/curator
+        property: maintainer
+        url: https://schema.org/maintainer
     object_properties:
       - name: name
         type: string

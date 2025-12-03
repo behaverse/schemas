@@ -92,7 +92,7 @@ subject_id,name,age,treatment,severity,temperature,response_time
   "date_created": "2025-12-01",
   "creator": "Research Lab",
   "url": "experiment_data.csv",
-  "tableSchema": {
+  "table_schema": {
     "columns": [
       {
         "name": "subject_id",
@@ -363,7 +363,7 @@ This section documents all properties supported by bcsvw, including bcsvw extens
 - Simple: `"Research Lab Name"`  
 - Detailed: `[{"name": "Jane Researcher", "email": "jane@university.edu", "orcid": "0000-0001-2345-6789", "affiliation": "University Psychology Department"}]`
 
-#### `tableSchema`
+#### `table_schema`
 
 **URI**: `http://www.w3.org/ns/csvw#tableSchema`  
 **Type**: Object  

@@ -7,7 +7,7 @@
   "creator": "Data Team",
   "url": "student_data.csv",
   "file_hash": "607e585a0785b8c94004cc5c7baf1304bb69b00dced6906e30f9e0203e090c6e",
-  "tableSchema": {
+  "table_schema": {
     "columns": [
       {
         "name": "id",

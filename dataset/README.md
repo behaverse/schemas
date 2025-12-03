@@ -20,7 +20,7 @@ This schema maps to established standards including Schema.org, DataCite, BIDS (
 | **Measurement Techniques** | Structured descriptions of EEG, fMRI, eye tracking, etc. |
 | **Activities** | Information about the activities (tasks, questionnaires, games)completed by the agent |
 | **Data Access** | Clear licensing, download URLs, and file format information |
-| **Ethics & Quality** | IRB approval tracking and data quality assessments |
+| **Ethics** | IRB approval tracking and data quality assessments |
 
 ## Field Groups
 
@@ -34,7 +34,7 @@ The schema organizes fields into logical groups:
 - **Activities & Paradigms**: Cognitive tasks, experimental procedures
 - **Study Design**: Methodology, conditions, variables
 - **Data Files & Distribution**: Formats, access, downloads
-- **Ethics & Quality**: IRB approval, data quality
+- **Ethics**: IRB approval, data quality
 - **HuggingFace-Specific**: ML dataset metadata
 
 ## Basic Example
@@ -202,7 +202,7 @@ The schema organizes fields into logical groups:
 | `repository` | string | optional | Repository name (e.g., "OpenNeuro", "Zenodo") | — |
 | `bids_compliant` | boolean | optional | BIDS format compliance | — |
 
-### Ethics & Quality
+### Ethics
 
 | Property | Type | Status | Description | Maps To |
 |----------|------|--------|-------------|---------|

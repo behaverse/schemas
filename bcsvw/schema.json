@@ -3,6 +3,7 @@
   "$id": "https://behaverse.org/schemas/bcsvw/schema.json",
   "title": "BCSVW Table Schema",
   "description": "JSON Schema for BCSVW (Behaverse CSV for the Web) metadata files",
+  "version": "25.1201",
   "type": "object",
   "properties": {
     "@context": {
@@ -73,8 +74,13 @@
       "type": "string",
       "description": "SHA-256 hash of the CSV file for integrity verification"
     },
-    "tableSchema": {
+    "license": {
+      "type": "string",
+      "description": "License identifier in SPDX format (e.g., CC-BY-4.0, MIT, Apache-2.0)"
+    },
+    "table_schema": {
       "type": "object",
+      "description": "Schema describing the structure and properties of columns in the CSV table",
       "required": ["columns"],
       "properties": {
         "columns": {
@@ -94,7 +100,7 @@
       }
     }
   },
-  "required": ["url", "tableSchema"],
+  "required": ["url", "table_schema"],
   "definitions": {
     "column": {
       "type": "object",
