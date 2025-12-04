@@ -3,10 +3,10 @@ name: Deploy Documentation
 on:
   push:
     branches:
-      - main
+      - gh-pages
   pull_request:
     branches:
-      - main
+      - gh-pages
   workflow_dispatch:
 
 permissions:
