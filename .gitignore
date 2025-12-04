@@ -1,0 +1,17 @@
+# Schema directories (fetched from main branch during build)
+bcsvw/
+collection/
+dataset/
+studyflow/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Node.js
+node_modules/
+
+# Misc
+.DS_Store
+*.log

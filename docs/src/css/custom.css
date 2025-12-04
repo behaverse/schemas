@@ -1,0 +1,250 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* Import Inter and JetBrains Mono fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* You can override the default Infima variables here. */
+:root {
+  /* Minimalistic color palette - muted blues/grays */
+  --ifm-color-primary: #2563eb;
+  --ifm-color-primary-dark: #1d4ed8;
+  --ifm-color-primary-darker: #1e40af;
+  --ifm-color-primary-darkest: #1e3a8a;
+  --ifm-color-primary-light: #3b82f6;
+  --ifm-color-primary-lighter: #60a5fa;
+  --ifm-color-primary-lightest: #93c5fd;
+  
+  /* Typography - Inter for UI, JetBrains Mono for code */
+  --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+  
+  /* Font sizes and weights for better readability */
+  --ifm-font-size-base: 16px;
+  --ifm-line-height-base: 1.7;
+  --ifm-font-weight-base: 400;
+  --ifm-heading-font-weight: 600;
+  
+  --ifm-code-font-size: 14px;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.05);
+  
+  /* Light mode colors - medium gray text on neutral light gray background */
+  --ifm-font-color-base: #4b5563;
+  --ifm-background-color: #fafafa;
+  --ifm-background-surface-color: #ffffff;
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  /* Muted colors for dark mode */
+  --ifm-color-primary: #60a5fa;
+  --ifm-color-primary-dark: #3b82f6;
+  --ifm-color-primary-darker: #2563eb;
+  --ifm-color-primary-darkest: #1d4ed8;
+  --ifm-color-primary-light: #93c5fd;
+  --ifm-color-primary-lighter: #bfdbfe;
+  --ifm-color-primary-lightest: #dbeafe;
+  
+  --docusaurus-highlighted-code-line-bg: rgba(100, 100, 100, 0.2);
+  
+  /* Softer background for dark mode */
+  --ifm-background-color: #0f172a;
+  --ifm-background-surface-color: #1e293b;
+}
+
+/* Custom styles for schema documentation */
+.property-details {
+  margin: 2rem 0;
+}
+
+.property-details table {
+  width: 100%;
+}
+
+.property-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  margin: 0 0.2rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.property-badge.required {
+  background-color: #d32f2f;
+  color: white;
+}
+
+.property-badge.recommended {
+  background-color: #f57c00;
+  color: white;
+}
+
+.property-badge.optional {
+  background-color: #616161;
+  color: white;
+}
+
+.namespace-uri {
+  font-family: var(--ifm-font-family-monospace);
+  background-color: var(--ifm-code-background);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.examples-section {
+  margin-top: 2rem;
+}
+
+.mappings-section {
+  margin-top: 1.5rem;
+}
+
+.mappings-section ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.mappings-section li {
+  margin: 0.5rem 0;
+}
+
+/* Consistent table styling for all property tables */
+/* High specificity to override Docusaurus defaults */
+.markdown article table,
+article.markdown table,
+main article table,
+.theme-doc-markdown article table,
+article table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+  margin-bottom: 1.5rem;
+  display: table !important;
+}
+
+/* Force all tables to use the same width regardless of content */
+.markdown article table,
+.markdown article table tbody,
+.markdown article table thead,
+article.markdown table,
+article.markdown table tbody,
+article.markdown table thead,
+main article table,
+main article table tbody,
+main article table thead,
+article table,
+article table tbody,
+article table thead {
+  width: 100% !important;
+  display: table !important;
+}
+
+/* Column widths for 4-column tables (Property, Type, Requirement, Description) */
+/* Apply to all 4-column tables in articles - high specificity */
+.markdown article table thead th:nth-child(1),
+.markdown article table tbody td:nth-child(1),
+article.markdown table thead th:nth-child(1),
+article.markdown table tbody td:nth-child(1),
+main article table thead th:nth-child(1),
+main article table tbody td:nth-child(1),
+article table thead th:nth-child(1),
+article table tbody td:nth-child(1) {
+  width: 25% !important; /* Property column */
+  min-width: 25% !important;
+  max-width: 25% !important;
+}
+
+.markdown article table thead th:nth-child(2),
+.markdown article table tbody td:nth-child(2),
+article.markdown table thead th:nth-child(2),
+article.markdown table tbody td:nth-child(2),
+main article table thead th:nth-child(2),
+main article table tbody td:nth-child(2),
+article table thead th:nth-child(2),
+article table tbody td:nth-child(2) {
+  width: 15% !important; /* Type column */
+  min-width: 15% !important;
+  max-width: 15% !important;
+}
+
+.markdown article table thead th:nth-child(3),
+.markdown article table tbody td:nth-child(3),
+article.markdown table thead th:nth-child(3),
+article.markdown table tbody td:nth-child(3),
+main article table thead th:nth-child(3),
+main article table tbody td:nth-child(3),
+article table thead th:nth-child(3),
+article table tbody td:nth-child(3) {
+  width: 16% !important; /* Requirement column */
+  min-width: 16% !important;
+  max-width: 16% !important;
+}
+
+.markdown article table thead th:nth-child(4),
+.markdown article table tbody td:nth-child(4),
+article.markdown table thead th:nth-child(4),
+article.markdown table tbody td:nth-child(4),
+main article table thead th:nth-child(4),
+main article table tbody td:nth-child(4),
+article table thead th:nth-child(4),
+article table tbody td:nth-child(4) {
+  width: 44% !important; /* Description column */
+  min-width: 44% !important;
+  max-width: 44% !important;
+}
+
+/* For property detail tables with 2 columns - more specific selector */
+.property-details table thead th:nth-child(1),
+.property-details table tbody td:nth-child(1) {
+  width: 30% !important;
+  min-width: 30% !important;
+  max-width: 30% !important;
+}
+
+.property-details table thead th:nth-child(2),
+.property-details table tbody td:nth-child(2) {
+  width: 70% !important;
+  min-width: 70% !important;
+  max-width: 70% !important;
+}
+
+/* Override the 4-column rules for 2-column detail tables */
+.property-details table thead th:nth-child(3),
+.property-details table tbody td:nth-child(3),
+.property-details table thead th:nth-child(4),
+.property-details table tbody td:nth-child(4) {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  display: none !important;
+}
+
+/* Ensure text wraps properly in all table cells */
+.markdown article table td,
+.markdown article table th,
+article.markdown table td,
+article.markdown table th,
+main article table td,
+main article table th,
+article table td,
+article table th {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto;
+  padding: 0.75rem;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+}
+
+/* Left align all table headers */
+.markdown article table thead th,
+article.markdown table thead th,
+main article table thead th,
+article table thead th {
+  text-align: left !important;
+}
