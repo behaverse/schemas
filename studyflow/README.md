@@ -14,5 +14,4 @@ For detailed documentation, visit the [Studyflow Documentation](https://behavers
 
 ## Files
 
-- [studyflow/schema.moddle.json](./schema.moddle.json): The schema definition for studyflow diagrams used by the Modeler app. It uses [moddle format](https://github.com/bpmn-io/moddle) for defining the structure of studyflow elements.
-- [studyflow/templates.json](./templates.json): Predefined templates for common studyflow patterns to help users quickly create studyflows. This is also used by the bpmnjs in the Modeler app to provide composite elements in the palette.
+- `schema.linkml.yaml`: The main LinkML schema file defining the Studyflow structure. It is used by the Studyflow Modeler app to extend BPMN and validate studyflow diagrams.

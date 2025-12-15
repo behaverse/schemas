@@ -50,7 +50,6 @@ Schema for defining the formal structure of studyflow diagrams - sequences of ac
 
 - **Version**: v25.0414
 - **Namespace**: `https://behaverse.org/schemas/studyflow#`
-- **Moddle Schema**: [`studyflow/schema.moddle.json`](studyflow/schema.moddle.json)
 - **LinkML Schema**: [`studyflow/schema.linkml.yaml`](studyflow/schema.linkml.yaml)
 - **Documentation**: [`studyflow/README.md`](studyflow/README.md)
 
