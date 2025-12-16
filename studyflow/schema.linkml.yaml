@@ -1,8 +1,8 @@
 id: http://behaverse.org/schemas/studyflow
 name: studyflow
 title: Behaverse Studyflow BPMN Extension
-description: LinkML schema for Behaverse Studyflow BPMN Extension
-version: 1.0.0
+description: LinkML schema for Behaverse Studyflow
+version: v25.1216.dev2
 license: MIT
 
 prefixes:
