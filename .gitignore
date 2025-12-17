@@ -1,8 +1,8 @@
 # Schema directories (fetched from main branch during build)
-bcsvw/
-collection/
-dataset/
-studyflow/
+/bcsvw/
+/collection/
+/dataset/
+/studyflow/
 
 # Python
 __pycache__/

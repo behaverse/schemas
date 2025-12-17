@@ -7,10 +7,15 @@
 # Generated files
 .docusaurus
 .cache-loader
-/docs/*
-!/docs/index.md
-!/docs/*/about.md
-!/docs/*/examples.md
+docs/**/*
+
+# Un-ignore manually editable docs/docs/{schema}/ files
+!docs/
+!docs/*/
+!docs/index.md
+!docs/*/about.md
+!docs/*/examples.md
+!docs/*/index.md
 
 # Misc
 .DS_Store

@@ -4,7 +4,7 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
-import {themes as prismThemes} from 'prism-react-renderer';
+import { themes as prismThemes } from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -144,19 +144,15 @@ const config = {
         darkTheme: prismThemes.dracula,
         additionalLanguages: ['json', 'yaml', 'python', 'bash'],
       },
-      algolia: {
-        // The application ID provided by Algolia
-        appId: 'YOUR_APP_ID',
-        // Public API key: it is safe to commit it
-        apiKey: 'YOUR_SEARCH_API_KEY',
-        indexName: 'behaverse-schemas',
-        // Optional: see doc section below
-        contextualSearch: true,
-        // Optional: Algolia search parameters
-        searchParameters: {},
-        // Optional: path for search page that enabled by default (`false` to disable it)
-        searchPagePath: 'search',
-      },
+      // Algolia search - uncomment and configure when credentials are available
+      // algolia: {
+      //   appId: 'YOUR_APP_ID',
+      //   apiKey: 'YOUR_SEARCH_API_KEY',
+      //   indexName: 'behaverse-schemas',
+      //   contextualSearch: true,
+      //   searchParameters: {},
+      //   searchPagePath: 'search',
+      // },
     }),
 };
 

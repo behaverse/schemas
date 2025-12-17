@@ -70,21 +70,21 @@ def load_schema_data(schema_name: str) -> Dict[str, Any]:
             'field_groups': data.get('field_groups', []),
         }
     elif schema_name == 'studyflow':
-        # Load from moddle format
-        moddle_path = schema_dir / 'schema.moddle.json'
-        if not moddle_path.exists():
-            # Skip studyflow if schema.moddle.json doesn't exist
+        # Load from LinkML format
+        linkml_path = schema_dir / 'schema.linkml.yaml'
+        if not linkml_path.exists():
+            # Skip studyflow if schema.linkml.yaml doesn't exist
             return None
-        with open(moddle_path, 'r') as f:
-            moddle = json.load(f)
+        with open(linkml_path, 'r') as f:
+            linkml = yaml.safe_load(f)
         return {
             'metadata': {
-                'name': moddle.get('name', 'Studyflow Schema'),
-                'version': '25.0414',  # From README
-                'namespace': moddle.get('uri', 'https://behaverse.org/schemas/studyflow'),
-                'description': 'Schema for defining the formal structure of studyflow diagrams',
+                'name': linkml.get('title', 'Studyflow Schema'),
+                'version': linkml.get('version', '').lstrip('v'),
+                'namespace': linkml.get('id', 'https://behaverse.org/schemas/studyflow'),
+                'description': linkml.get('description', 'Schema for defining the formal structure of studyflow diagrams'),
             },
-            'fields': convert_moddle_to_fields(moddle),
+            'fields': convert_linkml_to_fields(linkml),
             'field_groups': [],
         }
     else:
@@ -209,18 +209,56 @@ def convert_json_schema_to_fields(schema: Dict[str, Any]) -> List[Dict[str, Any]
     
     return fields
 
-def convert_moddle_to_fields(moddle: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Convert moddle format to field definitions format (simplified for studyflow)"""
-    # For studyflow, we'll create minimal documentation pointing to main docs
+def convert_linkml_to_fields(linkml: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """Convert LinkML format to field definitions format"""
     fields = []
     
-    # Add types from moddle
-    for type_def in moddle.get('types', []):
+    # Add classes from LinkML
+    for cls_name, cls_meta in linkml.get('classes', {}).items():
+        if cls_meta is None:
+            cls_meta = {}
+        
+        # Build description from class metadata
+        description = cls_meta.get('description', f'{cls_name} element type')
+        if cls_meta.get('abstract'):
+            description = f'[Abstract] {description}'
+        
         field = {
-            'name': type_def.get('name', 'unknown'),
-            'type': 'element',
-            'description': type_def.get('description', 'Studyflow element type'),
+            'name': cls_name,
+            'type': 'class',
+            'description': description,
             'requirement': 'optional',
+        }
+        
+        # Add attributes as nested properties
+        if 'attributes' in cls_meta:
+            obj_props = []
+            for attr_name, attr_meta in cls_meta['attributes'].items():
+                if attr_meta is None:
+                    attr_meta = {}
+                obj_props.append({
+                    'name': attr_name,
+                    'type': attr_meta.get('range', 'string'),
+                    'description': attr_meta.get('description', ''),
+                    'required': attr_meta.get('required', False),
+                })
+            if obj_props:
+                field['object_properties'] = obj_props
+        
+        fields.append(field)
+    
+    # Add enums from LinkML
+    for enum_name, enum_meta in linkml.get('enums', {}).items():
+        if enum_meta is None:
+            enum_meta = {}
+        
+        values = list(enum_meta.get('permissible_values', {}).keys())
+        field = {
+            'name': enum_name,
+            'type': 'enum',
+            'description': enum_meta.get('description', f'{enum_name} enumeration'),
+            'requirement': 'optional',
+            'constraints': {'enum': values} if values else {},
         }
         fields.append(field)
     

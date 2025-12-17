@@ -3,9 +3,11 @@ name: Deploy Documentation
 on:
   push:
     branches:
+      - main
       - gh-pages
   pull_request:
     branches:
+      - main
       - gh-pages
   workflow_dispatch:
 
@@ -49,6 +51,13 @@ jobs:
         working-directory: ./docs
         run: npm install
       
+      - name: Copy raw schemas to static directory
+        run: |
+          mkdir -p docs/static/schemas
+          for schema in bcsvw collection dataset studyflow; do
+            cp -r $schema docs/static/schemas/
+          done
+      
       - name: Build Docusaurus site
         working-directory: ./docs
         run: npm run build
@@ -61,7 +70,7 @@ jobs:
           path: docs/build
 
   deploy:
-    if: github.ref == 'refs/heads/gh-pages'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/gh-pages'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
