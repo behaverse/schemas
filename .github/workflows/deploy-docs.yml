@@ -28,10 +28,10 @@ jobs:
         with:
           ref: gh-pages
       
-      - name: Checkout schemas from main branch
+      - name: Checkout schemas and scripts from main branch
         run: |
           git fetch origin main
-          git checkout origin/main -- bcsvw/ collection/ dataset/ studyflow/
+          git checkout origin/main -- bcsvw/ collection/ dataset/ studyflow/ scripts/
       
       - name: Setup Python with uv
         uses: astral-sh/setup-uv@v4
