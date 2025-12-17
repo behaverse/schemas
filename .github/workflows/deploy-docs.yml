@@ -53,9 +53,8 @@ jobs:
       
       - name: Copy raw schemas to static directory
         run: |
-          mkdir -p docs/static/schemas
           for schema in bcsvw collection dataset studyflow; do
-            cp -r $schema docs/static/schemas/
+            cp -r $schema docs/static/
           done
       
       - name: Build Docusaurus site
