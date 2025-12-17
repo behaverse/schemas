@@ -4,7 +4,7 @@ id: http://behaverse.org/schemas/studyflow
 name: studyflow
 title: Behaverse Studyflow BPMN Extension
 description: LinkML schema for Behaverse Studyflow
-version: v25.1217.dev
+version: v25.1217.dev2
 license: MIT
 
 prefixes:
@@ -31,7 +31,7 @@ enums:
       psych-ds:
         title: Psych-DS
         description: Psych-DS
-      other:          
+      other:
         title: Other
         description: Other
 
@@ -253,10 +253,9 @@ classes:
       consentFormUrl:
         range: string
         description: Link to the consent form. Leave empty if you want to use the default consent form.
-        annotations:
-          condition:
-            language: json
-            body: '{"studyflow:requiresConsent": true}'
+        extensions:
+          condition_language: json
+          condition_body: '{"studyflow:requiresConsent": true}'
         comments:
           - Conditional on requiresConsent being true
 
@@ -271,10 +270,9 @@ classes:
       redirectUrl:
         range: string
         description: Link to redirect the user upon completion.
-        annotations:
-          condition:
-            language: json
-            body: '{"studyflow:hasRedirectUrl": true}'
+        extensions:
+          condition_language: json
+          condition_body: '{"studyflow:hasRedirectUrl": true}'
         comments:
           - Conditional on hasRedirectUrl being true
 
@@ -300,10 +298,9 @@ classes:
         range: BehaverseTaskEnum
         ifabsent: string(undefined)
         description: Behaverse instrument used for the test.
-        annotations:
-          condition:
-            language: json
-            body: '{"studyflow:instrument": "behaverse"}'
+        extensions:
+          condition_language: json
+          condition_body: '{"studyflow:instrument": "behaverse"}'
         comments:
           - Conditional on instrument being "behaverse"
 
@@ -330,10 +327,9 @@ classes:
         range: string
         ifabsent: string(uniform)
         description: Probability mass function that defines the discrete distribution of the random assignment. Defaults to `uniform`.
-        annotations:
-          condition:
-            language: json
-            body: '{"studyflow:algorithm": "probabilistic"}'
+        extensions:
+          condition_language: json
+          condition_body: '{"studyflow:algorithm": "probabilistic"}'
         comments:
           - Conditional on algorithm being "probabilistic"
 
@@ -352,20 +348,18 @@ classes:
         range: BDMDataLevelEnum
         ifabsent: string(events)
         description: Level of the data (events, trials, summary, models).
-        annotations:
-          condition:
-            language: json
-            body: '{"studyflow:datasetFormat": "bdm"}'
+        extensions:
+          condition_language: json
+          condition_body: '{"studyflow:datasetFormat": "bdm"}'
         comments:
           - Conditional on datasetFormat being "bdm"
       bidsDataType:
         range: BIDSDataTypeEnum
         ifabsent: string(trials)
         description: BIDS data type.
-        annotations:
-          condition:
-            language: json
-            body: '{"studyflow:datasetFormat": "bids"}'
+        extensions:
+          condition_language: json
+          condition_body: '{"studyflow:datasetFormat": "bids"}'
         comments:
           - Conditional on datasetFormat being "bids"
   
