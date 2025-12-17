@@ -1,0 +1,187 @@
+{
+  "@context": {
+    "@vocab": "https://behaverse.org/schemas/dataset#",
+    "behaverse": "https://behaverse.org/schemas/dataset#",
+    "schema": "https://schema.org/",
+    "dc": "http://purl.org/dc/terms/",
+    "bids": "https://bids-specification.readthedocs.io/en/stable/",
+    "ddi": "https://ddialliance.org/Specification/DDI-Lifecycle/3.3/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "name": {
+      "@id": "https://schema.org/name",
+      "@type": "xsd:string"
+    },
+    "pretty_name": {
+      "@id": "https://huggingface.co/docs/hub/datasets-cards#pretty_name",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "https://schema.org/description",
+      "@type": "xsd:string"
+    },
+    "version": {
+      "@id": "https://schema.org/version",
+      "@type": "xsd:string"
+    },
+    "license": {
+      "@id": "https://schema.org/license",
+      "@type": "xsd:string"
+    },
+    "url": {
+      "@id": "https://schema.org/url",
+      "@type": "@id"
+    },
+    "doi": {
+      "@id": "https://schema.org/identifier",
+      "@type": "xsd:string"
+    },
+    "keywords": {
+      "@id": "https://schema.org/keywords",
+      "@container": "@set"
+    },
+    "language": {
+      "@id": "https://schema.org/inLanguage",
+      "@container": "@set"
+    },
+    "date_created": {
+      "@id": "https://schema.org/dateCreated",
+      "@type": "xsd:date"
+    },
+    "date_published": {
+      "@id": "https://schema.org/datePublished",
+      "@type": "xsd:date"
+    },
+    "date_modified": {
+      "@id": "https://schema.org/dateModified",
+      "@type": "xsd:date"
+    },
+    "date_added": {
+      "@id": "behaverse:dateAdded",
+      "@type": "xsd:date"
+    },
+    "last_verified": {
+      "@id": "behaverse:lastVerified",
+      "@type": "xsd:date"
+    },
+    "creator": {
+      "@id": "https://schema.org/creator",
+      "@container": "@set"
+    },
+    "curator": {
+      "@id": "https://schema.org/maintainer",
+      "@container": "@set"
+    },
+    "citation": {
+      "@id": "https://schema.org/citation",
+      "@container": "@set"
+    },
+    "sample_size": {
+      "@id": "https://ddialliance.org/Specification/DDI-Lifecycle/3.3/XMLSchema/FieldLevelDocumentation/schemas/datacollection_xsd/elements/Universe.html",
+      "@type": "xsd:integer"
+    },
+    "age_range": {
+      "@id": "https://www.cdisc.org/standards/foundational/sdtm#AGE",
+      "@container": "@list"
+    },
+    "age_mean": {
+      "@id": "https://www.cdisc.org/standards/foundational/sdtm#AGE",
+      "@type": "xsd:decimal"
+    },
+    "age_std": {
+      "@id": "behaverse:age_std",
+      "@type": "xsd:decimal"
+    },
+    "sex_distribution": {
+      "@id": "https://www.cdisc.org/standards/foundational/sdtm#SEX",
+      "@type": "@id"
+    },
+    "age_category": {
+      "@id": "behaverse:ageCategory",
+      "@container": "@set"
+    },
+    "population_category": {
+      "@id": "https://schema.org/healthCondition",
+      "@type": "xsd:string"
+    },
+    "inclusion_criteria": {
+      "@id": "https://clinicaltrials.gov/data-api/about-api/schema#eligibility",
+      "@container": "@set"
+    },
+    "exclusion_criteria": {
+      "@id": "https://clinicaltrials.gov/data-api/about-api/schema#eligibility",
+      "@container": "@set"
+    },
+    "spatial_coverage": {
+      "@id": "https://schema.org/spatialCoverage",
+      "@type": "xsd:string"
+    },
+    "temporal_coverage": {
+      "@id": "https://schema.org/temporalCoverage",
+      "@type": "xsd:string"
+    },
+    "measurement_technique": {
+      "@id": "https://schema.org/measurementTechnique",
+      "@container": "@set"
+    },
+    "constructs_measured": {
+      "@id": "https://schema.org/variableMeasured",
+      "@container": "@set"
+    },
+    "activity": {
+      "@id": "http://www.cognitiveatlas.org/task/",
+      "@container": "@set"
+    },
+    "study_design_type": {
+      "@id": "https://schema.org/MedicalStudy",
+      "@type": "xsd:string"
+    },
+    "intervention_type": {
+      "@id": "https://clinicaltrials.gov/data-api/about-api/schema#interventionType",
+      "@container": "@set"
+    },
+    "session_count": {
+      "@id": "https://bids-specification.readthedocs.io/en/stable/common-principles.html#sessions",
+      "@type": "xsd:integer"
+    },
+    "session_description": {
+      "@id": "behaverse:session_description",
+      "@type": "xsd:string"
+    },
+    "data_formats": {
+      "@id": "https://schema.org/encodingFormat",
+      "@container": "@set"
+    },
+    "data_size_gb": {
+      "@id": "https://schema.org/contentSize",
+      "@type": "xsd:decimal"
+    },
+    "data_structure": {
+      "@id": "behaverse:dataStructure",
+      "@type": "xsd:string"
+    },
+    "download_url": {
+      "@id": "https://schema.org/contentUrl",
+      "@type": "@id"
+    },
+    "access_url": {
+      "@id": "https://schema.org/url",
+      "@type": "@id"
+    },
+    "access_conditions": {
+      "@id": "https://schema.org/conditionsOfAccess",
+      "@type": "@id"
+    },
+    "ethical_approval": {
+      "@id": "behaverse:ethical_approval",
+      "@type": "@id"
+    },
+    "size_category": {
+      "@id": "https://huggingface.co/docs/hub/datasets-cards#size_categories",
+      "@type": "xsd:string"
+    },
+    "task_categories": {
+      "@id": "https://huggingface.co/docs/hub/datasets-cards#task_categories",
+      "@container": "@set"
+    }
+  }
+}

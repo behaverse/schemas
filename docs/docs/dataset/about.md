@@ -6,7 +6,7 @@ sidebar_label: About
 
 <!-- THIS FILE IS MANUALLY EDITABLE -->
 
-# About dataset
+# <img src={require('@site/static/assets/img/schema_D.png').default} height="80" style={{verticalAlign: 'middle'}} /> About dataset
 
 The Behaverse `dataset` Schema provides a comprehensive, standardized metadata format for describing cognitive science and neuroscience datasets. It enables rich documentation of experimental data including participant demographics, measurement techniques, cognitive tasks, data access information, and ethical considerations.
 

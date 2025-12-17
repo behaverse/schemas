@@ -1,0 +1,216 @@
+# Behaverse Collection Schema - Field Definitions
+# This is the source of truth for all fields in the schema
+# Edit this file, then run: python scripts/generate_schema_files.py
+
+schema_metadata:
+  name: Behaverse Collection Schema
+  version: "25.1202"
+  namespace: https://behaverse.org/schemas/collection
+  description: A metadata schema for thematic collections of cognitive science and neuroscience datasets
+  type: https://schema.org/Collection
+
+# Field groups define categories for organization
+field_groups:
+  - id: core_metadata
+    name: Core Metadata
+    description: Essential fields for collection identification
+    
+  - id: definition
+    name: Collection Definition
+    description: Criteria and scope of the collection
+    
+  - id: membership
+    name: Collection Membership
+    description: Datasets that belong to this collection
+    
+  - id: relationships
+    name: Relationships
+    description: Related collections and cross-references
+
+# Field definitions
+fields:
+  # Core Metadata
+  - name: name
+    group: core_metadata
+    type: string
+    requirement: required
+    description: Short URL-friendly identifier
+    mappings:
+      - standard: schema.org
+        property: name
+        url: https://schema.org/name
+    constraints:
+      pattern: "^[a-z0-9-_]+$"
+    examples:
+      - multi-task
+      - longitudinal
+      - multimodal
+      
+  - name: pretty_name
+    group: core_metadata
+    type: string
+    requirement: required
+    description: Human-readable display title
+    mappings:
+      - standard: schema.org
+        property: name
+        url: https://schema.org/name
+    examples:
+      - Multi-Task Cognitive Assessments
+      - Longitudinal & Test-Retest Studies
+      
+  - name: description
+    group: core_metadata
+    type: string
+    requirement: required
+    description: Comprehensive description of the collection's purpose and scope
+    mappings:
+      - standard: schema.org
+        property: description
+        url: https://schema.org/description
+      - standard: dublin_core
+        property: description
+        url: http://purl.org/dc/terms/description
+    examples:
+      - "Datasets where participants completed multiple distinct cognitive tasks or assessments within the same study, enabling cross-task analysis and cognitive profiling."
+      
+  - name: keywords
+    group: core_metadata
+    type: array
+    item_type: string
+    requirement: recommended
+    description: Keywords describing the collection's focus areas
+    mappings:
+      - standard: schema.org
+        property: keywords
+        url: https://schema.org/keywords
+    examples:
+      - ["multi-task", "cognitive assessment", "battery", "neuropsychology"]
+      
+  # Collection Definition
+  - name: inclusion_criteria
+    group: definition
+    type: array
+    item_type: string
+    requirement: required
+    description: Specific rules a dataset must meet to be included in this collection (all criteria must be met)
+    mappings:
+      - standard: behaverse
+        property: inclusionCriteria
+    examples:
+      - ["Participants must have completed 2 or more distinct cognitive tasks", "Tasks must measure different cognitive constructs", "All tasks must be from the same participants (within-subject design)"]
+      
+  - name: exclusion_criteria
+    group: definition
+    type: array
+    item_type: string
+    requirement: optional
+    description: Criteria that would exclude a dataset from this collection
+    mappings:
+      - standard: behaverse
+        property: exclusionCriteria
+    examples:
+      - ["Single-task studies", "Between-subject designs only", "Non-human subjects"]
+      
+  # Collection Membership
+  - name: datasets
+    group: membership
+    type: array
+    item_type: string
+    requirement: optional
+    description: List of dataset URLs or DOIs that belong to this collection (use stable identifiers like DOIs or canonical URLs)
+    mappings:
+      - standard: schema.org
+        property: hasPart
+        url: https://schema.org/hasPart
+    constraints:
+      format: uri
+    examples:
+      - ["https://behaverse.org/datasets/axon-game-eeg", "https://doi.org/10.5281/zenodo.1234567", "https://openneuro.org/datasets/ds003097"]
+      
+  - name: dataset_count
+    group: membership
+    type: integer
+    requirement: optional
+    description: Number of datasets currently in this collection
+    mappings:
+      - standard: behaverse
+        property: datasetCount
+    examples:
+      - 15
+      
+  # Relationships
+  - name: related_collections
+    group: relationships
+    type: array
+    item_type: string
+    requirement: optional
+    description: Names of other collections that frequently overlap with this one
+    mappings:
+      - standard: behaverse
+        property: relatedCollections
+    examples:
+      - ["multimodal", "longitudinal"]
+      
+  # Core Metadata (continued)
+  - name: date_created
+    group: core_metadata
+    type: string
+    requirement: recommended
+    description: Date this collection was created (ISO 8601)
+    mappings:
+      - standard: schema.org
+        property: dateCreated
+        url: https://schema.org/dateCreated
+    constraints:
+      format: date
+    examples:
+      - "2025-12-02"
+      
+  - name: date_modified
+    group: core_metadata
+    type: string
+    requirement: optional
+    description: Date this collection definition was last modified (ISO 8601)
+    mappings:
+      - standard: schema.org
+        property: dateModified
+        url: https://schema.org/dateModified
+    constraints:
+      format: date
+    examples:
+      - "2025-12-02"
+      
+  - name: curator
+    group: core_metadata
+    type: array
+    item_type: object
+    requirement: recommended
+    description: People or organizations that curate this collection
+    mappings:
+      - standard: schema.org
+        property: maintainer
+        url: https://schema.org/maintainer
+    object_properties:
+      - name: name
+        type: string
+        required: true
+        description: Curator full name
+      - name: email
+        type: string
+        required: false
+        description: Curator email address
+        constraints:
+          format: email
+      - name: orcid
+        type: string
+        required: false
+        description: ORCID identifier
+        constraints:
+          pattern: "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
+      - name: affiliation
+        type: string
+        required: false
+        description: Institutional affiliation
+    examples:
+      - [{"name": "Curator Name", "email": "curator@institution.edu", "orcid": "0000-0001-2345-6789"}]

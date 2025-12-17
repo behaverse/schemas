@@ -6,7 +6,7 @@ sidebar_label: About
 
 <!-- THIS FILE IS MANUALLY EDITABLE -->
 
-# About collection
+# <img src={require('@site/static/assets/img/schema_C.png').default} height="80" style={{verticalAlign: 'middle'}} /> About collection
 
 The Behaverse collection Schema provides a standardized way to describe and organize thematic collections of cognitive science and neuroscience datasets.
 

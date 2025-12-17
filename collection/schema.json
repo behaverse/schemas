@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://behaverse.org/schemas/collection/v25.1202/schema.json",
+  "title": "Behaverse Collection Schema",
+  "description": "A metadata schema for thematic collections of cognitive science and neuroscience datasets",
+  "version": "25.1202",
+  "type": "object",
+  "required": [
+    "name",
+    "pretty_name",
+    "description",
+    "inclusion_criteria"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name",
+      "description": "Short URL-friendly identifier",
+      "equivalentProperty": "https://schema.org/name",
+      "pattern": "^[a-z0-9-_]+$"
+    },
+    "pretty_name": {
+      "type": "string",
+      "title": "Pretty Name",
+      "description": "Human-readable display title",
+      "equivalentProperty": "https://schema.org/name"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "description": "Comprehensive description of the collection's purpose and scope",
+      "equivalentProperty": [
+        "https://schema.org/description",
+        "http://purl.org/dc/terms/description"
+      ]
+    },
+    "keywords": {
+      "type": "array",
+      "title": "Keywords",
+      "description": "Keywords describing the collection's focus areas",
+      "equivalentProperty": "https://schema.org/keywords",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inclusion_criteria": {
+      "type": "array",
+      "title": "Inclusion Criteria",
+      "description": "Specific rules a dataset must meet to be included in this collection (all criteria must be met)",
+      "equivalentProperty": "https://behaverse.org/schemas/collection#inclusionCriteria",
+      "items": {
+        "type": "string"
+      }
+    },
+    "exclusion_criteria": {
+      "type": "array",
+      "title": "Exclusion Criteria",
+      "description": "Criteria that would exclude a dataset from this collection",
+      "equivalentProperty": "https://behaverse.org/schemas/collection#exclusionCriteria",
+      "items": {
+        "type": "string"
+      }
+    },
+    "datasets": {
+      "type": "array",
+      "title": "Datasets",
+      "description": "List of dataset URLs or DOIs that belong to this collection (use stable identifiers like DOIs or canonical URLs)",
+      "equivalentProperty": "https://schema.org/hasPart",
+      "format": "uri",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dataset_count": {
+      "type": "integer",
+      "title": "Dataset Count",
+      "description": "Number of datasets currently in this collection",
+      "equivalentProperty": "https://behaverse.org/schemas/collection#datasetCount"
+    },
+    "related_collections": {
+      "type": "array",
+      "title": "Related Collections",
+      "description": "Names of other collections that frequently overlap with this one",
+      "equivalentProperty": "https://behaverse.org/schemas/collection#relatedCollections",
+      "items": {
+        "type": "string"
+      }
+    },
+    "date_created": {
+      "type": "string",
+      "title": "Date Created",
+      "description": "Date this collection was created (ISO 8601)",
+      "equivalentProperty": "https://schema.org/dateCreated",
+      "format": "date"
+    },
+    "date_modified": {
+      "type": "string",
+      "title": "Date Modified",
+      "description": "Date this collection definition was last modified (ISO 8601)",
+      "equivalentProperty": "https://schema.org/dateModified",
+      "format": "date"
+    },
+    "curator": {
+      "type": "array",
+      "title": "Curator",
+      "description": "People or organizations that curate this collection",
+      "equivalentProperty": "https://schema.org/curator",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Curator full name"
+          },
+          "email": {
+            "type": "string",
+            "description": "Curator email address",
+            "format": "email"
+          },
+          "orcid": {
+            "type": "string",
+            "description": "ORCID identifier",
+            "pattern": "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
+          },
+          "affiliation": {
+            "type": "string",
+            "description": "Institutional affiliation"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    }
+  }
+}

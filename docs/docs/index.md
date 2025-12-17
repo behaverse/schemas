@@ -12,7 +12,7 @@ This site provides comprehensive documentation for all schema properties, with a
 
 ## Available Schemas
 
-### [bcsvw](/bcsvw) - Behaverse CSV for the Web
+### <img src={require('@site/static/assets/img/schema_B.png').default} height="40" style={{verticalAlign: 'middle'}} /> [bcsvw](/bcsvw)
 
 Extension of W3C CSVW with support for R/Python data types including categorical and ordered factors, missing value codes, units of measurement, and file integrity verification.
 
@@ -23,7 +23,7 @@ Extension of W3C CSVW with support for R/Python data types including categorical
 - Units of measurement
 - SHA-256 file hashing
 
-### [collection](/collection) - Collection Schema
+### <img src={require('@site/static/assets/img/schema_C.png').default} height="40" style={{verticalAlign: 'middle'}} /> [collection](/collection)
 
 Metadata schema for describing thematic collections of datasets that share specific characteristics or serve particular research applications.
 
@@ -31,7 +31,7 @@ Metadata schema for describing thematic collections of datasets that share speci
 - Inclusion/exclusion criteria
 - Dataset membership management
 
-### [dataset](/dataset) - Dataset Schema
+### <img src={require('@site/static/assets/img/schema_D.png').default} height="40" style={{verticalAlign: 'middle'}} /> [dataset](/dataset)
 
 Comprehensive metadata for cognitive science datasets with coverage of participant demographics, measurement techniques, cognitive tasks, and data access information.
 
@@ -42,7 +42,7 @@ Comprehensive metadata for cognitive science datasets with coverage of participa
 - Activities (e.g., cognitive tasks, questionnaires)
 - Ethics
 
-### [studyflow](/studyflow) - Studyflow Schema
+### <img src={require('@site/static/assets/img/schema_S.png').default} height="40" style={{verticalAlign: 'middle'}} /> [studyflow](/studyflow)
 
 Schema for defining the formal structure of studyflow diagrams - sequences of activities and resources designed to facilitate experimental research and data analysis.
 

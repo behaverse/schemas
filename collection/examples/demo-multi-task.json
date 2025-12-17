@@ -1,0 +1,41 @@
+{
+  "@context": "https://behaverse.org/schemas/collection/context.jsonld",
+  "name": "demo-multi-task",
+  "pretty_name": "Demo: Multi-Task Cognitive Assessments",
+  "description": "Example collection demonstrating how to define multi-task dataset collections. This is a demonstration - the criteria and datasets listed are for illustrative purposes only.",
+  "keywords": [
+    "demo-multi-task",
+    "cognitive assessment",
+    "battery",
+    "example",
+    "demonstration"
+  ],
+  "inclusion_criteria": [
+    "Participants must have completed 2 or more distinct cognitive tasks or assessments",
+    "Tasks must measure different cognitive constructs (e.g., memory, attention, executive function, language)",
+    "All tasks must be from the same participants (within-subject design)",
+    "Both behavioral and neuroimaging multi-task datasets are eligible",
+    "Tasks can be completed in single or multiple sessions"
+  ],
+  "exclusion_criteria": [
+    "Single-task studies",
+    "Between-subject designs with no within-subject component"
+  ],
+  "datasets": [
+    "https://example.org/datasets/demo-dataset-1",
+    "https://example.org/datasets/demo-dataset-2",
+    "https://doi.org/10.5555/example.12345"
+  ],
+  "related_collections": [
+    "demo-multimodal",
+    "demo-longitudinal"
+  ],
+  "dataset_count": 3,
+  "date_created": "2025-12-02",
+  "curator": [
+    {
+      "name": "Example Curator",
+      "email": "curator@example.org"
+    }
+  ]
+}

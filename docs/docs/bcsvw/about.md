@@ -6,7 +6,7 @@ sidebar_label: About
 
 <!-- THIS FILE IS MANUALLY EDITABLE -->
 
-# About bcsvw
+# <img src={require('@site/static/assets/img/schema_B.png').default} height="80" style={{verticalAlign: 'middle'}} /> About bcsvw
 
 bcsvw stands for **Behaverse CSV for the Web**; it is an extension of the [W3C CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) standard designed to enhance CSV metadata for use in R and Python data analysis workflows.
 

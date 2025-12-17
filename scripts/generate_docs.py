@@ -34,18 +34,22 @@ SCHEMAS = {
     'bcsvw': {
         'has_field_definitions': False,  # Uses schema.json directly
         'name': 'bcsvw (Behaverse CSV for the Web)',
+        'icon': 'schema_B.png',
     },
     'collection': {
         'has_field_definitions': True,
         'name': 'Collection Schema',
+        'icon': 'schema_C.png',
     },
     'dataset': {
         'has_field_definitions': True,
         'name': 'Dataset Schema',
+        'icon': 'schema_D.png',
     },
     'studyflow': {
         'has_field_definitions': False,  # Uses moddle/linkml format
         'name': 'Studyflow Schema',
+        'icon': 'schema_S.png',
     },
 }
 
@@ -68,6 +72,9 @@ def load_schema_data(schema_name: str) -> Dict[str, Any]:
     elif schema_name == 'studyflow':
         # Load from moddle format
         moddle_path = schema_dir / 'schema.moddle.json'
+        if not moddle_path.exists():
+            # Skip studyflow if schema.moddle.json doesn't exist
+            return None
         with open(moddle_path, 'r') as f:
             moddle = json.load(f)
         return {
@@ -352,6 +359,10 @@ def generate_index_page(schema_name: str, data: Dict[str, Any]) -> str:
     # Use simple schema name as title
     page_title = schema_name
     
+    # Get schema icon if available
+    schema_icon = SCHEMAS.get(schema_name, {}).get('icon', '')
+    icon_html = f"<img src={{require('@site/static/assets/img/{schema_icon}').default}} height=\"80\" style={{{{verticalAlign: 'middle'}}}} /> " if schema_icon else ""
+    
     mdx = f"""---
 id: index
 title: {page_title}
@@ -361,7 +372,7 @@ slug: /{schema_name}
 
 <!-- THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY. -->
 
-# {page_title}
+# {icon_html}{page_title}
 
 **Version**: {version_str}  
 **Namespace**: `{metadata['namespace']}`
@@ -580,6 +591,9 @@ def main():
         try:
             # Load schema data
             data = load_schema_data(schema_name)
+            if data is None:
+                print(f"   ⊘ Skipping (schema files not found)")
+                continue
             
             # Create schema directory
             schema_docs_dir = docs_dir / schema_name
