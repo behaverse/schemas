@@ -12,7 +12,7 @@ This repository hosts machine-readable schemas and vocabularies for organizing, 
 
 ## Schemas
 
-### bcsvw (Behaverse CSV for the Web)
+### <img src="assets/img/schema_B.png" height="40" style="vertical-align: middle;"> bcsvw (Behaverse CSV for the Web)
 Extension of W3C CSVW with support for R/Python data types including categorical and ordered factors, missing value codes, units of measurement, and file integrity verification.
 
 - **Version**: v25.1201
@@ -23,7 +23,7 @@ Extension of W3C CSVW with support for R/Python data types including categorical
 
 **Example property reference**: `https://behaverse.org/schemas/bcsvw#ordered`
 
-### collection 
+### <img src="assets/img/schema_C.png" height="40" style="vertical-align: middle;"> collection 
 Metadata schema for describing thematic collections of datasets that share specific characteristics or serve particular research applications. Extends schema.org/Collection.
 
 - **Version**: v25.1202
@@ -34,7 +34,7 @@ Metadata schema for describing thematic collections of datasets that share speci
 
 **Example property reference**: `https://behaverse.org/schemas/collection#inclusion_criteria`
 
-### dataset
+### <img src="assets/img/schema_D.png" height="40" style="vertical-align: middle;"> dataset
 Metadata schema for describing cognitive science datasets with comprehensive coverage of participant demographics, measurement techniques, cognitive tasks, and data access information.
 
 - **Version**: v25.1201
@@ -45,7 +45,7 @@ Metadata schema for describing cognitive science datasets with comprehensive cov
 
 **Example property reference**: `https://behaverse.org/schemas/dataset#sample_size`
 
-### studyflow
+### <img src="assets/img/schema_S.png" height="40" style="vertical-align: middle;"> studyflow
 Schema for defining the formal structure of studyflow diagrams - sequences of activities and resources designed to facilitate experimental research and data analysis. Used by the Studyflow Modeler app.
 
 - **Version**: v25.0414
