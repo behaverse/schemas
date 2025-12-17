@@ -81,13 +81,12 @@ const config = {
             position: 'left',
             label: 'dataset',
           },
-          // studyflow sidebar - requires schema.moddle.json from main branch
-          // {
-          //   type: 'docSidebar',
-          //   sidebarId: 'studyflowSidebar',
-          //   position: 'left',
-          //   label: 'studyflow',
-          // },
+          {
+            type: 'docSidebar',
+            sidebarId: 'studyflowSidebar',
+            position: 'left',
+            label: 'studyflow',
+          },
           {
             href: 'https://github.com/behaverse/schemas',
             label: 'GitHub',
