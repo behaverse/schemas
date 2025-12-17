@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout gh-pages branch
         uses: actions/checkout@v4
+        with:
+          ref: gh-pages
       
       - name: Checkout schemas from main branch
         run: |
