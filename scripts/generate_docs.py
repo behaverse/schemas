@@ -84,7 +84,7 @@ def load_schema_data(schema_name: str) -> Dict[str, Any]:
                 'namespace': linkml.get('id', 'https://behaverse.org/schemas/studyflow'),
                 'description': linkml.get('description', 'Schema for defining the formal structure of studyflow diagrams'),
             },
-            'fields': convert_linkml_to_fields(linkml),
+            'fields': linkml_to_json(linkml),
             'field_groups': [],
         }
     else:
@@ -209,7 +209,7 @@ def convert_json_schema_to_fields(schema: Dict[str, Any]) -> List[Dict[str, Any]
     
     return fields
 
-def convert_linkml_to_fields(linkml: Dict[str, Any]) -> List[Dict[str, Any]]:
+def linkml_to_json(linkml: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Convert LinkML format to field definitions format"""
     fields = []
     
@@ -231,7 +231,7 @@ def convert_linkml_to_fields(linkml: Dict[str, Any]) -> List[Dict[str, Any]]:
         }
         
         # Add attributes as nested properties
-        if 'attributes' in cls_meta:
+        if cls_meta.get('attributes'):
             obj_props = []
             for attr_name, attr_meta in cls_meta['attributes'].items():
                 if attr_meta is None:
