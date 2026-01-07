@@ -104,7 +104,7 @@ A catalog of datasets with repeated measurements over time.
 }
 ```
 
-## Minimal Collection
+## Minimal Catalog
 
 A minimal catalog definition with only required fields.
 
@@ -112,7 +112,7 @@ A minimal catalog definition with only required fields.
 {
   "@context": "https://behaverse.org/schemas/catalog/context.jsonld",
   "name": "minimal-example",
-  "pretty_name": "Minimal Collection Example",
+  "pretty_name": "Minimal Catalog Example",
   "description": "This minimal example shows the required fields for a valid catalog definition.",
   "inclusion_criteria": [
     "Datasets must meet at least one inclusion criterion"

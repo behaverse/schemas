@@ -23,9 +23,9 @@ Extension of W3C CSVW with support for R/Python data types including categorical
 - Units of measurement
 - SHA-256 file hashing
 
-### <img src={require('@site/static/assets/img/schema_C.png').default} height="40" style={{verticalAlign: 'middle'}} /> [collection](/collection)
+### <img src={require('@site/static/assets/img/schema_C.png').default} height="40" style={{verticalAlign: 'middle'}} /> [catalog](/catalog)
 
-Metadata schema for describing thematic collections of datasets that share specific characteristics or serve particular research applications.
+Metadata schema for describing thematic catalogs of datasets that share specific characteristics or serve particular research applications.
 
 **Key features:**
 - Inclusion/exclusion criteria

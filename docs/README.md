@@ -5,7 +5,7 @@ This directory contains the Docusaurus-based documentation site for Behaverse sc
 ## Overview
 
 The documentation is **auto-generated** from the schema definitions in:
-- `collection/field-definitions.yaml`
+- `catalog/field-definitions.yaml`
 - `dataset/field-definitions.yaml`
 - `bcsvw/schema.json`
 - `studyflow/schema.moddle.json`
@@ -58,7 +58,7 @@ npm run serve
 
 1. **`scripts/generate_docs.py`** reads schema definitions and generates:
    - Index pages for each schema
-   - Individual property pages (e.g., `/dataset/name`, `/collection/inclusion_criteria`)
+   - Individual property pages (e.g., `/dataset/name`, `/catalog/inclusion_criteria`)
    - Sidebar configuration (`docs/sidebars.js`)
 
 2. **Docusaurus** builds a static React site with:
@@ -101,7 +101,7 @@ docs/
 │   │   ├── index.md          # Auto-generated
 │   │   ├── ordered.md        # Auto-generated property page
 │   │   └── examples/         # Manual examples
-│   ├── collection/
+│   ├── catalog/
 │   ├── dataset/
 │   └── studyflow/
 ├── src/

@@ -29,9 +29,9 @@ The schema requires explicit `inclusion_criteria` - a list of rules that dataset
 
 The schema provides consistent `snake_case` property naming conventions while maintaining compatibility with existing standards like [schema.org](https://schema.org) and [Dublin Core](https://www.dublincore.org/). Properties such as [`description`](../catalog/description), [`keywords`](../catalog/keywords), and [`curator`](../catalog/curator) map to their schema.org equivalents, while using developer-friendly naming that aligns with common programming conventions.
 
-### 3. Rich Collection Metadata
+### 3. Rich Catalog Metadata
 
-Collections can be described with standard metadata fields:
+Catalogs can be described with standard metadata fields:
 - `name`: URL-friendly identifier
 - `pretty_name`: Human-readable title
 - `description`: Comprehensive purpose and scope
@@ -40,11 +40,11 @@ Collections can be described with standard metadata fields:
 
 ### 4. Dataset Membership Tracking
 
-Collections can list their member datasets via:
+Catalogs can list their member datasets via:
 - `datasets`: Array of dataset URLs or DOIs
 - `dataset_count`: Number of datasets in the catalog
 
-### 5. Collection Relationships
+### 5. Catalog Relationships
 
 The `related_catalogs` property enables listing related catalogs to facilitate dataset discovery.
 
@@ -62,13 +62,13 @@ The `related_catalogs` property enables listing related catalogs to facilitate d
 - **"Multimodal Data"** - Datasets combining behavioral and neural measures
 - **"Developmental Research"** - Studies spanning multiple age groups
 
-### Population-Focused Collections
+### Population-Focused Catalogs
 
 - **"Adolescent Mental Health"** - Datasets from adolescent populations with mental health measures
 - **"Aging and Cognition"** - Studies of cognitive aging in older adults
 - **"Clinical Populations"** - Datasets from specific clinical groups
 
-### Methodology-Based Collections
+### Methodology-Based Catalogs
 
 - **"fMRI Studies"** - Datasets using functional magnetic resonance imaging
 - **"Ecological Momentary Assessment"** - Studies using real-time data catalog
@@ -92,13 +92,13 @@ The `related_catalogs` property enables listing related catalogs to facilitate d
 
 - **Interoperability**: Machine-readable catalog definitions
 - **Semantic web ready**: JSON-LD support for linked data
-- **Standards-based**: Built on Schema.org Collection vocabulary
+- **Standards-based**: Built on Schema.org DataCatalog vocabulary
 
 ## Relationship to Standards
 
-The Collection Schema builds on:
+The Catalog Schema builds on:
 
-- **[Schema.org Collection](https://schema.org/Collection)**: Base vocabulary for catalogs
+- **[Schema.org DataCatalog](https://schema.org/DataCatalog)**: Base vocabulary for catalogs
 - **[Dublin Core](https://www.dublincore.org/)**: Metadata properties (`description`, `creator`)
 - **[Dataset Schema](https://behaverse.org/schemas/dataset)**: Properties used in inclusion criteria must align with dataset descriptors
 

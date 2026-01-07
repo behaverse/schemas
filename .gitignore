@@ -1,6 +1,6 @@
 # Schema directories (fetched from main branch during build)
 /bcsvw/
-/collection/
+/catalog/
 /dataset/
 /studyflow/
 
