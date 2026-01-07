@@ -33,7 +33,7 @@ jobs:
       - name: Checkout schemas and scripts from main branch
         run: |
           git fetch origin main
-          git checkout origin/main -- bcsvw/ collection/ dataset/ studyflow/ scripts/
+          git checkout origin/main -- bcsvw/ catalog/ dataset/ studyflow/ scripts/
       
       - name: Setup Python with uv
         uses: astral-sh/setup-uv@v4
@@ -53,7 +53,7 @@ jobs:
       
       - name: Copy raw schemas to static directory
         run: |
-          for schema in bcsvw collection dataset studyflow; do
+          for schema in bcsvw catalog dataset studyflow; do
             cp -r $schema docs/static/
           done
       
