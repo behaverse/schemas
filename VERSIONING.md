@@ -18,7 +18,7 @@ When you make changes to a schema, use the versioning script:
 python scripts/version_schema.py <schema_name> --message "Description of changes"
 ```
 
-**Available schemas:** `bcsvw`, `collection`, `dataset`, `studyflow`
+**Available schemas:** `bcsvw`, `catalog`, `dataset`, `studyflow`
 
 ### Example
 

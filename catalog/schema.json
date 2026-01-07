@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://behaverse.org/schemas/collection/v25.1202/schema.json",
-  "title": "Behaverse Collection Schema",
-  "description": "A metadata schema for thematic collections of cognitive science and neuroscience datasets",
-  "version": "25.1202",
+  "$id": "https://behaverse.org/schemas/catalog/v26.0107/schema.json",
+  "title": "Behaverse Catalog Schema",
+  "description": "A metadata schema for thematic catalogs of cognitive science and neuroscience datasets",
+  "version": "26.0107",
   "type": "object",
   "required": [
     "name",
@@ -28,7 +28,7 @@
     "description": {
       "type": "string",
       "title": "Description",
-      "description": "Comprehensive description of the collection's purpose and scope",
+      "description": "Comprehensive description of the catalog's purpose and scope",
       "equivalentProperty": [
         "https://schema.org/description",
         "http://purl.org/dc/terms/description"
@@ -37,7 +37,7 @@
     "keywords": {
       "type": "array",
       "title": "Keywords",
-      "description": "Keywords describing the collection's focus areas",
+      "description": "Keywords describing the catalog's focus areas",
       "equivalentProperty": "https://schema.org/keywords",
       "items": {
         "type": "string"
@@ -46,8 +46,8 @@
     "inclusion_criteria": {
       "type": "array",
       "title": "Inclusion Criteria",
-      "description": "Specific rules a dataset must meet to be included in this collection (all criteria must be met)",
-      "equivalentProperty": "https://behaverse.org/schemas/collection#inclusionCriteria",
+      "description": "Specific rules a dataset must meet to be included in this catalog (all criteria must be met)",
+      "equivalentProperty": "https://behaverse.org/schemas/catalog#inclusionCriteria",
       "items": {
         "type": "string"
       }
@@ -55,8 +55,8 @@
     "exclusion_criteria": {
       "type": "array",
       "title": "Exclusion Criteria",
-      "description": "Criteria that would exclude a dataset from this collection",
-      "equivalentProperty": "https://behaverse.org/schemas/collection#exclusionCriteria",
+      "description": "Criteria that would exclude a dataset from this catalog",
+      "equivalentProperty": "https://behaverse.org/schemas/catalog#exclusionCriteria",
       "items": {
         "type": "string"
       }
@@ -64,7 +64,17 @@
     "datasets": {
       "type": "array",
       "title": "Datasets",
-      "description": "List of dataset URLs or DOIs that belong to this collection (use stable identifiers like DOIs or canonical URLs)",
+      "description": "List of dataset URLs or DOIs that belong to this catalog (use stable identifiers like DOIs or canonical URLs)",
+      "equivalentProperty": "https://schema.org/dataset",
+      "format": "uri",
+      "items": {
+        "type": "string"
+      }
+    },
+    "catalogs": {
+      "type": "array",
+      "title": "Catalogs",
+      "description": "List of child catalog URLs that belong to this catalog (for hierarchical organization)",
       "equivalentProperty": "https://schema.org/hasPart",
       "format": "uri",
       "items": {
@@ -74,14 +84,14 @@
     "dataset_count": {
       "type": "integer",
       "title": "Dataset Count",
-      "description": "Number of datasets currently in this collection",
-      "equivalentProperty": "https://behaverse.org/schemas/collection#datasetCount"
+      "description": "Number of datasets currently in this catalog",
+      "equivalentProperty": "https://behaverse.org/schemas/catalog#datasetCount"
     },
-    "related_collections": {
+    "related_catalogs": {
       "type": "array",
-      "title": "Related Collections",
-      "description": "Names of other collections that frequently overlap with this one",
-      "equivalentProperty": "https://behaverse.org/schemas/collection#relatedCollections",
+      "title": "Related Catalogs",
+      "description": "Names of other catalogs that frequently overlap with this one",
+      "equivalentProperty": "https://behaverse.org/schemas/catalog#relatedCatalogs",
       "items": {
         "type": "string"
       }
@@ -89,21 +99,21 @@
     "date_created": {
       "type": "string",
       "title": "Date Created",
-      "description": "Date this collection was created (ISO 8601)",
+      "description": "Date this catalog was created (ISO 8601)",
       "equivalentProperty": "https://schema.org/dateCreated",
       "format": "date"
     },
     "date_modified": {
       "type": "string",
       "title": "Date Modified",
-      "description": "Date this collection definition was last modified (ISO 8601)",
+      "description": "Date this catalog definition was last modified (ISO 8601)",
       "equivalentProperty": "https://schema.org/dateModified",
       "format": "date"
     },
     "curator": {
       "type": "array",
       "title": "Curator",
-      "description": "People or organizations that curate this collection",
+      "description": "People or organizations that curate this catalog",
       "equivalentProperty": "https://schema.org/curator",
       "items": {
         "type": "object",

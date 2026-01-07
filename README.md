@@ -23,16 +23,16 @@ Extension of W3C CSVW with support for R/Python data types including categorical
 
 **Example property reference**: `https://behaverse.org/schemas/bcsvw#ordered`
 
-### <img src="assets/img/schema_C.png" height="40" style="vertical-align: middle;"> collection 
-Metadata schema for describing thematic collections of datasets that share specific characteristics or serve particular research applications. Extends schema.org/Collection.
+### <img src="assets/img/schema_C.png" height="40" style="vertical-align: middle;"> catalog 
+Metadata schema for describing thematic catalogs of datasets that share specific characteristics or serve particular research applications. Extends schema.org/DataCatalog. Supports hierarchical organization through nested catalogs.
 
-- **Version**: v25.1202
-- **Namespace**: `https://behaverse.org/schemas/collection#`
-- **Context**: [`collection/context.jsonld`](collection/context.jsonld)
-- **JSON Schema**: [`collection/schema.json`](collection/schema.json)
-- **Documentation**: [`collection/README.md`](collection/README.md)
+- **Version**: v26.0107
+- **Namespace**: `https://behaverse.org/schemas/catalog#`
+- **Context**: [`catalog/context.jsonld`](catalog/context.jsonld)
+- **JSON Schema**: [`catalog/schema.json`](catalog/schema.json)
+- **Documentation**: [`catalog/README.md`](catalog/README.md)
 
-**Example property reference**: `https://behaverse.org/schemas/collection#inclusion_criteria`
+**Example property reference**: `https://behaverse.org/schemas/catalog#inclusion_criteria`
 
 ### <img src="assets/img/schema_D.png" height="40" style="vertical-align: middle;"> dataset
 Metadata schema for describing cognitive science datasets with comprehensive coverage of participant demographics, measurement techniques, cognitive tasks, and data access information.
@@ -82,7 +82,7 @@ behaverse/schemas/
 │   ├── README.md
 │   ├── examples/
 │   └── versions/
-├── collection/          # collection schema
+├── catalog/             # catalog schema (DataCatalog)
 │   ├── context.jsonld
 │   ├── schema.json
 │   ├── README.md
@@ -124,6 +124,7 @@ Under the following terms:
 These schemas build upon and reference established standards including:
 - [Schema.org](https://schema.org/)
 - [W3C CSVW](https://www.w3.org/TR/tabular-data-primer/)
+- [W3C DCAT](https://www.w3.org/TR/vocab-dcat-3/)
 - [Dublin Core](https://www.dublincore.org/)
 - [BIDS](https://bids-specification.readthedocs.io/)
 - [DataCite](https://schema.datacite.org/)

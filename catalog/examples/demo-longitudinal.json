@@ -1,8 +1,8 @@
 {
-  "@context": "https://behaverse.org/schemas/collection/context.jsonld",
+  "@context": "https://behaverse.org/schemas/catalog/context.jsonld",
   "name": "demo-longitudinal",
   "pretty_name": "Demo: Longitudinal & Test-Retest Studies",
-  "description": "Example collection demonstrating how to define longitudinal dataset collections. This is a demonstration - the criteria and datasets listed are for illustrative purposes only.",
+  "description": "Example catalog demonstrating how to define longitudinal dataset catalogs. This is a demonstration - the criteria and datasets listed are for illustrative purposes only.",
   "keywords": [
     "demo-longitudinal",
     "test-retest",
@@ -25,7 +25,7 @@
     "https://example.org/datasets/demo-longitudinal-2",
     "https://doi.org/10.5555/example.67890"
   ],
-  "related_collections": [
+  "related_catalogs": [
     "demo-multi-task",
     "demo-adolescent-mental-health",
     "demo-adult-mental-health"
