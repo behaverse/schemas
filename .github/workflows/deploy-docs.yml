@@ -33,7 +33,7 @@ jobs:
       - name: Checkout schemas and scripts from main branch
         run: |
           git fetch origin main
-          git checkout origin/main -- bcsvw/ catalog/ dataset/ studyflow/ scripts/
+          git checkout origin/main -- bcsvw/ catalog/ dataset/ studyflow/
       
       - name: Setup Python with uv
         uses: astral-sh/setup-uv@v4
