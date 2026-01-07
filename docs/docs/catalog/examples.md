@@ -10,14 +10,14 @@ sidebar_label: Examples
 
 ## Multi-Task Cognitive Assessments
 
-A collection of datasets where participants completed multiple distinct cognitive tasks.
+A catalog of datasets where participants completed multiple distinct cognitive tasks.
 
 ```json
 {
-  "@context": "https://behaverse.org/schemas/collection/context.jsonld",
+  "@context": "https://behaverse.org/schemas/catalog/context.jsonld",
   "name": "demo-multi-task",
   "pretty_name": "Demo: Multi-Task Cognitive Assessments",
-  "description": "Example collection demonstrating how to define multi-task dataset collections. This is a demonstration - the criteria and datasets listed are for illustrative purposes only.",
+  "description": "Example catalog demonstrating how to define multi-task dataset catalogs. This is a demonstration - the criteria and datasets listed are for illustrative purposes only.",
   "keywords": [
     "demo-multi-task",
     "cognitive assessment",
@@ -41,7 +41,7 @@ A collection of datasets where participants completed multiple distinct cognitiv
     "https://example.org/datasets/demo-dataset-2",
     "https://doi.org/10.5555/example.12345"
   ],
-  "related_collections": [
+  "related_catalogs": [
     "demo-multimodal",
     "demo-longitudinal"
   ],
@@ -58,14 +58,14 @@ A collection of datasets where participants completed multiple distinct cognitiv
 
 ## Longitudinal Studies
 
-A collection of datasets with repeated measurements over time.
+A catalog of datasets with repeated measurements over time.
 
 ```json
 {
-  "@context": "https://behaverse.org/schemas/collection/context.jsonld",
+  "@context": "https://behaverse.org/schemas/catalog/context.jsonld",
   "name": "demo-longitudinal",
   "pretty_name": "Demo: Longitudinal & Test-Retest Studies",
-  "description": "Example collection demonstrating how to define longitudinal dataset collections. This is a demonstration - the criteria and datasets listed are for illustrative purposes only.",
+  "description": "Example catalog demonstrating how to define longitudinal dataset catalogs. This is a demonstration - the criteria and datasets listed are for illustrative purposes only.",
   "keywords": [
     "demo-longitudinal",
     "test-retest",
@@ -88,7 +88,7 @@ A collection of datasets with repeated measurements over time.
     "https://example.org/datasets/demo-longitudinal-2",
     "https://doi.org/10.5555/example.67890"
   ],
-  "related_collections": [
+  "related_catalogs": [
     "demo-multi-task",
     "demo-adolescent-mental-health",
     "demo-adult-mental-health"
@@ -106,14 +106,14 @@ A collection of datasets with repeated measurements over time.
 
 ## Minimal Collection
 
-A minimal collection definition with only required fields.
+A minimal catalog definition with only required fields.
 
 ```json
 {
-  "@context": "https://behaverse.org/schemas/collection/context.jsonld",
+  "@context": "https://behaverse.org/schemas/catalog/context.jsonld",
   "name": "minimal-example",
   "pretty_name": "Minimal Collection Example",
-  "description": "This minimal example shows the required fields for a valid collection definition.",
+  "description": "This minimal example shows the required fields for a valid catalog definition.",
   "inclusion_criteria": [
     "Datasets must meet at least one inclusion criterion"
   ]

@@ -36,9 +36,9 @@ SCHEMAS = {
         'name': 'bcsvw (Behaverse CSV for the Web)',
         'icon': 'schema_B.png',
     },
-    'collection': {
+    'catalog': {
         'has_field_definitions': True,
-        'name': 'Collection Schema',
+        'name': 'Catalog Schema',
         'icon': 'schema_C.png',
     },
     'dataset': {
@@ -497,7 +497,7 @@ This schema defines **{len(fields)} properties** for describing {schema_name} me
             mdx += f"| [{field['name']}]({schema_name}/{field['name']}) | `{field['type']}` | {field.get('requirement', 'optional')} | {desc} |\n"
     
     # Update examples link for schemas with examples pages
-    if schema_name in ['bcsvw', 'collection', 'dataset']:
+    if schema_name in ['bcsvw', 'catalog', 'dataset']:
         examples_link = f'[examples]({schema_name}/examples)'
     else:
         examples_link = f'[examples](./{schema_name}/examples)'
@@ -529,8 +529,8 @@ def generate_sidebar_config(schema_name: str, data: Dict[str, Any]) -> Dict[str,
         }
     ]
     
-    # Add about page for bcsvw, collection, and dataset
-    if schema_name in ['bcsvw', 'collection', 'dataset']:
+    # Add about page for bcsvw, catalog, and dataset
+    if schema_name in ['bcsvw', 'catalog', 'dataset']:
         sidebar.append({
             'type': 'doc',
             'id': f'{schema_name}/about',
@@ -580,7 +580,7 @@ def generate_sidebar_config(schema_name: str, data: Dict[str, Any]) -> Dict[str,
                 })
         
         # Add examples page at the end for schemas with field groups
-        if schema_name in ['collection', 'dataset']:
+        if schema_name in ['catalog', 'dataset']:
             sidebar.append({
                 'type': 'doc',
                 'id': f'{schema_name}/examples',
@@ -596,7 +596,7 @@ def generate_sidebar_config(schema_name: str, data: Dict[str, Any]) -> Dict[str,
         })
         
         # Add examples page at the end if not already added
-        if schema_name in ['collection', 'dataset']:
+        if schema_name in ['catalog', 'dataset']:
             sidebar.append({
                 'type': 'doc',
                 'id': f'{schema_name}/examples',

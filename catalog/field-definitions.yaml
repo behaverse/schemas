@@ -1,31 +1,31 @@
-# Behaverse Collection Schema - Field Definitions
+# Behaverse Catalog Schema - Field Definitions
 # This is the source of truth for all fields in the schema
 # Edit this file, then run: python scripts/generate_schema_files.py
 
 schema_metadata:
-  name: Behaverse Collection Schema
-  version: "25.1202"
-  namespace: https://behaverse.org/schemas/collection
-  description: A metadata schema for thematic collections of cognitive science and neuroscience datasets
-  type: https://schema.org/Collection
+  name: Behaverse Catalog Schema
+  version: "26.0107"
+  namespace: https://behaverse.org/schemas/catalog
+  description: A metadata schema for thematic catalogs of cognitive science and neuroscience datasets
+  type: https://schema.org/DataCatalog
 
 # Field groups define categories for organization
 field_groups:
   - id: core_metadata
     name: Core Metadata
-    description: Essential fields for collection identification
+    description: Essential fields for catalog identification
     
   - id: definition
-    name: Collection Definition
-    description: Criteria and scope of the collection
+    name: Catalog Definition
+    description: Criteria and scope of the catalog
     
   - id: membership
-    name: Collection Membership
-    description: Datasets that belong to this collection
+    name: Catalog Membership
+    description: Datasets and child catalogs that belong to this catalog
     
   - id: relationships
     name: Relationships
-    description: Related collections and cross-references
+    description: Related catalogs and cross-references
 
 # Field definitions
 fields:
@@ -63,7 +63,7 @@ fields:
     group: core_metadata
     type: string
     requirement: required
-    description: Comprehensive description of the collection's purpose and scope
+    description: Comprehensive description of the catalog's purpose and scope
     mappings:
       - standard: schema.org
         property: description
@@ -79,7 +79,7 @@ fields:
     type: array
     item_type: string
     requirement: recommended
-    description: Keywords describing the collection's focus areas
+    description: Keywords describing the catalog's focus areas
     mappings:
       - standard: schema.org
         property: keywords
@@ -87,13 +87,13 @@ fields:
     examples:
       - ["multi-task", "cognitive assessment", "battery", "neuropsychology"]
       
-  # Collection Definition
+  # Catalog Definition
   - name: inclusion_criteria
     group: definition
     type: array
     item_type: string
     requirement: required
-    description: Specific rules a dataset must meet to be included in this collection (all criteria must be met)
+    description: Specific rules a dataset must meet to be included in this catalog (all criteria must be met)
     mappings:
       - standard: behaverse
         property: inclusionCriteria
@@ -105,34 +105,52 @@ fields:
     type: array
     item_type: string
     requirement: optional
-    description: Criteria that would exclude a dataset from this collection
+    description: Criteria that would exclude a dataset from this catalog
     mappings:
       - standard: behaverse
         property: exclusionCriteria
     examples:
       - ["Single-task studies", "Between-subject designs only", "Non-human subjects"]
       
-  # Collection Membership
+  # Catalog Membership
   - name: datasets
     group: membership
     type: array
     item_type: string
     requirement: optional
-    description: List of dataset URLs or DOIs that belong to this collection (use stable identifiers like DOIs or canonical URLs)
+    description: List of dataset URLs or DOIs that belong to this catalog (use stable identifiers like DOIs or canonical URLs)
     mappings:
       - standard: schema.org
-        property: hasPart
-        url: https://schema.org/hasPart
+        property: dataset
+        url: https://schema.org/dataset
     constraints:
       format: uri
     examples:
       - ["https://behaverse.org/datasets/axon-game-eeg", "https://doi.org/10.5281/zenodo.1234567", "https://openneuro.org/datasets/ds003097"]
+
+  - name: catalogs
+    group: membership
+    type: array
+    item_type: string
+    requirement: optional
+    description: List of child catalog URLs that belong to this catalog (for hierarchical organization)
+    mappings:
+      - standard: schema.org
+        property: hasPart
+        url: https://schema.org/hasPart
+      - standard: dcat
+        property: catalog
+        url: http://www.w3.org/ns/dcat#catalog
+    constraints:
+      format: uri
+    examples:
+      - ["https://behaverse.org/catalogs/neuroimaging-mental-health", "https://behaverse.org/catalogs/behavioral-adhd"]
       
   - name: dataset_count
     group: membership
     type: integer
     requirement: optional
-    description: Number of datasets currently in this collection
+    description: Number of datasets currently in this catalog
     mappings:
       - standard: behaverse
         property: datasetCount
@@ -140,15 +158,15 @@ fields:
       - 15
       
   # Relationships
-  - name: related_collections
+  - name: related_catalogs
     group: relationships
     type: array
     item_type: string
     requirement: optional
-    description: Names of other collections that frequently overlap with this one
+    description: Names of other catalogs that frequently overlap with this one
     mappings:
       - standard: behaverse
-        property: relatedCollections
+        property: relatedCatalogs
     examples:
       - ["multimodal", "longitudinal"]
       
@@ -157,7 +175,7 @@ fields:
     group: core_metadata
     type: string
     requirement: recommended
-    description: Date this collection was created (ISO 8601)
+    description: Date this catalog was created (ISO 8601)
     mappings:
       - standard: schema.org
         property: dateCreated
@@ -171,7 +189,7 @@ fields:
     group: core_metadata
     type: string
     requirement: optional
-    description: Date this collection definition was last modified (ISO 8601)
+    description: Date this catalog definition was last modified (ISO 8601)
     mappings:
       - standard: schema.org
         property: dateModified
@@ -186,7 +204,7 @@ fields:
     type: array
     item_type: object
     requirement: recommended
-    description: People or organizations that curate this collection
+    description: People or organizations that curate this catalog
     mappings:
       - standard: schema.org
         property: maintainer

@@ -1,8 +1,8 @@
 {
-  "@context": "https://behaverse.org/schemas/collection/context.jsonld",
+  "@context": "https://behaverse.org/schemas/catalog/context.jsonld",
   "name": "demo-multi-task",
   "pretty_name": "Demo: Multi-Task Cognitive Assessments",
-  "description": "Example collection demonstrating how to define multi-task dataset collections. This is a demonstration - the criteria and datasets listed are for illustrative purposes only.",
+  "description": "Example catalog demonstrating how to define multi-task dataset catalogs. This is a demonstration - the criteria and datasets listed are for illustrative purposes only.",
   "keywords": [
     "demo-multi-task",
     "cognitive assessment",
@@ -26,7 +26,7 @@
     "https://example.org/datasets/demo-dataset-2",
     "https://doi.org/10.5555/example.12345"
   ],
-  "related_collections": [
+  "related_catalogs": [
     "demo-multimodal",
     "demo-longitudinal"
   ],

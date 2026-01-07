@@ -1,15 +1,17 @@
-# Behaverse Collection Schema (WIP)
+# Behaverse Catalog Schema (WIP)
 
-**Metadata schema for thematic collections of cognitive science datasets**
+**Metadata schema for thematic catalogs of cognitive science datasets**
 
 ## Overview
 
-The Behaverse Collection Schema defines how to describe and organize **collections** of datasets that share specific characteristics or serve particular research applications. A collection groups datasets by research focus, methodology, or population (e.g., "Multi-Task Studies", "Longitudinal Data", "Adolescent Mental Health").
+The Behaverse Catalog Schema defines how to describe and organize **catalogs** of datasets that share specific characteristics or serve particular research applications. A catalog groups datasets by research focus, methodology, or population (e.g., "Multi-Task Studies", "Longitudinal Data", "Adolescent Mental Health").
 
-The Behaverse `collection` schema extends `https://schema.org/Collection`. Furthermore, `collection` is linked to `behaverse.org/schemas/dataset` in the sense that the properties required to define a collection (e.g., "mental health", "adolescents") must be available as descriptors of a datasets.
+The Behaverse `catalog` schema extends `https://schema.org/DataCatalog`. Furthermore, `catalog` is linked to `behaverse.org/schemas/dataset` in the sense that the properties required to define a catalog (e.g., "mental health", "adolescents") must be available as descriptors of a datasets.
 
-- **Version**: v25.1202
-- **Namespace**: `https://behaverse.org/schemas/collection#`
+Catalogs can be nested hierarchically—a catalog can contain child catalogs using the `catalogs` property, enabling multi-level organization (e.g., a "Mental Health" catalog containing "Pediatric Mental Health" and "Adult Mental Health" sub-catalogs).
+
+- **Version**: v26.0107
+- **Namespace**: `https://behaverse.org/schemas/catalog#`
 - **Format**: JSON or JSON-LD
 - **Status**: Active
 
@@ -19,7 +21,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 
 ```json
 {
-  "@context": "https://behaverse.org/schemas/collection/context.jsonld",
+  "@context": "https://behaverse.org/schemas/catalog/context.jsonld",
   "name": "demo-multi-task",
   "pretty_name": "Demo: Multi-Task Cognitive Assessments",
   "description": "This is a demonstration example - datasets where participants completed multiple distinct cognitive tasks...",
@@ -34,6 +36,24 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 }
 ```
 
+### Nested Catalogs Example
+
+```json
+{
+  "@context": "https://behaverse.org/schemas/catalog/context.jsonld",
+  "name": "mental-health-data",
+  "pretty_name": "Mental Health Research Data Catalog",
+  "description": "A collection of datasets related to mental health research across populations.",
+  "inclusion_criteria": [
+    "Dataset must include mental health-related measures or diagnoses"
+  ],
+  "catalogs": [
+    "https://behaverse.org/catalogs/pediatric-mental-health",
+    "https://behaverse.org/catalogs/adult-mental-health"
+  ]
+}
+```
+
 ## Core Fields
 
 ### Identity Fields
@@ -42,31 +62,32 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 |-------|------|--------|-------------|
 | `name` | string | **Required** | Short URL-friendly identifier (e.g., `demo-multi-task`, `demo-longitudinal`) |
 | `pretty_name` | string | **Required** | Human-readable title (e.g., "Demo: Multi-Task Cognitive Assessments") |
-| `description` | string | **Required** | Comprehensive description of the collection's purpose and scope |
-| `keywords` | array[string] | Recommended | Keywords describing the collection's focus areas |
+| `description` | string | **Required** | Comprehensive description of the catalog's purpose and scope |
+| `keywords` | array[string] | Recommended | Keywords describing the catalog's focus areas |
 
-### Collection Definition
+### Catalog Definition
 
 | Field | Type | Status | Description |
 |-------|------|--------|-------------|
 | `inclusion_criteria` | array[string] | **Required** | Rules that datasets must meet to be included (ALL must be satisfied) |
-| `exclusion_criteria` | array[string] | Optional | Criteria that would exclude a dataset from this collection |
+| `exclusion_criteria` | array[string] | Optional | Criteria that would exclude a dataset from this catalog |
 
-### Collection Contents
+### Catalog Contents
 
 | Field | Type | Status | Description |
 |-------|------|--------|-------------|
-| `datasets` | array[string] | Optional | List of dataset URLs or DOIs that belong to this collection |
-| `dataset_count` | integer | Optional | Number of datasets currently in this collection |
-| `related_collections` | array[string] | Optional | Names of other collections that frequently overlap |
+| `datasets` | array[string] | Optional | List of dataset URLs or DOIs that belong to this catalog |
+| `catalogs` | array[string] | Optional | List of child catalog URLs for hierarchical organization |
+| `dataset_count` | integer | Optional | Number of datasets currently in this catalog |
+| `related_catalogs` | array[string] | Optional | Names of other catalogs that frequently overlap |
 
 ### Metadata & Curation
 
 | Field | Type | Status | Description |
 |-------|------|--------|-------------|
-| `date_created` | string | Recommended | Date collection was created (ISO 8601: YYYY-MM-DD) |
-| `date_modified` | string | Optional | Date collection definition was last modified |
-| `curator` | array[object] | Recommended | People or organizations that curate this collection |
+| `date_created` | string | Recommended | Date catalog was created (ISO 8601: YYYY-MM-DD) |
+| `date_modified` | string | Optional | Date catalog definition was last modified |
+| `curator` | array[object] | Recommended | People or organizations that curate this catalog |
 
 ### Curator Object
 
@@ -99,7 +120,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 
 **Type**: string  
 **Status**: Required  
-**Description**: Human-readable display title for the collection  
+**Description**: Human-readable display title for the catalog  
 **Mapped to**: `schema:name`
 
 **Example**:
@@ -113,7 +134,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 
 **Type**: string  
 **Status**: Required  
-**Description**: Comprehensive description of what the collection represents and why it is useful  
+**Description**: Comprehensive description of what the catalog represents and why it is useful  
 **Mapped to**: `schema:description`, `dc:description`
 
 **Example**:
@@ -129,7 +150,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 
 **Type**: array of strings  
 **Status**: Recommended  
-**Description**: Keywords or tags that describe the collection's focus areas  
+**Description**: Keywords or tags that describe the catalog's focus areas  
 **Mapped to**: `schema:keywords`
 
 **Example**:
@@ -153,7 +174,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 
 **Type**: array of strings  
 **Status**: Required  
-**Description**: Specific rules that datasets must meet to be included. A dataset must satisfy ALL criteria to be included in the collection.  
+**Description**: Specific rules that datasets must meet to be included. A dataset must satisfy ALL criteria to be included in the catalog.  
 **Mapped to**: `behaverse:inclusionCriteria`
 
 **Example**:
@@ -180,7 +201,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 
 **Type**: array of strings  
 **Status**: Optional  
-**Description**: Criteria that would explicitly exclude a dataset from this collection  
+**Description**: Criteria that would explicitly exclude a dataset from this catalog  
 **Mapped to**: `behaverse:exclusionCriteria`
 
 **Example**:
@@ -201,8 +222,8 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 **Type**: array of strings (URLs)  
 **Status**: Optional  
 **Format**: URI (URLs or DOIs)  
-**Description**: List of dataset URLs or DOIs that belong to this collection. Use stable, resolvable identifiers like DOIs or canonical dataset URLs. This provides explicit membership rather than relying only on inclusion criteria.  
-**Mapped to**: `schema:hasPart`
+**Description**: List of dataset URLs or DOIs that belong to this catalog. Use stable, resolvable identifiers like DOIs or canonical dataset URLs. This provides explicit membership rather than relying only on inclusion criteria.  
+**Mapped to**: `schema:dataset`
 
 **Example**:
 ```json
@@ -219,21 +240,46 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 - Use DOIs when available (most stable)
 - Use canonical dataset URLs for datasets without DOIs
 - Keep URLs resolvable (don't use local file paths)
-- Update when datasets are added/removed from collection
+- Update when datasets are added/removed from catalog
 
 ---
 
-### related_collections
+### catalogs
 
-**Type**: array of strings  
+**Type**: array of strings (URLs)  
 **Status**: Optional  
-**Description**: Names (using `name` field) of other collections that frequently overlap or are related  
-**Mapped to**: `behaverse:relatedCollections`
+**Format**: URI  
+**Description**: List of child catalog URLs for hierarchical organization. Enables nesting catalogs within catalogs.  
+**Mapped to**: `schema:hasPart`, `dcat:catalog`
 
 **Example**:
 ```json
 {
-  "related_collections": [
+  "catalogs": [
+    "https://behaverse.org/catalogs/pediatric-mental-health",
+    "https://behaverse.org/catalogs/adult-mental-health"
+  ]
+}
+```
+
+**Use Cases**:
+- Organizing thematic sub-collections (e.g., "Neuroimaging in Pediatric Mental Health")
+- Creating hierarchical data portals
+- Federating multiple research group catalogs
+
+---
+
+### related_catalogs
+
+**Type**: array of strings  
+**Status**: Optional  
+**Description**: Names (using `name` field) of other catalogs that frequently overlap or are related  
+**Mapped to**: `behaverse:relatedCatalogs`
+
+**Example**:
+```json
+{
+  "related_catalogs": [
     "demo-multimodal",
     "demo-longitudinal",
     "demo-adult-mental-health"
@@ -247,7 +293,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 
 **Type**: integer  
 **Status**: Optional  
-**Description**: Number of datasets currently included in this collection (may change over time)  
+**Description**: Number of datasets currently included in this catalog (may change over time)  
 **Mapped to**: `behaverse:datasetCount`
 
 **Example**:
@@ -264,7 +310,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 **Type**: string (ISO 8601 date)  
 **Status**: Recommended  
 **Format**: `YYYY-MM-DD`  
-**Description**: Date when this collection was first created  
+**Description**: Date when this catalog was first created  
 **Mapped to**: `schema:dateCreated`
 
 **Example**:
@@ -281,7 +327,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 **Type**: string (ISO 8601 date)  
 **Status**: Optional  
 **Format**: `YYYY-MM-DD`  
-**Description**: Date when the collection definition was last modified  
+**Description**: Date when the catalog definition was last modified  
 **Mapped to**: `schema:dateModified`
 
 **Example**:
@@ -297,7 +343,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 
 **Type**: array of objects  
 **Status**: Recommended  
-**Description**: People or organizations responsible for curating this collection  
+**Description**: People or organizations responsible for curating this catalog  
 **Mapped to**: `schema:curator`
 
 **Object Properties**:
@@ -328,7 +374,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 
 ```json
 {
-  "@context": "https://behaverse.org/schemas/collection/context.jsonld",
+  "@context": "https://behaverse.org/schemas/catalog/context.jsonld",
   "name": "demo-longitudinal",
   "pretty_name": "Demo: Longitudinal & Test-Retest Studies",
   "description": "This is a demonstration - datasets where participants completed the same assessment(s) at multiple time points, enabling analysis of temporal dynamics, reliability, and developmental or intervention effects.",
@@ -355,7 +401,7 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
     "https://doi.org/10.5555/example.12345",
     "https://example.org/datasets/demo-dataset-2"
   ],
-  "related_collections": [
+  "related_catalogs": [
     "demo-multi-task",
     "demo-adolescent-mental-health"
   ],
@@ -372,19 +418,19 @@ The Behaverse `collection` schema extends `https://schema.org/Collection`. Furth
 
 ## Validation
 
-Validate your collection metadata against the JSON Schema:
+Validate your catalog metadata against the JSON Schema:
 
 ```bash
 # Using ajv-cli
-ajv validate -s https://behaverse.org/schemas/collection/schema.json -d your-collection.json
+ajv validate -s https://behaverse.org/schemas/catalog/schema.json -d your-catalog.json
 
 # Using Python
 import json
 import jsonschema
 import requests
 
-schema = requests.get('https://behaverse.org/schemas/collection/schema.json').json()
-with open('your-collection.json') as f:
+schema = requests.get('https://behaverse.org/schemas/catalog/schema.json').json()
+with open('your-catalog.json') as f:
     data = json.load(f)
 jsonschema.validate(data, schema)
 ```
@@ -408,26 +454,28 @@ jsonschema.validate(data, schema)
    - Design requirements
 
 4. **Think AND Logic**: Datasets must meet ALL inclusion criteria
-   - If you need OR logic, consider creating multiple collections
+   - If you need OR logic, consider creating multiple catalogs
 
-### Collection Naming
+### Catalog Naming
 
 - Use descriptive, memorable names
 - Keep `name` field short and URL-friendly
 - Make `pretty_name` clear and professional
-- Be consistent with existing collection names
+- Be consistent with existing catalog names
 
-### Organizing Collections
+### Organizing Catalogs
 
-- Collections can overlap - datasets may belong to multiple collections
-- Use `related_collections` to indicate frequent overlaps
+- Catalogs can overlap—datasets may belong to multiple catalogs
+- Use `related_catalogs` to indicate frequent overlaps
+- Use `catalogs` property for hierarchical nesting
 - Consider both methodology (e.g., "multimodal") and domain (e.g., "adolescent-mental-health")
 
 ## Semantic Web & JSON-LD
 
 This schema uses JSON-LD for semantic web integration. Properties are mapped to standard vocabularies:
 
-- **Schema.org**: Core metadata properties
+- **Schema.org**: Core metadata properties (DataCatalog, Dataset)
+- **DCAT**: W3C Data Catalog Vocabulary
 - **Dublin Core**: Descriptive metadata
 - **Behaverse**: Custom cognitive science properties
 
@@ -436,9 +484,9 @@ This schema uses JSON-LD for semantic web integration. Properties are mapped to 
 Properties can be referenced using full URIs:
 
 ```
-https://behaverse.org/schemas/collection#name
-https://behaverse.org/schemas/collection#inclusion_criteria
-https://behaverse.org/schemas/collection#multimodal
+https://behaverse.org/schemas/catalog#name
+https://behaverse.org/schemas/catalog#inclusion_criteria
+https://behaverse.org/schemas/catalog#catalogs
 ```
 
 ### Using the Context
@@ -447,7 +495,7 @@ The `@context` provides short names for full URIs:
 
 ```json
 {
-  "@context": "https://behaverse.org/schemas/collection/context.jsonld",
+  "@context": "https://behaverse.org/schemas/catalog/context.jsonld",
   "name": "demo-multi-task"
 }
 ```
@@ -466,7 +514,7 @@ Expands to:
 - **schema.json**: JSON Schema for validation
 - **context.jsonld**: JSON-LD context for semantic web
 - **README.md**: This documentation
-- **examples/**: Example collection files
+- **examples/**: Example catalog files
 - **scripts/**: Schema generation scripts
 
 ## Related Schemas
@@ -476,7 +524,14 @@ Expands to:
 
 ## Version History
 
-- **v25.1202** (2025-12-02): Initial release
+- **v26.0107** (2026-01-07): Renamed to Catalog, aligned with Schema.org DataCatalog
+  - Renamed from "collection" to "catalog"
+  - Changed base type from `schema:Collection` to `schema:DataCatalog`
+  - Added `catalogs` property for hierarchical nesting
+  - Renamed `related_collections` to `related_catalogs`
+  - Updated `datasets` to use `schema:dataset` mapping
+
+- **v25.1202** (2025-12-02): Initial release (as "collection")
   - Core identity and definition fields
   - Curator support
   - Examples and documentation

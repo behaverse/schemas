@@ -71,9 +71,9 @@ const config = {
           },
           {
             type: 'docSidebar',
-            sidebarId: 'collectionSidebar',
+            sidebarId: 'catalogSidebar',
             position: 'left',
-            label: 'collection',
+            label: 'catalog',
           },
           {
             type: 'docSidebar',
@@ -105,8 +105,8 @@ const config = {
                 to: '/bcsvw',
               },
               {
-                label: 'collection',
-                to: '/collection',
+                label: 'catalog',
+                to: '/catalog',
               },
               {
                 label: 'dataset',

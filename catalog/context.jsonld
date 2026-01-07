@@ -1,13 +1,14 @@
 {
   "@context": {
-    "@vocab": "https://behaverse.org/schemas/collection#",
-    "behaverse": "https://behaverse.org/schemas/collection#",
+    "@vocab": "https://behaverse.org/schemas/catalog#",
+    "behaverse": "https://behaverse.org/schemas/catalog#",
     "schema": "https://schema.org/",
     "dc": "http://purl.org/dc/terms/",
+    "dcat": "http://www.w3.org/ns/dcat#",
     "bids": "https://bids-specification.readthedocs.io/en/stable/",
     "ddi": "https://ddialliance.org/Specification/DDI-Lifecycle/3.3/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
-    "@type": "https://schema.org/Collection",
+    "@type": "https://schema.org/DataCatalog",
     "name": {
       "@id": "https://schema.org/name",
       "@type": "xsd:string"
@@ -33,15 +34,20 @@
       "@container": "@set"
     },
     "datasets": {
+      "@id": "https://schema.org/dataset",
+      "@container": "@set"
+    },
+    "catalogs": {
       "@id": "https://schema.org/hasPart",
+      "@type": "@id",
       "@container": "@set"
     },
     "dataset_count": {
       "@id": "behaverse:datasetCount",
       "@type": "xsd:integer"
     },
-    "related_collections": {
-      "@id": "behaverse:relatedCollections",
+    "related_catalogs": {
+      "@id": "behaverse:relatedCatalogs",
       "@container": "@set"
     },
     "date_created": {
