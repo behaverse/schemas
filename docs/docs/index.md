@@ -12,7 +12,7 @@ This site provides comprehensive documentation for all schema properties, with a
 
 ## Available Schemas
 
-### <img src={require('@site/static/assets/img/schema_B.png').default} height="40" style={{verticalAlign: 'middle'}} /> [bcsvw](/bcsvw)
+### <img src={require('@site/static/assets/img/schema_B.png').default} height="40" style={{verticalAlign: 'middle'}} /> [bcsv](/bcsv)
 
 Extension of W3C CSVW with support for R/Python data types including categorical and ordered factors, missing value codes, units of measurement, and file integrity verification.
 

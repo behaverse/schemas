@@ -6,15 +6,15 @@ sidebar_label: About
 
 <!-- THIS FILE IS MANUALLY EDITABLE -->
 
-# <img src={require('@site/static/assets/img/schema_B.png').default} height="80" style={{verticalAlign: 'middle'}} /> About bcsvw
+# <img src={require('@site/static/assets/img/schema_B.png').default} height="80" style={{verticalAlign: 'middle'}} /> About bcsv
 
-bcsvw stands for **Behaverse CSV for the Web**; it is an extension of the [W3C CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) standard designed to enhance CSV metadata for use in R and Python data analysis workflows.
+bcsv stands for **Behaverse CSV**; it is an extension of the [W3C CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) standard designed to enhance CSV metadata for use in R and Python data analysis workflows.
 
 
 
 ## Motivation
 
-CSV files are ubiquitous in data science, but they often lack the metadata needed to correctly interpret their contents. The [W3C CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) standard provides a foundation for describing tabular data, but it was designed primarily for web publishing and lacks several features essential for modern data analysis workflows. bcsvw aims to bridge this gap.
+CSV files are ubiquitous in data science, but they often lack the metadata needed to correctly interpret their contents. The [W3C CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) standard provides a foundation for describing tabular data, but it was designed primarily for web publishing and lacks several features essential for modern data analysis workflows. bcsv aims to bridge this gap.
 
 
 
@@ -24,7 +24,7 @@ CSV files are ubiquitous in data science, but they often lack the metadata neede
 
 CSVW defines many data types (`string`, `integer`, `number`, `boolean`, `date`, etc.), but lacks native support for **categorical variables** (factors) — one of the most fundamental data types in statistics and data science.
 
-**bcsvw** adds `categorical` and `ordered` data types that map directly to:
+**bcsv** adds `categorical` and `ordered` data types that map directly to:
 - **R**: `factor()` and `ordered()` functions
 - **Python**: `pd.Categorical()` with the `ordered` parameter
 
@@ -37,7 +37,7 @@ CSVW defines many data types (`string`, `integer`, `number`, `boolean`, `date`, 
 
 CSVW lacks properties for common metadata fields that are essential for data documentation and discovery.
 
-**bcsvw** incorporates properties from Dublin Core (DC) and other vocabularies, including:
+**bcsv** incorporates properties from Dublin Core (DC) and other vocabularies, including:
 - `description` (from DC): Detailed descriptions for tables and columns
 - `creator`: Person or organization that created the dataset
 - `date_created`: When the dataset was created
@@ -49,25 +49,25 @@ These properties make datasets more discoverable and self-documenting.
 
 CSVW lacks a standardized way to specify units of measurement for numeric columns, making it difficult to ensure correct interpretation of scientific data.
 
-**bcsvw** adds `unit` property for SI units and custom units (e.g., `"kg"`, `"°C"`, `"mol/L"`, `"years"`).
+**bcsv** adds `unit` property for SI units and custom units (e.g., `"kg"`, `"°C"`, `"mol/L"`, `"years"`).
 
 ### 4. Missing Value Semantics
 
 CSVW's `null` property only allows a single missing value representation. Real-world data often uses multiple codes (`NA`, `N/A`, `missing`, `BDL` for "Below Detection Limit", etc.) with different semantic meanings.
 
-**bcsvw** adds `na_strings` property to specify additional missing value codes beyond the standard `null`, enabling domain-specific missing value handling.
+**bcsv** adds `na_strings` property to specify additional missing value codes beyond the standard `null`, enabling domain-specific missing value handling.
 
 ### 5. Data Integrity
 
 Metadata and data files can become desynchronized, leading to incorrect interpretations.
 
-**bcsvw** adds `file_hash` property (SHA-256) to cryptographically ensure metadata corresponds to the correct data file.
+**bcsv** adds `file_hash` property (SHA-256) to cryptographically ensure metadata corresponds to the correct data file.
 
 ### 6. Consistent Naming
 
 CSVW uses camelCase naming (e.g., `minLength`, `maxLength`) which is inconsistent with common data science conventions.
 
-**bcsvw** consistently uses snake_case and provides snake_case aliases (`min_length`, `max_length`) while maintaining backward compatibility with CSVW.
+**bcsv** consistently uses snake_case and provides snake_case aliases (`min_length`, `max_length`) while maintaining backward compatibility with CSVW.
 
 
 
@@ -89,18 +89,18 @@ CSVW uses camelCase naming (e.g., `minLength`, `maxLength`) which is inconsisten
 
 ### For the Ecosystem
 
-- **CSVW compatible**: Valid bcsvw files are valid CSVW files
+- **CSVW compatible**: Valid bcsv files are valid CSVW files
 - **Semantic web ready**: JSON-LD context enables linked data integration
-- **Tool-agnostic**: Any tool that reads CSVW can read bcsvw
+- **Tool-agnostic**: Any tool that reads CSVW can read bcsv
 
 ## Namespace
 
-- **Base namespace**: `https://behaverse.org/schemas/bcsvw#`
-- **Context file**: `https://behaverse.org/schemas/bcsvw/context.jsonld`
+- **Base namespace**: `https://behaverse.org/schemas/bcsv#`
+- **Context file**: `https://behaverse.org/schemas/bcsv/context.jsonld`
 
 ## Extension Properties
 
-bcsvw adds the following properties to CSVW:
+bcsv adds the following properties to CSVW:
 
 ### Column-Level Properties
 
@@ -125,9 +125,9 @@ bcsvw adds the following properties to CSVW:
 
 ## Type Mapping
 
-bcsvw data types map directly to native types in R and Python:
+bcsv data types map directly to native types in R and Python:
 
-| bcsvw Specification | R Type | Python Type |
+| bcsv Specification | R Type | Python Type |
 |---------------------|--------|-------------|
 | `datatype: "string"` | `character` | `str` |
 | `datatype: "integer"` | `integer` | `int64` |
@@ -142,7 +142,7 @@ bcsvw data types map directly to native types in R and Python:
 
 ## Relationship to Standards
 
-bcsvw builds on and references:
+bcsv builds on and references:
 
 - **[W3C CSVW](https://www.w3.org/TR/tabular-data-primer/)**: Core table and column definitions
 - **[Dublin Core](https://www.dublincore.org/)**: Metadata properties (`description`, `creator`, `date_created`)
@@ -154,16 +154,16 @@ bcsvw builds on and references:
 
 
 
-## Using bcsvw for data processing
+## Using bcsv for data processing
 
 **Currently not implemented.** 
 
 
 The goal is to provide two small packages/libraries to support the following functions in R and Python (same API):
 
-### `read_bcsvw(data_file, metadata_file = NULL)`
+### `read_bcsv(data_file, metadata_file = NULL)`
 
-Reads a CSV file and applies data types defined in the bcsvw metadata.
+Reads a CSV file and applies data types defined in the bcsv metadata.
 
 **Inputs:**
 - `data_file`: Path to CSV file
@@ -171,9 +171,9 @@ Reads a CSV file and applies data types defined in the bcsvw metadata.
 
 **Output:** Data frame with proper types applied (factors, ordered factors, dates, missing values handled)
 
-### `document_bcsvw(csv_filename, data, column_descriptions, pretty_name, description)`
+### `document_bcsv(csv_filename, data, column_descriptions, pretty_name, description)`
 
-Documents a data frame by generating bcsvw metadata and inferring types from the R data frame.
+Documents a data frame by generating bcsv metadata and inferring types from the R data frame.
 
 **Inputs:**
 - `csv_filename`: Name of the CSV file this metadata describes
@@ -184,21 +184,21 @@ Documents a data frame by generating bcsvw metadata and inferring types from the
 
 **Output:** Metadata object (JSON structure) ready for writing
 
-### `write_bcsvw(data, file, metadata_obj, metadata_file = NULL)`
+### `write_bcsv(data, file, metadata_obj, metadata_file = NULL)`
 
-Saves a data frame as CSV and generates its bcsvw metadata file with automatic file hash.
+Saves a data frame as CSV and generates its bcsv metadata file with automatic file hash.
 
 **Inputs:**
 - `data`: Data frame to save
 - `file`: Path for output CSV file
-- `metadata_obj`: Metadata object (from `document_bcsvw()`)
+- `metadata_obj`: Metadata object (from `document_bcsv()`)
 - `metadata_file`: Path for output JSON metadata file (optional, defaults to same name with `.json` extension)
 
 **Output:** Saves both CSV and JSON files, returns paths to saved files
 
-### `validate_bcsvw(data_file, metadata_file = NULL)`
+### `validate_bcsv(data_file, metadata_file = NULL)`
 
-Validates that a CSV file conforms to its bcsvw metadata specification.
+Validates that a CSV file conforms to its bcsv metadata specification.
 
 **Inputs:**
 - `data_file`: Path to CSV file
@@ -212,11 +212,11 @@ Validates that a CSV file conforms to its bcsvw metadata specification.
 ### Example in R
 
 ```r
-# Source the bcsvw functions
-library("bcsvw")
+# Source the bcsv functions
+library("bcsv")
 
 # Reading CSV with metadata
-df <- read_bcsvw(data_file = "experiment_data.csv",
+df <- read_bcsv(data_file = "experiment_data.csv",
                  metadata_file = "experiment_data.json")
 
 # The data frame now has proper R types:
@@ -251,7 +251,7 @@ column_descriptions <- list(
 )
 
 # Create metadata from data frame (types inferred from R)
-metadata <- document_bcsvw(
+metadata <- document_bcsv(
   csv_filename = "experiment_data.csv",
   data = sample_data,
   column_descriptions = column_descriptions,
@@ -260,7 +260,7 @@ metadata <- document_bcsvw(
 )
 
 # Write both CSV and metadata with automatic file hash
-write_bcsvw(
+write_bcsv(
   data = sample_data,
   file = "experiment_data.csv",
   metadata_obj = metadata,
@@ -268,7 +268,7 @@ write_bcsvw(
 )
 
 # Validate the written files
-validation_result <- validate_bcsvw(
+validation_result <- validate_bcsv(
   data_file = "experiment_data.csv",
   metadata_file = "experiment_data.json"
 )

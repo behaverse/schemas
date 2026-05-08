@@ -65,9 +65,9 @@ const config = {
         items: [
           {
             type: 'docSidebar',
-            sidebarId: 'bcsvwSidebar',
+            sidebarId: 'bcsvSidebar',
             position: 'left',
-            label: 'bcsvw',
+            label: 'bcsv',
           },
           {
             type: 'docSidebar',
@@ -101,8 +101,8 @@ const config = {
             title: 'Schemas',
             items: [
               {
-                label: 'bcsvw',
-                to: '/bcsvw',
+                label: 'bcsv',
+                to: '/bcsv',
               },
               {
                 label: 'catalog',

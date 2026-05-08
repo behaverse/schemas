@@ -31,9 +31,9 @@ import sys
 
 # Schema directories to process
 SCHEMAS = {
-    'bcsvw': {
+    'bcsv': {
         'has_field_definitions': False,  # Uses schema.json directly
-        'name': 'bcsvw (Behaverse CSV for the Web)',
+        'name': 'bcsv (Behaverse CSV)',
         'icon': 'schema_B.png',
     },
     'catalog': {
@@ -147,7 +147,7 @@ def convert_json_schema_to_fields(schema: Dict[str, Any]) -> List[Dict[str, Any]
         
         fields.append(field)
     
-    # For bcsvw, also extract column properties from definitions
+    # For bcsv, also extract column properties from definitions
     if 'definitions' in schema and 'column' in schema['definitions']:
         column_def = schema['definitions']['column']
         if 'properties' in column_def:
@@ -423,8 +423,8 @@ This schema defines **{len(fields)} properties** for describing {schema_name} me
 
 """
     
-    # For bcsvw, separate table and column properties
-    if schema_name == 'bcsvw':
+    # For bcsv, separate table and column properties
+    if schema_name == 'bcsv':
         table_fields = [f for f in fields if f.get('context') != 'column']
         column_fields = [f for f in fields if f.get('context') == 'column']
         
@@ -497,7 +497,7 @@ This schema defines **{len(fields)} properties** for describing {schema_name} me
             mdx += f"| [{field['name']}]({schema_name}/{field['name']}) | `{field['type']}` | {field.get('requirement', 'optional')} | {desc} |\n"
     
     # Update examples link for schemas with examples pages
-    if schema_name in ['bcsvw', 'catalog', 'dataset']:
+    if schema_name in ['bcsv', 'catalog', 'dataset']:
         examples_link = f'[examples]({schema_name}/examples)'
     else:
         examples_link = f'[examples](./{schema_name}/examples)'
@@ -529,8 +529,8 @@ def generate_sidebar_config(schema_name: str, data: Dict[str, Any]) -> Dict[str,
         }
     ]
     
-    # Add about page for bcsvw, catalog, and dataset
-    if schema_name in ['bcsvw', 'catalog', 'dataset']:
+    # Add about page for bcsv, catalog, and dataset
+    if schema_name in ['bcsv', 'catalog', 'dataset']:
         sidebar.append({
             'type': 'doc',
             'id': f'{schema_name}/about',
@@ -540,8 +540,8 @@ def generate_sidebar_config(schema_name: str, data: Dict[str, Any]) -> Dict[str,
     # Filter out JSON-LD keywords
     fields = [f for f in fields if not f['name'].startswith('@')]
     
-    # For bcsvw, separate table-level and column-level properties
-    if schema_name == 'bcsvw':
+    # For bcsv, separate table-level and column-level properties
+    if schema_name == 'bcsv':
         table_fields = [f for f in fields if f.get('context') != 'column']
         column_fields = [f for f in fields if f.get('context') == 'column']
         
@@ -561,7 +561,7 @@ def generate_sidebar_config(schema_name: str, data: Dict[str, Any]) -> Dict[str,
                 'items': [f"{schema_name}/{field['name']}" for field in column_fields]
             })
         
-        # Add examples page at the end for bcsvw
+        # Add examples page at the end for bcsv
         sidebar.append({
             'type': 'doc',
             'id': f'{schema_name}/examples',

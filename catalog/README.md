@@ -520,7 +520,7 @@ Expands to:
 ## Related Schemas
 
 - **[Dataset Schema](../dataset/)**: For describing individual datasets
-- **[bcsvw Schema](../bcsvw/)**: For describing CSV data files
+- **[bcsv Schema](../bcsv/)**: For describing CSV data files
 
 ## Version History
 

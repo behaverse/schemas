@@ -27,7 +27,7 @@ subject_id,name,age,treatment,severity,temperature,response_time
 **experiment_data.json:**
 ```json
 {
-  "@context": "https://behaverse.org/schemas/bcsvw/context.jsonld",
+  "@context": "https://behaverse.org/schemas/bcsv/context.jsonld",
   "name": "experiment-data",
   "pretty_name": "Experiment Data",
   "description": "Experimental data with treatment groups and measurements",

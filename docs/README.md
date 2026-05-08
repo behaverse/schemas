@@ -7,7 +7,7 @@ This directory contains the Docusaurus-based documentation site for Behaverse sc
 The documentation is **auto-generated** from the schema definitions in:
 - `catalog/field-definitions.yaml`
 - `dataset/field-definitions.yaml`
-- `bcsvw/schema.json`
+- `bcsv/schema.json`
 - `studyflow/schema.moddle.json`
 
 ## Quick Start
@@ -97,7 +97,7 @@ Edit `docs/docusaurus.config.js` to change:
 ```
 docs/
 ├── docs/                      # Documentation content (auto-generated + manual)
-│   ├── bcsvw/
+│   ├── bcsv/
 │   │   ├── index.md          # Auto-generated
 │   │   ├── ordered.md        # Auto-generated property page
 │   │   └── examples/         # Manual examples

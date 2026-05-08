@@ -18,21 +18,21 @@ When you make changes to a schema, use the versioning script:
 python scripts/version_schema.py <schema_name> --message "Description of changes"
 ```
 
-**Available schemas:** `bcsvw`, `catalog`, `dataset`, `studyflow`
+**Available schemas:** `bcsv`, `catalog`, `dataset`, `studyflow`
 
 ### Example
 
 ```bash
-# Make changes to bcsvw/schema.json
+# Make changes to bcsv/schema.json
 # Then run:
-python scripts/version_schema.py bcsvw --message "Add new validation rules for column types"
+python scripts/version_schema.py bcsv --message "Add new validation rules for column types"
 
 # Review the changes
 git status
 
 # Commit and push
-git add bcsvw/
-git commit -m "chore(bcsvw): bump version to 25.1204"
+git add bcsv/
+git commit -m "chore(bcsv): bump version to 25.1204"
 git push origin main
 ```
 
@@ -112,7 +112,7 @@ If you need to version manually:
 
 ### Dry run to preview changes
 ```bash
-python scripts/version_schema.py bcsvw --message "Test" --dry-run
+python scripts/version_schema.py bcsv --message "Test" --dry-run
 ```
 
 ## Workflow Summary
