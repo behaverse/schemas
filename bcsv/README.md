@@ -1,10 +1,10 @@
-# bcsvw: Behaverse CSV for the Web (WIP)
+# bcsv: Behaverse CSV (WIP)
 
 **Extension of W3C CSVW for R and Python data types**
 
 ## Overview
 
-bcsvw extends the [W3C CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) standard with data types and properties commonly used in R and Python:
+bcsv extends the [W3C CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) standard with data types and properties commonly used in R and Python:
 
 - **New data types**: `categorical` and `ordered` for factor variables
 - **File integrity**: SHA-256 hash to ensure data and metadata correspondence
@@ -13,20 +13,20 @@ bcsvw extends the [W3C CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data
 - **Rich metadata**: Human-readable labels and descriptions
 - **Consistent naming**: snake_case property names for better readability
 
-bcsvw maintains compatibility with standard CSVW while making CSV files self-documenting and ready for immediate use in data analysis workflows.
+bcsv maintains compatibility with standard CSVW while making CSV files self-documenting and ready for immediate use in data analysis workflows.
 
 ## Namespace
 
-- **Base namespace**: `https://behaverse.org/schemas/bcsvw#`
-- **Context file**: `https://behaverse.org/schemas/bcsvw/context.jsonld`
+- **Base namespace**: `https://behaverse.org/schemas/bcsv#`
+- **Context file**: `https://behaverse.org/schemas/bcsv/context.jsonld`
 
 ## Key Properties
 
-### bcsvw Extensions
+### bcsv Extensions
 
 #### New Data Types
 
-CSVW defines the following built-in data types: `string`, `integer`, `number`, `boolean`, `date`, `datetime`, `time`, `duration`, `binary`, `hexBinary`, `anyURI`, `json`, and `xml`. However, it lacks native support for **categorical variables** (factors, ordered and unordered) which are fundamental in data science. bcsvw adds thus adds two new data types to fill this gap:
+CSVW defines the following built-in data types: `string`, `integer`, `number`, `boolean`, `date`, `datetime`, `time`, `duration`, `binary`, `hexBinary`, `anyURI`, `json`, and `xml`. However, it lacks native support for **categorical variables** (factors, ordered and unordered) which are fundamental in data science. bcsv adds thus adds two new data types to fill this gap:
 
 
 | Data Type | Description | Example Use |
@@ -47,7 +47,7 @@ These types map directly to R's `factor()` and `ordered()` functions, and Python
 
 #### Renamed for Consistency (snake_case)
 
-| bcsvw Property | CSVW Property | Description |
+| bcsv Property | CSVW Property | Description |
 |----------------|---------------|-------------|
 | `min_length` | `minLength` | Minimum string length |
 | `max_length` | `maxLength` | Maximum string length |
@@ -70,7 +70,7 @@ All standard CSVW properties are supported:
 
 ### Basic Example
 
-This example demonstrates all key bcsvw features: categorical variables, ordered factors, units, missing values, and constraints.
+This example demonstrates all key bcsv features: categorical variables, ordered factors, units, missing values, and constraints.
 
 **experiment_data.csv:**
 ```csv
@@ -85,7 +85,7 @@ subject_id,name,age,treatment,severity,temperature,response_time
 **experiment_data.json:**
 ```json
 {
-  "@context": "https://behaverse.org/schemas/bcsvw/context.jsonld",
+  "@context": "https://behaverse.org/schemas/bcsv/context.jsonld",
   "name": "experiment-data",
   "pretty_name": "Experiment Data",
   "description": "Experimental data with treatment groups and measurements",
@@ -151,7 +151,7 @@ subject_id,name,age,treatment,severity,temperature,response_time
 
 ## Type Mapping
 
-| bcsvw Specification | R Type | Python Type |
+| bcsv Specification | R Type | Python Type |
 |---------------------|--------|-------------|
 | `datatype: "string"` | `character` | `str` |
 | `datatype: "integer"` | `integer` | `int64` |
@@ -163,16 +163,16 @@ subject_id,name,age,treatment,severity,temperature,response_time
 | `datatype: "ordered"` + `levels` | `ordered()` | `pd.Categorical(ordered=True)` |
 
 
-## Using bcsvw for data processing
+## Using bcsv for data processing
 
 **Currently not implemented.** 
 
 
 The goal is to provide two small packages/libraries to support the following functions in R and Python (same API):
 
-### `read_bcsvw(data_file, metadata_file = NULL)`
+### `read_bcsv(data_file, metadata_file = NULL)`
 
-Reads a CSV file and applies data types defined in the bcsvw metadata.
+Reads a CSV file and applies data types defined in the bcsv metadata.
 
 **Inputs:**
 - `data_file`: Path to CSV file
@@ -180,9 +180,9 @@ Reads a CSV file and applies data types defined in the bcsvw metadata.
 
 **Output:** Data frame with proper types applied (factors, ordered factors, dates, missing values handled)
 
-### `document_bcsvw(csv_filename, data, column_descriptions, pretty_name, description)`
+### `document_bcsv(csv_filename, data, column_descriptions, pretty_name, description)`
 
-Documents a data frame by generating bcsvw metadata and inferring types from the R data frame.
+Documents a data frame by generating bcsv metadata and inferring types from the R data frame.
 
 **Inputs:**
 - `csv_filename`: Name of the CSV file this metadata describes
@@ -193,21 +193,21 @@ Documents a data frame by generating bcsvw metadata and inferring types from the
 
 **Output:** Metadata object (JSON structure) ready for writing
 
-### `write_bcsvw(data, file, metadata_obj, metadata_file = NULL)`
+### `write_bcsv(data, file, metadata_obj, metadata_file = NULL)`
 
-Saves a data frame as CSV and generates its bcsvw metadata file with automatic file hash.
+Saves a data frame as CSV and generates its bcsv metadata file with automatic file hash.
 
 **Inputs:**
 - `data`: Data frame to save
 - `file`: Path for output CSV file
-- `metadata_obj`: Metadata object (from `document_bcsvw()`)
+- `metadata_obj`: Metadata object (from `document_bcsv()`)
 - `metadata_file`: Path for output JSON metadata file (optional, defaults to same name with `.json` extension)
 
 **Output:** Saves both CSV and JSON files, returns paths to saved files
 
-### `validate_bcsvw(data_file, metadata_file = NULL)`
+### `validate_bcsv(data_file, metadata_file = NULL)`
 
-Validates that a CSV file conforms to its bcsvw metadata specification.
+Validates that a CSV file conforms to its bcsv metadata specification.
 
 **Inputs:**
 - `data_file`: Path to CSV file
@@ -221,11 +221,11 @@ Validates that a CSV file conforms to its bcsvw metadata specification.
 ### Example in R
 
 ```r
-# Source the bcsvw functions
-library("bcsvw")
+# Source the bcsv functions
+library("bcsv")
 
 # Reading CSV with metadata
-df <- read_bcsvw(data_file = "experiment_data.csv",
+df <- read_bcsv(data_file = "experiment_data.csv",
                  metadata_file = "experiment_data.json")
 
 # The data frame now has proper R types:
@@ -260,7 +260,7 @@ column_descriptions <- list(
 )
 
 # Create metadata from data frame (types inferred from R)
-metadata <- document_bcsvw(
+metadata <- document_bcsv(
   csv_filename = "experiment_data.csv",
   data = sample_data,
   column_descriptions = column_descriptions,
@@ -269,7 +269,7 @@ metadata <- document_bcsvw(
 )
 
 # Write both CSV and metadata with automatic file hash
-write_bcsvw(
+write_bcsv(
   data = sample_data,
   file = "experiment_data.csv",
   metadata_obj = metadata,
@@ -277,7 +277,7 @@ write_bcsvw(
 )
 
 # Validate the written files
-validation_result <- validate_bcsvw(
+validation_result <- validate_bcsv(
   data_file = "experiment_data.csv",
   metadata_file = "experiment_data.json"
 )
@@ -292,7 +292,7 @@ The Python version of this code should be very similar.
 
 ## Property Reference
 
-This section documents all properties supported by bcsvw, including bcsvw extensions, inherited CSVW properties, and linked data properties.
+This section documents all properties supported by bcsv, including bcsv extensions, inherited CSVW properties, and linked data properties.
 
 ### Table-Level Properties
 
@@ -300,9 +300,9 @@ This section documents all properties supported by bcsvw, including bcsvw extens
 
 **URI**: Standard JSON-LD property  
 **Type**: String (URL)  
-**Description**: URL to the bcsvw JSON-LD context file  
+**Description**: URL to the bcsv JSON-LD context file  
 **Required**: Recommended  
-**Example**: `"https://behaverse.org/schemas/bcsvw/context.jsonld"`
+**Example**: `"https://behaverse.org/schemas/bcsv/context.jsonld"`
 
 #### `url`
 
@@ -339,7 +339,7 @@ This section documents all properties supported by bcsvw, including bcsvw extens
 
 #### `file_hash`
 
-**URI**: `https://behaverse.org/schemas/bcsvw#file_hash`  
+**URI**: `https://behaverse.org/schemas/bcsv#file_hash`  
 **Type**: String (SHA-256 hash)  
 **Description**: SHA-256 hash of the CSV file for integrity verification. Ensures that the metadata corresponds to the correct version of the data file.  
 **Required**: No  
@@ -414,7 +414,7 @@ This section documents all properties supported by bcsvw, including bcsvw extens
 - `datetime` - Date and time (ISO 8601)
 - `time` - Time of day
 
-**bcsvw extensions:**
+**bcsv extensions:**
 - `categorical` - Unordered categorical variable (factor)
 - `ordered` - Ordered categorical variable (ordered factor)
 
@@ -429,7 +429,7 @@ This section documents all properties supported by bcsvw, including bcsvw extens
 
 #### `levels`
 
-**URI**: `https://behaverse.org/schemas/bcsvw#levels`  
+**URI**: `https://behaverse.org/schemas/bcsv#levels`  
 **Type**: Array of strings  
 **Description**: Defines the valid categories for `categorical` or `ordered` datatypes. For `ordered` type, the array defines the order from lowest to highest.  
 **Required**: Required when `datatype` is `categorical` or `ordered`  
@@ -453,7 +453,7 @@ This section documents all properties supported by bcsvw, including bcsvw extens
 
 #### `na_strings`
 
-**URI**: `https://behaverse.org/schemas/bcsvw#na_strings`  
+**URI**: `https://behaverse.org/schemas/bcsv#na_strings`  
 **Type**: Array of strings  
 **Description**: Additional missing value codes beyond standard `null`. Useful for domain-specific missing value indicators like "BDL" (Below Detection Limit)  
 **Required**: No  
@@ -461,7 +461,7 @@ This section documents all properties supported by bcsvw, including bcsvw extens
 
 #### `unit`
 
-**URI**: `https://behaverse.org/schemas/bcsvw#unit`  
+**URI**: `https://behaverse.org/schemas/bcsv#unit`  
 **Type**: String  
 **Description**: Unit of measurement for numeric columns (e.g., SI units, custom units)  
 **Required**: No  
@@ -485,7 +485,7 @@ This section documents all properties supported by bcsvw, including bcsvw extens
 
 #### `min_length`
 
-**URI**: `https://behaverse.org/schemas/bcsvw#min_length` (maps to `csvw:minLength`)  
+**URI**: `https://behaverse.org/schemas/bcsv#min_length` (maps to `csvw:minLength`)  
 **Type**: Integer (non-negative)  
 **Description**: Minimum string length for the column value  
 **Required**: No  
@@ -493,7 +493,7 @@ This section documents all properties supported by bcsvw, including bcsvw extens
 
 #### `max_length`
 
-**URI**: `https://behaverse.org/schemas/bcsvw#max_length` (maps to `csvw:maxLength`)  
+**URI**: `https://behaverse.org/schemas/bcsv#max_length` (maps to `csvw:maxLength`)  
 **Type**: Integer (non-negative)  
 **Description**: Maximum string length for the column value  
 **Required**: No  
@@ -536,7 +536,7 @@ This section documents all properties supported by bcsvw, including bcsvw extens
 
 ## Relationship to Standards
 
-bcsvw builds on and references:
+bcsv builds on and references:
 
 - **[W3C CSVW](https://www.w3.org/TR/tabular-data-primer/)**: Core table and column definitions
 - **[Dublin Core](https://www.dublincore.org/)**: `description` property
@@ -551,7 +551,7 @@ Complete example datasets are available in the [`examples/`](examples/) director
 - **`student_data.csv` / `student_data.json`**: Student test results demonstrating ordered factors (letter grades), numeric data with units (age), and file integrity verification with SHA-256 hash
 - **`measurements.json` / `measurements.csv`**: Laboratory measurements showing categorical variables (site types), missing value codes (`na_strings` for "BDL"), units for scientific data (°C, mol/L), and datetime formats
 
-These examples demonstrate all key bcsvw features including categorical and ordered datatypes, units, missing value handling, constraints, and metadata structure.
+These examples demonstrate all key bcsv features including categorical and ordered datatypes, units, missing value handling, constraints, and metadata structure.
 
 ## Versioning
 

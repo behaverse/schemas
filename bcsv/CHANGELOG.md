@@ -1,6 +1,6 @@
-# BCSVW Schema Changelog
+# BCSV Schema Changelog
 
-All notable changes to the BCSVW schema will be documented in this file.
+All notable changes to the BCSV schema will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).

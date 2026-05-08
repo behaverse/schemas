@@ -1,7 +1,7 @@
 {
   "@context": {
-    "@vocab": "https://behaverse.org/schemas/bcsvw#",
-    "bcsvw": "https://behaverse.org/schemas/bcsvw#",
+    "@vocab": "https://behaverse.org/schemas/bcsv#",
+    "bcsv": "https://behaverse.org/schemas/bcsv#",
     "csvw": "http://www.w3.org/ns/csvw#",
     "dc": "http://purl.org/dc/terms/",
     "schema": "http://schema.org/",
@@ -23,24 +23,24 @@
       "@id": "schema:creator"
     },
     "categorical": {
-      "@id": "https://behaverse.org/schemas/bcsvw#categorical"
+      "@id": "https://behaverse.org/schemas/bcsv#categorical"
     },
     "ordered": {
-      "@id": "https://behaverse.org/schemas/bcsvw#ordered"
+      "@id": "https://behaverse.org/schemas/bcsv#ordered"
     },
     "levels": {
-      "@id": "https://behaverse.org/schemas/bcsvw#levels",
+      "@id": "https://behaverse.org/schemas/bcsv#levels",
       "@container": "@list"
     },
     "na_strings": {
-      "@id": "https://behaverse.org/schemas/bcsvw#na_strings",
+      "@id": "https://behaverse.org/schemas/bcsv#na_strings",
       "@container": "@list"
     },
     "unit": {
-      "@id": "https://behaverse.org/schemas/bcsvw#unit"
+      "@id": "https://behaverse.org/schemas/bcsv#unit"
     },
     "file_hash": {
-      "@id": "https://behaverse.org/schemas/bcsvw#file_hash"
+      "@id": "https://behaverse.org/schemas/bcsv#file_hash"
     },
     "label": "rdfs:label",
     "min_length": {

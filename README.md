@@ -12,16 +12,16 @@ This repository hosts machine-readable schemas and vocabularies for organizing, 
 
 ## Schemas
 
-### <img src="assets/img/schema_B.png" height="40" style="vertical-align: middle;"> bcsvw (Behaverse CSV for the Web)
+### <img src="assets/img/schema_B.png" height="40" style="vertical-align: middle;"> bcsv (Behaverse CSV)
 Extension of W3C CSVW with support for R/Python data types including categorical and ordered factors, missing value codes, units of measurement, and file integrity verification.
 
 - **Version**: v25.1201
-- **Namespace**: `https://behaverse.org/schemas/bcsvw#`
-- **Context**: [`bcsvw/context.jsonld`](bcsvw/context.jsonld)
-- **JSON Schema**: [`bcsvw/schema.json`](bcsvw/schema.json)
-- **Documentation**: [`bcsvw/README.md`](bcsvw/README.md)
+- **Namespace**: `https://behaverse.org/schemas/bcsv#`
+- **Context**: [`bcsv/context.jsonld`](bcsv/context.jsonld)
+- **JSON Schema**: [`bcsv/schema.json`](bcsv/schema.json)
+- **Documentation**: [`bcsv/README.md`](bcsv/README.md)
 
-**Example property reference**: `https://behaverse.org/schemas/bcsvw#ordered`
+**Example property reference**: `https://behaverse.org/schemas/bcsv#ordered`
 
 ### <img src="assets/img/schema_C.png" height="40" style="vertical-align: middle;"> catalog 
 Metadata schema for describing thematic catalogs of datasets that share specific characteristics or serve particular research applications. Extends schema.org/DataCatalog. Supports hierarchical organization through nested catalogs.
@@ -76,7 +76,7 @@ Property URIs remain stable across versions. For example, `https://behaverse.org
 
 ```
 behaverse/schemas/
-├── bcsvw/               # bcsvw schema
+├── bcsv/                # bcsv schema
 │   ├── context.jsonld
 │   ├── schema.json
 │   ├── README.md

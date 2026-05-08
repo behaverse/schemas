@@ -1,15 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://behaverse.org/schemas/bcsvw/schema.json",
-  "title": "BCSVW Table Schema",
-  "description": "JSON Schema for BCSVW (Behaverse CSV for the Web) metadata files",
+  "$id": "https://behaverse.org/schemas/bcsv/schema.json",
+  "title": "BCSV Table Schema",
+  "description": "JSON Schema for BCSV (Behaverse CSV) metadata files",
   "version": "25.1201",
   "type": "object",
   "properties": {
     "@context": {
       "type": "string",
       "description": "JSON-LD context URL",
-      "default": "https://behaverse.org/schemas/bcsvw/context.jsonld"
+      "default": "https://behaverse.org/schemas/bcsv/context.jsonld"
     },
     "name": {
       "type": "string",
