@@ -52,7 +52,6 @@
         "name": "site_type",
         "label": "Site Type",
         "datatype": "categorical",
-        "format": "urban|rural|industrial",
         "description": "Type of sampling site",
         "levels": ["urban", "rural", "industrial"]
       }

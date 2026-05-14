@@ -4,16 +4,27 @@
 
 ## Overview
 
-bcsv extends the [W3C CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) standard with data types and properties commonly used in R and Python:
+W3C [CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) is excellent at scalar validation (typed XSD primitives, value-range and pattern constraints, foreign keys across CSVs) but predates the era when R and pandas became the dominant tabular tooling. bcsv extends CSVW with the vocabulary that R/Python data-science workflows actually need — without breaking CSVW compatibility for the properties CSVW already covers.
 
-- **New data types**: `categorical` and `ordered` for factor variables
-- **File integrity**: SHA-256 hash to ensure data and metadata correspondence
-- **Missing value codes**: Multiple NA string representations beyond standard null
-- **Units of measurement**: SI units and custom units for scientific data
-- **Rich metadata**: Human-readable labels and descriptions
-- **Consistent naming**: snake_case property names for better readability
+### Gaps that bcsv addresses
 
-bcsv maintains compatibility with standard CSVW while making CSV files self-documenting and ready for immediate use in data analysis workflows.
+| Need                            | CSVW today                       | bcsv                                              |
+|---------------------------------|----------------------------------|----------------------------------------------------|
+| Unordered categorical           | regex format only                | `datatype: "categorical"` + `levels`               |
+| Ordered categorical             | none                             | `datatype: "ordered"` + `levels` (in order)        |
+| Multiple NA codes               | one `null` list                  | `null` + `na_strings`                              |
+| Units                           | `propertyUrl` + QUDT IRIs        | `unit: "°C"`                                       |
+| Human-readable label            | multilingual `titles` array      | `label` → rdfs:label                               |
+| Description                     | `dc:description` (prefix needed) | `description` (no prefix; mapped to dc:description) |
+| Data/metadata integrity         | none                             | `file_hash` (SHA-256)                              |
+| Compatibility with CSVW tools   | —                                | compatible with permissive CSVW readers; strict CSVW validators will flag `categorical` and `ordered` as unknown datatypes |
+
+### Non-goals
+
+- bcsv is not a CSVW replacement. Every bcsv document remains a CSVW document with extra properties; permissive CSVW tools ignore the bcsv additions.
+- bcsv does not introduce new scalar types beyond `categorical` and `ordered`.
+- bcsv does not extend CSVW's multi-table relational model.
+- bcsv does not attempt to formalise units (no unit algebra, no dimensional analysis). The `unit` field is a free-form string.
 
 ## Namespace
 
@@ -321,9 +332,11 @@ This section documents all properties supported by bcsv, including bcsv extensio
 **Pattern**: `^[a-z0-9-_]+$`  
 **Example**: `"experiment-results"`
 
+> **Note**: `name` is used at two levels with different semantics — the table-level `name` (here) is a URL-friendly slug mapped to `schema:name`; the column-level `name` (below) must match the CSV header exactly and is mapped to `csvw:name`.
+
 #### `pretty_name`
 
-**URI**: `http://schema.org/name`  
+**URI**: `http://purl.org/dc/terms/title`  
 **Type**: String  
 **Description**: Human-readable title for the table  
 **Required**: No  
@@ -432,14 +445,14 @@ This section documents all properties supported by bcsv, including bcsv extensio
 **URI**: `https://behaverse.org/schemas/bcsv#levels`  
 **Type**: Array of strings  
 **Description**: Defines the valid categories for `categorical` or `ordered` datatypes. For `ordered` type, the array defines the order from lowest to highest.  
-**Required**: Required when `datatype` is `categorical` or `ordered`  
+**Required**: Required when `datatype` is `categorical` or `ordered`; forbidden for other datatypes.  
 **Example**: `["low", "medium", "high"]`
 
 #### `format`
 
 **URI**: `http://www.w3.org/ns/csvw#format`  
 **Type**: String  
-**Description**: Pattern or format for the values (e.g., date format, regex pattern)  
+**Description**: Pattern or format for the values (e.g., date format, regex pattern). Forbidden when `datatype` is `categorical` or `ordered` — use `levels` to enumerate valid values.  
 **Required**: No  
 **Example**: `"yyyy-MM-dd"` for dates, `"[A-Z]{3}"` for regex
 
@@ -534,12 +547,23 @@ This section documents all properties supported by bcsv, including bcsv extensio
 
 
 
+## CSVW Pass-Through Properties
+
+All standard CSVW properties pass through unchanged. The bcsv JSON-LD context declares the following CSVW terms so they expand to the correct W3C CSVW IRIs; consult the [W3C CSVW spec](https://www.w3.org/TR/tabular-data-primer/) for their semantics.
+
+- `propertyUrl`, `valueUrl`, `aboutUrl` — URI templates for RDF mapping.
+- `primaryKey`, `foreignKeys` — relational integrity declarations.
+- `default`, `separator`, `suppressOutput`, `rowTitles` — column-cell handling.
+- `length`, `base` — additional value constraints.
+
+These properties are not validated by `bcsv/schema.json`. If you need to use them, refer to the CSVW spec.
+
 ## Relationship to Standards
 
 bcsv builds on and references:
 
 - **[W3C CSVW](https://www.w3.org/TR/tabular-data-primer/)**: Core table and column definitions
-- **[Dublin Core](https://www.dublincore.org/)**: `description` property
+- **[Dublin Core](https://www.dublincore.org/)**: `description` and `title` properties
 - **[RDFS](https://www.w3.org/TR/rdf-schema/)**: `label` property
 - **[Schema.org](https://schema.org/)**: General vocabulary alignment
 - **[XSD](https://www.w3.org/TR/xmlschema-2/)**: Data type definitions
@@ -555,7 +579,7 @@ These examples demonstrate all key bcsv features including categorical and order
 
 ## Versioning
 
-**Current version**: v25.1201  
+**Current version**: v26.0513  
 **Format**: Calendar versioning (vYY.MMDD)
 
 Older versions are available in the [`versions/`](versions/) directory.

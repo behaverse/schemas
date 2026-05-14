@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://behaverse.org/schemas/bcsv/v26.0513/schema.json",
+  "$id": "https://behaverse.org/schemas/bcsv/schema.json",
   "title": "BCSV Table Schema",
   "description": "JSON Schema for BCSV (Behaverse CSV) metadata files",
-  "version": "26.0513",
+  "version": "25.1201",
   "type": "object",
   "properties": {
     "@context": {
@@ -72,8 +72,7 @@
     },
     "file_hash": {
       "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
-      "description": "SHA-256 hash of the CSV file for integrity verification (lowercase hex)"
+      "description": "SHA-256 hash of the CSV file for integrity verification"
     },
     "license": {
       "type": "string",
@@ -101,7 +100,7 @@
       }
     }
   },
-  "required": ["@context", "url", "table_schema"],
+  "required": ["url", "table_schema"],
   "definitions": {
     "column": {
       "type": "object",
@@ -126,7 +125,7 @@
         },
         "format": {
           "type": "string",
-          "description": "Format pattern or constraint for values (forbidden when datatype is categorical or ordered)"
+          "description": "Format pattern or constraint for values"
         },
         "unit": {
           "type": "string",
@@ -135,7 +134,7 @@
         "levels": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "Factor levels for categorical or ordered datatypes"
+          "description": "Factor levels for categorical variables"
         },
         "minimum": {
           "type": "number",
@@ -145,15 +144,25 @@
           "type": "number",
           "description": "Maximum value for numeric columns"
         },
-        "min_length": {
+        "minLength": {
           "type": "integer",
           "minimum": 0,
           "description": "Minimum string length"
         },
-        "max_length": {
+        "maxLength": {
           "type": "integer",
           "minimum": 0,
           "description": "Maximum string length"
+        },
+        "min_length": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Minimum string length (snake_case alias for minLength)"
+        },
+        "max_length": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum string length (snake_case alias for maxLength)"
         },
         "null": {
           "oneOf": [
@@ -175,56 +184,7 @@
           "type": "boolean",
           "description": "Whether column is virtual (not in CSV)"
         }
-      },
-      "allOf": [
-        {
-          "if": {
-            "required": ["datatype"],
-            "properties": { "datatype": { "enum": ["categorical", "ordered"] } }
-          },
-          "then": {
-            "required": ["levels"],
-            "not": { "required": ["format"] }
-          }
-        },
-        {
-          "if": {
-            "anyOf": [
-              { "not": { "required": ["datatype"] } },
-              { "properties": { "datatype": { "not": { "enum": ["categorical", "ordered"] } } } }
-            ]
-          },
-          "then": {
-            "not": { "required": ["levels"] }
-          }
-        },
-        {
-          "if": {
-            "anyOf": [
-              { "not": { "required": ["datatype"] } },
-              { "properties": { "datatype": { "not": { "enum": ["integer", "number"] } } } }
-            ]
-          },
-          "then": {
-            "allOf": [
-              { "not": { "required": ["minimum"] } },
-              { "not": { "required": ["maximum"] } }
-            ]
-          }
-        },
-        {
-          "if": {
-            "required": ["datatype"],
-            "properties": { "datatype": { "not": { "enum": ["string"] } } }
-          },
-          "then": {
-            "allOf": [
-              { "not": { "required": ["min_length"] } },
-              { "not": { "required": ["max_length"] } }
-            ]
-          }
-        }
-      ]
+      }
     }
   }
 }

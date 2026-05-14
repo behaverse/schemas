@@ -13,7 +13,7 @@
       "@id": "dc:description"
     },
     "pretty_name": {
-      "@id": "dc:title"
+      "@id": "schema:name"
     },
     "date_created": {
       "@id": "schema:dateCreated",
@@ -22,26 +22,12 @@
     "creator": {
       "@id": "schema:creator"
     },
-    "email": {
-      "@id": "schema:email"
+    "categorical": {
+      "@id": "https://behaverse.org/schemas/bcsv#categorical"
     },
-    "orcid": {
-      "@id": "schema:identifier"
+    "ordered": {
+      "@id": "https://behaverse.org/schemas/bcsv#ordered"
     },
-    "affiliation": {
-      "@id": "schema:affiliation"
-    },
-
-    "string":      "xsd:string",
-    "integer":     "xsd:integer",
-    "number":      "xsd:double",
-    "boolean":     "xsd:boolean",
-    "date":        "xsd:date",
-    "datetime":    "xsd:dateTime",
-    "time":        "xsd:time",
-    "categorical": "bcsv:categorical",
-    "ordered":     "bcsv:ordered",
-
     "levels": {
       "@id": "https://behaverse.org/schemas/bcsv#levels",
       "@container": "@list"
@@ -82,7 +68,7 @@
     },
     "datatype": {
       "@id": "csvw:datatype",
-      "@type": "@vocab"
+      "@type": "@id"
     },
     "name": "csvw:name",
     "propertyUrl": {
@@ -126,6 +112,14 @@
     "format": "csvw:format",
     "minimum": "csvw:minInclusive",
     "maximum": "csvw:maxInclusive",
+    "minLength": {
+      "@id": "csvw:minLength",
+      "@type": "xsd:nonNegativeInteger"
+    },
+    "maxLength": {
+      "@id": "csvw:maxLength",
+      "@type": "xsd:nonNegativeInteger"
+    },
     "length": {
       "@id": "csvw:length",
       "@type": "xsd:nonNegativeInteger"
