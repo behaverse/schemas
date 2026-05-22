@@ -5,6 +5,25 @@ All notable changes to the BCSV schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0522] - 2026-05-22
+
+### Breaking
+- `primaryKey` renamed to `primary_key` in `schema.json` and `context.jsonld` (under `table_schema`). `foreignKeys` retained in CSVW casing — bcsv only renames CSVW properties it actively validates. The underlying JSON-LD IRI is unchanged (`csvw:primaryKey`). (H3)
+
+### Added
+- `levels` accepts numeric items (integers and numbers) in addition to strings — supports Likert-scale and other numerically-encoded ordinal data. (H1)
+- `creator` accepts a single structured object (`{"name": ..., "orcid": ...}`) in addition to a string or array of objects. (H2)
+- Explicit `license` term mapping in `context.jsonld` (`license → schema:license`); previously fell through `@vocab` and expanded to the wrong IRI. (H6)
+- Property Reference entry for `license` in `README.md`. (H6)
+- `bcsv/versions/v26.0513/` snapshot of the prior release for consumer pinning.
+
+### Changed
+- Type Mapping table in `README.md` now lists pandas nullable extension dtypes (`Int64`, `Float64`, `boolean`, `string`) — uniform missing-value handling via `pd.NA`. (H8)
+- CSVW built-in datatype list in `README.md` trimmed to the bcsv-supported subset (`string, integer, number, boolean, date, datetime, time`); deferred types (`duration`, `binary`, `hexBinary`, `anyURI`, `json`, `xml`, `decimal`) documented as treated as `string` until mapped. (H9)
+- `README.md` "Using bcsv for data processing" section replaced with a forward-looking placeholder; signature reference removed pending publication of the consumer R/Python packages. (H7)
+- `bcsv/examples/measurements.json` updated to use `primary_key` (was `primaryKey`).
+- `$id` updated to `https://behaverse.org/schemas/bcsv/v26.0522/schema.json`.
+
 ## [26.0513] - 2026-05-13
 
 ### Breaking

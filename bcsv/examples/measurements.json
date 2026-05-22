@@ -7,7 +7,7 @@
   "creator": "Lab Team",
   "url": "measurements.csv",
   "table_schema": {
-    "primaryKey": "sample_id",
+    "primary_key": "sample_id",
     "columns": [
       {
         "name": "sample_id",

@@ -56,7 +56,6 @@
     "file_hash": {
       "@id": "https://behaverse.org/schemas/bcsv#file_hash"
     },
-    "license": "schema:license",
     "label": "rdfs:label",
     "min_length": {
       "@id": "csvw:minLength",
@@ -117,7 +116,7 @@
       "@id": "csvw:required",
       "@type": "xsd:boolean"
     },
-    "primary_key": "csvw:primaryKey",
+    "primaryKey": "csvw:primaryKey",
     "foreignKeys": {
       "@id": "csvw:foreignKey",
       "@container": "@list"

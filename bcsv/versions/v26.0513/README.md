@@ -37,7 +37,7 @@ W3C [CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) is excel
 
 #### New Data Types
 
-bcsv supports the CSVW built-in scalar types: `string`, `integer`, `number`, `boolean`, `date`, `datetime`, and `time`. Other CSVW built-ins (`duration`, `binary`, `hexBinary`, `anyURI`, `json`, `xml`, `decimal`) are deferred and treated as `string` for v0 — they may gain explicit mappings in a future minor version. On top of the supported scalars, bcsv adds two types that CSVW lacks: **categorical variables** (factors, ordered and unordered), which are fundamental in data science.
+CSVW defines the following built-in data types: `string`, `integer`, `number`, `boolean`, `date`, `datetime`, `time`, `duration`, `binary`, `hexBinary`, `anyURI`, `json`, and `xml`. However, it lacks native support for **categorical variables** (factors, ordered and unordered) which are fundamental in data science. bcsv adds thus adds two new data types to fill this gap:
 
 
 | Data Type | Description | Example Use |
@@ -164,23 +164,138 @@ subject_id,name,age,treatment,severity,temperature,response_time
 
 | bcsv Specification | R Type | Python Type |
 |---------------------|--------|-------------|
-| `datatype: "string"` | `character` | `string` (StringDtype) |
-| `datatype: "integer"` | `integer` | `Int64` (nullable) |
-| `datatype: "number"` | `numeric` | `Float64` (nullable) |
-| `datatype: "boolean"` | `logical` | `boolean` (nullable) |
+| `datatype: "string"` | `character` | `str` |
+| `datatype: "integer"` | `integer` | `int64` |
+| `datatype: "number"` | `numeric` | `float64` |
+| `datatype: "boolean"` | `logical` | `bool` |
 | `datatype: "date"` | `Date` | `datetime64[ns]` |
 | `datatype: "datetime"` | `POSIXct` | `datetime64[ns]` |
 | `datatype: "categorical"` + `levels` | `factor()` | `pd.Categorical(ordered=False)` |
 | `datatype: "ordered"` + `levels` | `ordered()` | `pd.Categorical(ordered=True)` |
 
-Python types are pandas extension dtypes throughout (pandas ≥ 1.0). Missingness is represented as `pd.NA` (Python) or `NA` (R) for all columns.
-
 
 ## Using bcsv for data processing
 
-Consumer R and Python packages that read, write, document, and validate
-bcsv-paired CSVs are in development. This section will be expanded with
-worked examples when those packages ship.
+**Currently not implemented.** 
+
+
+The goal is to provide two small packages/libraries to support the following functions in R and Python (same API):
+
+### `read_bcsv(data_file, metadata_file = NULL)`
+
+Reads a CSV file and applies data types defined in the bcsv metadata.
+
+**Inputs:**
+- `data_file`: Path to CSV file
+- `metadata_file`: Path to JSON metadata file (optional, defaults to same name with `.json` extension)
+
+**Output:** Data frame with proper types applied (factors, ordered factors, dates, missing values handled)
+
+### `document_bcsv(csv_filename, data, column_descriptions, pretty_name, description)`
+
+Documents a data frame by generating bcsv metadata and inferring types from the R data frame.
+
+**Inputs:**
+- `csv_filename`: Name of the CSV file this metadata describes
+- `data`: Data frame with properly typed columns (factors, ordered, dates, etc.)
+- `column_descriptions`: Named list with metadata for each column (description, unit, constraints)
+- `pretty_name`: Human-readable dataset title
+- `description`: Dataset description
+
+**Output:** Metadata object (JSON structure) ready for writing
+
+### `write_bcsv(data, file, metadata_obj, metadata_file = NULL)`
+
+Saves a data frame as CSV and generates its bcsv metadata file with automatic file hash.
+
+**Inputs:**
+- `data`: Data frame to save
+- `file`: Path for output CSV file
+- `metadata_obj`: Metadata object (from `document_bcsv()`)
+- `metadata_file`: Path for output JSON metadata file (optional, defaults to same name with `.json` extension)
+
+**Output:** Saves both CSV and JSON files, returns paths to saved files
+
+### `validate_bcsv(data_file, metadata_file = NULL)`
+
+Validates that a CSV file conforms to its bcsv metadata specification.
+
+**Inputs:**
+- `data_file`: Path to CSV file
+- `metadata_file`: Path to JSON metadata file (optional, defaults to same name with `.json` extension)
+
+**Output:** Validation result object with pass/fail status and detailed error messages for any violations
+
+
+
+
+### Example in R
+
+```r
+# Source the bcsv functions
+library("bcsv")
+
+# Reading CSV with metadata
+df <- read_bcsv(data_file = "experiment_data.csv",
+                 metadata_file = "experiment_data.json")
+
+# The data frame now has proper R types:
+# - categorical -> factor()
+# - ordered -> ordered()
+# - missing values handled according to na_strings
+
+# Creating metadata from a data frame
+sample_data <- data.frame(
+  subject_id = 1:5,
+  name = c("Alice", "Bob", "Carol", "David", "Eve"),
+  age = c(25, 30, 35, 28, 32),
+  treatment = factor(c("control", "treatment_a", "treatment_b", "control", "treatment_a"),
+                     levels = c("control", "treatment_a", "treatment_b")),
+  severity = ordered(c("mild", "moderate", "severe", "mild", "critical"),
+                     levels = c("mild", "moderate", "severe", "critical")),
+  temperature = c(36.5, 37.2, 36.8, NA, 38.1),
+  response_time = c(0.45, NA, 0.68, 0.52, NA)
+)
+
+# Define column metadata
+column_descriptions <- list(
+  subject_id = list(description = "Unique subject identifier"),
+  name = list(description = "Participant name"),
+  age = list(description = "Age in years", unit = "years", minimum = 18, maximum = 100),
+  treatment = list(description = "Experimental treatment group (unordered)"),
+  severity = list(description = "Symptom severity level (ordered)"),
+  temperature = list(description = "Body temperature in Celsius", unit = "°C", 
+                     minimum = 35.0, maximum = 42.0),
+  response_time = list(description = "Response time in seconds (NA if timeout)", 
+                       unit = "s", na_strings = c("NA", "N/A", "timeout"))
+)
+
+# Create metadata from data frame (types inferred from R)
+metadata <- document_bcsv(
+  csv_filename = "experiment_data.csv",
+  data = sample_data,
+  column_descriptions = column_descriptions,
+  pretty_name = "Experiment Data",
+  description = "Experimental data with treatment groups and measurements"
+)
+
+# Write both CSV and metadata with automatic file hash
+write_bcsv(
+  data = sample_data,
+  file = "experiment_data.csv",
+  metadata_obj = metadata,
+  metadata_file = "experiment_data.json"
+)
+
+# Validate the written files
+validation_result <- validate_bcsv(
+  data_file = "experiment_data.csv",
+  metadata_file = "experiment_data.json"
+)
+```
+
+
+The Python version of this code should be very similar.
 
 
 
@@ -254,21 +369,12 @@ This section documents all properties supported by bcsv, including bcsv extensio
 #### `creator`
 
 **URI**: `http://schema.org/creator`  
-**Type**: String, Object, or Array of Objects  
-**Description**: Person or organization that created the table. Accepts a simple string, a single structured creator object, or an array of creator objects (each with `name`, optional `email`, `orcid`, `affiliation`).  
+**Type**: String or Array of Objects  
+**Description**: Person or organization that created the table. Can be a simple string or an array of creator objects with detailed information (name, email, orcid, affiliation).  
 **Required**: No  
 **Examples**:  
 - Simple: `"Research Lab Name"`  
-- Single object: `{"name": "Jane Researcher", "orcid": "0000-0001-2345-6789"}`  
-- Array of objects: `[{"name": "Jane Researcher", "email": "jane@university.edu", "orcid": "0000-0001-2345-6789", "affiliation": "University Psychology Department"}]`
-
-#### `license`
-
-**URI**: `http://schema.org/license`  
-**Type**: String (SPDX identifier)  
-**Description**: License under which the data is published, given as an SPDX identifier.  
-**Required**: No  
-**Example**: `"CC-BY-4.0"`, `"MIT"`, `"Apache-2.0"`
+- Detailed: `[{"name": "Jane Researcher", "email": "jane@university.edu", "orcid": "0000-0001-2345-6789", "affiliation": "University Psychology Department"}]`
 
 #### `table_schema`
 
@@ -276,7 +382,7 @@ This section documents all properties supported by bcsv, including bcsv extensio
 **Type**: Object  
 **Description**: Container for column definitions  
 **Required**: Yes  
-**Contains**: `columns` array (required), `primary_key` (optional)
+**Contains**: `columns` array (required), `primaryKey` (optional)
 
 ### Column-Level Properties
 
@@ -337,12 +443,10 @@ This section documents all properties supported by bcsv, including bcsv extensio
 #### `levels`
 
 **URI**: `https://behaverse.org/schemas/bcsv#levels`  
-**Type**: Array of strings, integers, or numbers  
-**Description**: Defines the valid categories for `categorical` or `ordered` datatypes. For `ordered` type, the array defines the order from lowest to highest. Numeric levels are supported for Likert-scale and other numerically-encoded ordinal data.  
+**Type**: Array of strings  
+**Description**: Defines the valid categories for `categorical` or `ordered` datatypes. For `ordered` type, the array defines the order from lowest to highest.  
 **Required**: Required when `datatype` is `categorical` or `ordered`; forbidden for other datatypes.  
-**Examples**:  
-- String levels: `["low", "medium", "high"]`  
-- Likert-scale (integer levels): `[1, 2, 3, 4, 5]`
+**Example**: `["low", "medium", "high"]`
 
 #### `format`
 
@@ -448,13 +552,11 @@ This section documents all properties supported by bcsv, including bcsv extensio
 All standard CSVW properties pass through unchanged. The bcsv JSON-LD context declares the following CSVW terms so they expand to the correct W3C CSVW IRIs; consult the [W3C CSVW spec](https://www.w3.org/TR/tabular-data-primer/) for their semantics.
 
 - `propertyUrl`, `valueUrl`, `aboutUrl` — URI templates for RDF mapping.
-- `foreignKeys` — referential-integrity declarations.
+- `primaryKey`, `foreignKeys` — relational integrity declarations.
 - `default`, `separator`, `suppressOutput`, `rowTitles` — column-cell handling.
 - `length`, `base` — additional value constraints.
 
 These properties are not validated by `bcsv/schema.json`. If you need to use them, refer to the CSVW spec.
-
-**Naming convention.** Where bcsv actively validates a CSVW property (e.g., `primary_key`, which bcsv checks for composite uniqueness), it is renamed to snake_case. Properties bcsv passes through without validation (e.g., `foreignKeys`) keep their CSVW casing. The renamed `primary_key` is documented above under `table_schema`; the underlying IRI is still the W3C CSVW IRI for primary key.
 
 ## Relationship to Standards
 
