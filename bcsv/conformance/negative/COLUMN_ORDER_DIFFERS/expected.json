@@ -1,0 +1,10 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "COLUMN_ORDER_DIFFERS",
+      "location": null
+    }
+  ]
+}

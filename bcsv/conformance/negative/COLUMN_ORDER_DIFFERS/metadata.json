@@ -1,0 +1,17 @@
+{
+  "@context": "https://behaverse.org/schemas/bcsv/context.jsonld",
+  "url": "data.csv",
+  "table_schema": {
+    "columns": [
+      {
+        "name": "a",
+        "datatype": "integer"
+      },
+      {
+        "name": "b",
+        "datatype": "string"
+      }
+    ]
+  },
+  "file_hash": "eba583d2bd9483d93770e4f9ef20de23d4b757ba2c9021fde89f3dfe636e53a5"
+}

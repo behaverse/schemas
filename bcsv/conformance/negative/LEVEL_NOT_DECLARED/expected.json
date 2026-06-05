@@ -1,0 +1,10 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "LEVEL_NOT_DECLARED",
+      "location": "g"
+    }
+  ]
+}

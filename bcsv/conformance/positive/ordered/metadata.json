@@ -1,0 +1,18 @@
+{
+  "@context": "https://behaverse.org/schemas/bcsv/context.jsonld",
+  "url": "data.csv",
+  "table_schema": {
+    "columns": [
+      {
+        "name": "severity",
+        "datatype": "ordered",
+        "levels": [
+          "mild",
+          "moderate",
+          "severe"
+        ]
+      }
+    ]
+  },
+  "file_hash": "579196b1b9a2e8a4da6e90b7bf68090a9dea0af5f2f4d35d3f1d12d029b189bb"
+}

@@ -1,0 +1,17 @@
+{
+  "@context": "https://behaverse.org/schemas/bcsv/context.jsonld",
+  "url": "data.csv",
+  "table_schema": {
+    "columns": [
+      {
+        "name": "g",
+        "datatype": "categorical",
+        "levels": [
+          "A",
+          "B"
+        ]
+      }
+    ]
+  },
+  "file_hash": "2c700bac9de2f1aba492cf6a22c43cf221ede1f4df1ba2092efbe0f890e156c1"
+}

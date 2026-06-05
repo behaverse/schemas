@@ -1,0 +1,10 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "HASH_ABSENT",
+      "location": "/file_hash"
+    }
+  ]
+}

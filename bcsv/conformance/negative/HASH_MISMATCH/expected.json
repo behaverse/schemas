@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "HASH_MISMATCH",
+      "location": "data.csv"
+    }
+  ],
+  "warnings": []
+}

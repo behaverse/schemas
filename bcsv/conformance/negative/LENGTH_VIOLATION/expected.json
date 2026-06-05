@@ -1,0 +1,14 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "LENGTH_VIOLATION",
+      "location": "code"
+    },
+    {
+      "code": "LENGTH_VIOLATION",
+      "location": "code"
+    }
+  ]
+}

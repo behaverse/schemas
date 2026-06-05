@@ -1,0 +1,15 @@
+{
+  "@context": "https://behaverse.org/schemas/bcsv/context.jsonld",
+  "url": "data.csv",
+  "table_schema": {
+    "columns": [
+      {
+        "name": "code",
+        "datatype": "string",
+        "min_length": 3,
+        "max_length": 5
+      }
+    ]
+  },
+  "file_hash": "0478507c53fdfbaffb0cffb9e2f6705e49b98c5e471a7660f3feb29e851253c3"
+}

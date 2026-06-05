@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "FILE_NOT_FOUND",
+      "location": "data.csv"
+    }
+  ],
+  "warnings": []
+}

@@ -1,0 +1,13 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "LEVELS_FORBIDDEN",
+      "location": "n"
+    }
+  ],
+  "warnings": [],
+  "validate_with": {
+    "check_schema": false
+  }
+}

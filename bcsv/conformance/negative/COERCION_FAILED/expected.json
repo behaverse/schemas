@@ -1,0 +1,10 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "COERCION_FAILED",
+      "location": "n"
+    }
+  ]
+}

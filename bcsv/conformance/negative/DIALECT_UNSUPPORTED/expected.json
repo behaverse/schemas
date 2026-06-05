@@ -1,0 +1,10 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "DIALECT_UNSUPPORTED",
+      "location": "/dialect"
+    }
+  ]
+}

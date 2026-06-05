@@ -1,0 +1,10 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "PRIMARY_KEY_VIOLATION",
+      "location": null
+    }
+  ]
+}

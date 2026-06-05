@@ -1,0 +1,13 @@
+{
+  "@context": "https://behaverse.org/schemas/bcsv/context.jsonld",
+  "url": "data.csv",
+  "table_schema": {
+    "columns": [
+      {
+        "name": "ts",
+        "datatype": "datetime"
+      }
+    ]
+  },
+  "file_hash": "776f1a24abcc38b8a65632a41a61d6a8f0401764ddfb74cb095a4c16435ae375"
+}

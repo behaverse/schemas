@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "COLUMN_MISSING_IN_DATA",
+      "location": "b"
+    }
+  ],
+  "warnings": []
+}

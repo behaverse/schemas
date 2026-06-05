@@ -1,0 +1,13 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "LEVELS_REQUIRED",
+      "location": "g"
+    }
+  ],
+  "warnings": [],
+  "validate_with": {
+    "check_schema": false
+  }
+}

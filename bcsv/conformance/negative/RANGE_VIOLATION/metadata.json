@@ -1,0 +1,15 @@
+{
+  "@context": "https://behaverse.org/schemas/bcsv/context.jsonld",
+  "url": "data.csv",
+  "table_schema": {
+    "columns": [
+      {
+        "name": "age",
+        "datatype": "integer",
+        "minimum": 0,
+        "maximum": 120
+      }
+    ]
+  },
+  "file_hash": "4d7e8e09feb90a2de8af53aefb3f92a73c97c3ef1d45d232d1c502d96d2b81e4"
+}

@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "METADATA_INVALID_JSON",
+      "location": "metadata.json"
+    }
+  ],
+  "warnings": []
+}

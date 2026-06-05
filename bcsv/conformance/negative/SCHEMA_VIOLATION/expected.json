@@ -1,0 +1,13 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "SCHEMA_VIOLATION",
+      "location": "/table_schema/columns/0"
+    }
+  ],
+  "warnings": [],
+  "validate_with": {
+    "check_constraints": false
+  }
+}
