@@ -60,14 +60,14 @@
         "http://purl.org/dc/terms/rights"
       ],
       "enum": [
-        "cc-by-4.0",
-        "cc-by-sa-4.0",
-        "cc-by-nc-4.0",
-        "cc-by-nc-sa-4.0",
-        "cc0-1.0",
-        "mit",
-        "apache-2.0",
-        "gpl-3.0",
+        "CC-BY-4.0",
+        "CC-BY-SA-4.0",
+        "CC-BY-NC-4.0",
+        "CC-BY-NC-SA-4.0",
+        "CC0-1.0",
+        "MIT",
+        "Apache-2.0",
+        "GPL-3.0-only",
         "other"
       ]
     },
