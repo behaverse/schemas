@@ -1,5 +1,6 @@
 {
   "@context": "https://behaverse.org/schemas/dataset/context.jsonld",
+  "@type": "schema:Dataset",
   "name": "demo-dataset",
   "pretty_name": "Demo Dataset (Example)",
   "description": "This is a demonstration dataset showing how to structure metadata. In a real dataset, provide a comprehensive description of the actual data collection, experimental procedures, and dataset contents.",

@@ -1,5 +1,6 @@
 {
   "@context": "https://behaverse.org/schemas/catalog/context.jsonld",
+  "@type": "schema:DataCatalog",
   "name": "demo-longitudinal",
   "pretty_name": "Demo: Longitudinal & Test-Retest Studies",
   "description": "Example catalog demonstrating how to define longitudinal dataset catalogs. This is a demonstration - the criteria and datasets listed are for illustrative purposes only.",

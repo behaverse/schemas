@@ -11,6 +11,10 @@
       "description": "JSON-LD context URL",
       "default": "https://behaverse.org/schemas/bcsv/context.jsonld"
     },
+    "@type": {
+      "const": "csvw:Table",
+      "description": "JSON-LD node type (rdf:type). A bcsv document describes a CSVW table."
+    },
     "name": {
       "type": "string",
       "description": "Short URL-friendly identifier",

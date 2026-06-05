@@ -8,6 +8,7 @@ and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 ## [26.0605] - 2026-06-05
 
 ### Added
+- `@type` optional top-level property (`const: "schema:Dataset"`) for schema.org / Google Dataset Search discoverability; added to the bundled example.
 - Inner `creator`/`curator` object term mappings in `context.jsonld`: `email → schema:email`, `orcid → schema:identifier`, `affiliation → schema:affiliation`. Previously these structured-person fields fell through `@vocab` and expanded to the wrong (dataset-namespaced) IRIs.
 - `dataset/versions/v25.1201/` snapshot of the prior release for consumer pinning.
 

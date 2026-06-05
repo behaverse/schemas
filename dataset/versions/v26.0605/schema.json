@@ -13,6 +13,11 @@
     "sample_size"
   ],
   "properties": {
+    "@type": {
+      "const": "schema:Dataset",
+      "title": "Type",
+      "description": "JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverability."
+    },
     "name": {
       "type": "string",
       "title": "Name",

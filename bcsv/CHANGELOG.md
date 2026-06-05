@@ -8,6 +8,7 @@ and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 ## [26.0605] - 2026-06-05
 
 ### Added
+- `@type` optional top-level property (`const: "csvw:Table"`) so a bcsv document can declare its JSON-LD node type (`rdf:type`); added to the bundled examples.
 - `dialect` top-level property in `schema.json` documenting the CSV serialization hints bcsv honors in v0 (`delimiter`, `encoding`). Other CSVW dialect sub-properties pass through (`additionalProperties: true`) and are not interpreted by bcsv tooling; consumer tooling MAY emit a `DIALECT_UNSUPPORTED` warning for unhonored keys.
 - "Dialect" subsection in `README.md` documenting the honored vs. pass-through stance.
 - Consumer pinning guidance and a snapshot-immutability note in the `README.md` Versioning section.

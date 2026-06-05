@@ -13,6 +13,7 @@ Catalogs can be nested hierarchically—a catalog can contain child catalogs usi
 - **Version**: v26.0605
 - **Namespace**: `https://behaverse.org/schemas/catalog#`
 - **Format**: JSON or JSON-LD
+- **JSON-LD type**: `schema:DataCatalog` (set `@type` in the document for schema.org / Dataset Search discoverability)
 - **Status**: Active
 
 ## Quick Start

@@ -1,5 +1,6 @@
 {
   "@context": "https://behaverse.org/schemas/bcsv/context.jsonld",
+  "@type": "csvw:Table",
   "name": "student-test-results",
   "pretty_name": "Student Test Results",
   "description": "Test results for students including scores and grades",

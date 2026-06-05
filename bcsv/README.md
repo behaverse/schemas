@@ -197,6 +197,7 @@ This is a summary of every bcsv property. **Authoritative per-property detail â€
 | Property | Type | Required | Description |
 |---|---|---|---|
 | `@context` | string | yes | JSON-LD context URL |
+| `@type` | string | no | Fixed value `csvw:Table` â€” the JSON-LD node type (`rdf:type`) |
 | `name` | string | no | Short URL-friendly identifier |
 | `url` | string | yes | URL or path to the CSV file |
 | `dialect` | object | no | CSV serialization hints. v0 honors `delimiter` and `encoding`; other CSVW dialect sub-properties pass through but are not interpreted by bcsv tooling. |

@@ -11,6 +11,7 @@ All notable changes to the Catalog schema will be documented in this file.
 - Removed the invalid context-level `@type` keyword override (`"@type": "https://schema.org/DataCatalog"`), which caused spec-compliant JSON-LD processors to reject the context entirely (it never expanded). Assigning the `DataCatalog` type via the document data is planned as a follow-up.
 
 ### Added
+- `@type` optional top-level property (`const: "schema:DataCatalog"`) for schema.org / Google Dataset Search discoverability; added to the bundled examples. Aligned the `pretty_name` `equivalentProperty` annotation with the context (`dc:title`).
 - Inner `curator` object term mappings in `context.jsonld`: `email → schema:email`, `orcid → schema:identifier`, `affiliation → schema:affiliation`. Previously these fell through `@vocab` and expanded to the wrong (catalog-namespaced) IRIs.
 - `catalog/versions/v26.0107/` snapshot of the prior release for consumer pinning.
 

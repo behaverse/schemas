@@ -1,7 +1,8 @@
 # Behaverse Dataset Schema (WIP)
 
 **Version:** v26.0605  
-**Namespace:** `https://behaverse.org/schemas/dataset#`
+**Namespace:** `https://behaverse.org/schemas/dataset#`  
+**JSON-LD type:** `schema:Dataset` (set `@type` in the document for schema.org / Google Dataset Search discoverability)
 
 ## Overview
 
