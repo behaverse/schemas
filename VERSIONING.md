@@ -9,7 +9,8 @@ consumers can pin to an immutable snapshot.
 - **Version archiving** — each release is copied to a per-version directory under
   `<schema_name>/versions/`.
 - **Changelog** — every release is recorded in `<schema_name>/CHANGELOG.md`.
-- **CI/CD** — pushes to `main` trigger documentation deployment to GitHub Pages.
+- **CI/CD** — the docs site redeploys when the `gh-pages` branch is pushed or the
+  workflow is dispatched manually; the build fetches schema content from `main`.
 
 > **Immutability commitment.** Snapshots under each schema's `versions/vYY.MMDD/`
 > directory are never modified after publication. Once a snapshot is online,
@@ -107,9 +108,16 @@ changelog conventions; its archive layout may differ.
 
 ## Documentation Deployment
 
-Pushing to `main` triggers `.github/workflows/deploy-docs.yml` (which lives on the
-`gh-pages` branch). It fetches schema artifacts from `main`, regenerates the
-documentation site, and deploys to GitHub Pages.
+The `deploy-docs.yml` workflow lives on the **`gh-pages`** branch (the repo's CI was
+consolidated there). It runs on a push to `gh-pages` or via manual dispatch
+(GitHub Actions → "Deploy Documentation" → Run workflow, or
+`gh workflow run deploy-docs.yml --ref gh-pages`). At build time it fetches the
+`bcsv/`, `catalog/`, `dataset/`, and `studyflow/` directories from `main`,
+regenerates the Docusaurus site, and deploys to GitHub Pages.
+
+**Important:** the workflow file is not present on `main`, so **pushing to `main`
+does not by itself trigger a deploy.** After pushing schema changes to `main`,
+trigger the workflow (push `gh-pages`, or dispatch it) to publish them.
 
 ## Workflow Summary
 
@@ -119,5 +127,6 @@ documentation site, and deploys to GitHub Pages.
 3. Prepend a CHANGELOG entry (mark breaking changes)
 4. Snapshot the new version under versions/v<new>/
 5. Commit and push to main
-6. deploy-docs.yml regenerates and deploys the docs site
+6. Trigger the gh-pages deploy (push gh-pages, or dispatch deploy-docs.yml);
+   it fetches main and redeploys the docs site
 ```
