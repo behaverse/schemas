@@ -67,15 +67,6 @@
       "@id": "https://schema.org/creator",
       "@container": "@set"
     },
-    "email": {
-      "@id": "https://schema.org/email"
-    },
-    "orcid": {
-      "@id": "https://schema.org/identifier"
-    },
-    "affiliation": {
-      "@id": "https://schema.org/affiliation"
-    },
     "curator": {
       "@id": "https://schema.org/maintainer",
       "@container": "@set"

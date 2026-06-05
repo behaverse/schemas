@@ -1,6 +1,6 @@
 # Behaverse Dataset Schema (WIP)
 
-**Version:** v26.0605  
+**Version:** v25.1201  
 **Namespace:** `https://behaverse.org/schemas/dataset#`
 
 ## Overview
@@ -302,7 +302,7 @@ This schema and documentation were developed with the assistance of AI tools (Gi
 
 ---
 
-**Version**: v26.0605  
+**Version**: v25.1201  
 **License**: CC-BY-4.0  
 **Maintainer**: Behaverse Project  
 **Repository**: https://github.com/behaverse/schemas
