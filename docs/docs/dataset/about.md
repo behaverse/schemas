@@ -107,3 +107,9 @@ The dataset schema builds on and maps to:
 
 - **Base namespace**: `https://behaverse.org/schemas/dataset#`
 - **Context file**: `https://behaverse.org/schemas/dataset/context.jsonld`
+
+## Learn more
+
+- **[Overview](/dataset)** — the full property reference (auto-generated from the schema), with a page per property.
+- **[Examples](examples)** — a worked dataset example.
+- **[README on GitHub](https://github.com/behaverse/schemas/blob/main/dataset/README.md)** — full schema details.

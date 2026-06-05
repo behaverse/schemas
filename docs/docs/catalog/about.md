@@ -107,3 +107,9 @@ The Catalog Schema builds on:
 
 - **Base namespace**: `https://behaverse.org/schemas/catalog#`
 - **Context file**: `https://behaverse.org/schemas/catalog/context.jsonld`
+
+## Learn more
+
+- **[Overview](/catalog)** — the full property reference (auto-generated from the schema), with a page per property.
+- **[Examples](examples)** — worked catalog examples.
+- **[README on GitHub](https://github.com/behaverse/schemas/blob/main/catalog/README.md)** — full schema details.
