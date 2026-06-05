@@ -15,6 +15,10 @@ and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 ### Changed
 - `$id` updated to `https://behaverse.org/schemas/dataset/v26.0605/schema.json`.
 
+### Fixed
+- `age_category`, `intervention_type`, and `measurement_technique[].response_type` had their `enum` on the array itself, so no value could ever validate (the array would have had to equal an enum string). Moved the `enum` onto `items`; these array-of-enum fields now validate correctly.
+- `examples/demo-dataset.json` reconciled to the schema: `license` lowercased to `cc-by-4.0`, `population_category` set to a single enum value (`healthy`), `citation[].type` set to `primary`.
+
 ## [25.1201] - 2025-12-01
 
 ### Added

@@ -308,14 +308,14 @@
       "title": "Age Category",
       "description": "Age group classification",
       "equivalentProperty": "https://behaverse.org/schemas/dataset#ageCategory",
-      "enum": [
-        "children",
-        "adolescent",
-        "adult",
-        "elderly"
-      ],
       "items": {
-        "type": "string"
+        "type": "string",
+        "enum": [
+          "children",
+          "adolescent",
+          "adult",
+          "elderly"
+        ]
       }
     },
     "population_category": {
@@ -451,14 +451,17 @@
           "response_type": {
             "type": "array",
             "description": "Types of behavior responses (applies when technique is behavior)",
-            "enum": [
-              "button-press",
-              "key-press",
-              "mouse",
-              "voice",
-              "eye-gaze",
-              "touchscreen"
-            ]
+            "items": {
+              "type": "string",
+              "enum": [
+                "button-press",
+                "key-press",
+                "mouse",
+                "voice",
+                "eye-gaze",
+                "touchscreen"
+              ]
+            }
           },
           "format": {
             "type": "string",
@@ -563,15 +566,15 @@
       "title": "Intervention Type",
       "description": "Type(s) of intervention (applies when study_design_type is intervention)",
       "equivalentProperty": "https://clinicaltrials.gov/data-api/about-api/schema#interventionType",
-      "enum": [
-        "behavioral",
-        "pharmacological",
-        "device",
-        "procedure",
-        "other"
-      ],
       "items": {
-        "type": "string"
+        "type": "string",
+        "enum": [
+          "behavioral",
+          "pharmacological",
+          "device",
+          "procedure",
+          "other"
+        ]
       }
     },
     "session_count": {

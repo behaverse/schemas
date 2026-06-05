@@ -5,7 +5,7 @@
   "pretty_name": "Demo Dataset (Example)",
   "description": "This is a demonstration dataset showing how to structure metadata. In a real dataset, provide a comprehensive description of the actual data collection, experimental procedures, and dataset contents.",
   "version": "1.0.0",
-  "license": "CC-BY-4.0",
+  "license": "cc-by-4.0",
   "url": "https://example.org/datasets/demo-dataset",
   "doi": "10.5555/example.doi",
   "keywords": [
@@ -37,7 +37,7 @@
   ],
   "citation": [
     {
-      "type": "article",
+      "type": "primary",
       "doi": "10.5555/example.citation.doi",
       "text": "Author, F., & Author, S. (2023). Example article title. Journal Name, 100, 1-20.",
       "url": "https://doi.org/10.5555/example.citation.doi"
@@ -53,7 +53,7 @@
     "non_binary": 1
   },
   "age_category": ["adult"],
-  "population_category": ["healthy", "neurotypical"],
+  "population_category": "healthy",
   "inclusion_criteria": [
     "Age 18-35 years",
     "Native English speaker",
