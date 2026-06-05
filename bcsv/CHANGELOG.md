@@ -5,6 +5,17 @@ All notable changes to the BCSV schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0605] - 2026-06-05
+
+### Added
+- `dialect` top-level property in `schema.json` documenting the CSV serialization hints bcsv honors in v0 (`delimiter`, `encoding`). Other CSVW dialect sub-properties pass through (`additionalProperties: true`) and are not interpreted by bcsv tooling; consumer tooling MAY emit a `DIALECT_UNSUPPORTED` warning for unhonored keys.
+- "Dialect" subsection in `README.md` documenting the honored vs. pass-through stance.
+- Consumer pinning guidance and a snapshot-immutability note in the `README.md` Versioning section.
+
+### Changed
+- `$id` updated to `https://behaverse.org/schemas/bcsv/v26.0605/schema.json`.
+- `README.md` Versioning section now reports the correct current version (was stale at v26.0513).
+
 ## [26.0522] - 2026-05-22
 
 ### Breaking
