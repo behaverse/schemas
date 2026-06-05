@@ -1,47 +1,67 @@
 # Schema Versioning System
 
-This repository uses an automated versioning system for managing schema changes.
+This repository versions each schema with CalVer and archives every release so
+consumers can pin to an immutable snapshot.
 
 ## Overview
 
-The versioning system provides:
-- **Automatic version bumping** using CalVer (YY.MMDD format)
-- **Version archiving** - old versions stored in `versions/` directories
-- **Changelog management** - automatic updates to `CHANGELOG.md`
-- **CI/CD integration** - automated deployment of documentation
+- **CalVer (YY.MMDD)** version strings on every schema release.
+- **Version archiving** — each release is copied to a per-version directory under
+  `<schema_name>/versions/`.
+- **Changelog** — every release is recorded in `<schema_name>/CHANGELOG.md`.
+- **CI/CD** — pushes to `main` trigger documentation deployment to GitHub Pages.
+
+> **Immutability commitment.** Snapshots under each schema's `versions/vYY.MMDD/`
+> directory are never modified after publication. Once a snapshot is online,
+> downstream consumers can safely pin to that URL.
 
 ## How to Version a Schema
 
-When you make changes to a schema, use the versioning script:
+Versioning is a deliberate manual process — there is no automation script. Doing
+each step by hand keeps the author aware of whether a change is breaking. After
+editing a schema:
 
-```bash
-python scripts/version_schema.py <schema_name> --message "Description of changes"
-```
+1. **Bump the version.** Set the new CalVer (today, `YY.MMDD`) in two places in
+   `<schema_name>/schema.json`:
+   - the `version` field, and
+   - the `$id` field →
+     `https://behaverse.org/schemas/<schema_name>/v<new_version>/schema.json`.
 
-**Available schemas:** `bcsv`, `catalog`, `dataset`, `studyflow`
+2. **Update the changelog.** Prepend a section to `<schema_name>/CHANGELOG.md`:
 
-### Example
+   ```markdown
+   ## [<new_version>] - <YYYY-MM-DD>
 
-```bash
-# Make changes to bcsv/schema.json
-# Then run:
-python scripts/version_schema.py bcsv --message "Add new validation rules for column types"
+   ### Changed
+   - Description of changes
+   ```
 
-# Review the changes
-git status
+   Use a `### Breaking` heading for backward-incompatible changes so consumers
+   pinning to an older snapshot know why.
 
-# Commit and push
-git add bcsv/
-git commit -m "chore(bcsv): bump version to 25.1204"
-git push origin main
-```
+3. **Snapshot the new release.** Copy the current files into a per-version
+   directory named for the *new* version:
 
-## What the Script Does
+   ```bash
+   mkdir -p <schema_name>/versions/v<new_version>
+   cp <schema_name>/{schema.json,context.jsonld,README.md} \
+      <schema_name>/versions/v<new_version>/
+   ```
 
-1. **Archives old version**: Copies current `schema.json` to `versions/schema-v<old_version>.json`
-2. **Bumps version**: Updates the `version` field in `schema.json` to current date (YY.MMDD)
-3. **Updates CHANGELOG**: Adds new entry to `CHANGELOG.md` with your change description
-4. **Provides next steps**: Shows git commands to commit and push
+   The snapshot's `schema.json` keeps the version and `$id` you just set, so it is
+   a faithful, immutable copy of that release. (The previous release already has
+   its own snapshot from when it shipped; if one is missing, create it the same
+   way.)
+
+4. **Commit and push.**
+
+   ```bash
+   git add <schema_name>/
+   git commit -m "chore(<schema_name>): bump version to <new_version>"
+   git push origin main
+   ```
+
+**Available schemas:** `bcsv`, `catalog`, `dataset`, `studyflow`.
 
 ## Version Format
 
@@ -49,81 +69,55 @@ We use [Calendar Versioning (CalVer)](https://calver.org/) with format `YY.MMDD`
 - `25.1204` = December 4, 2025
 - `26.0115` = January 15, 2026
 
-Multiple changes on the same day will have the same version number.
+Multiple changes on the same day share one version number; list them all under
+that version in the changelog.
 
-## Automated Checks
+## Pinning vs. latest
 
-The repository includes GitHub Actions workflows:
+- **Unversioned URL** (e.g. `https://behaverse.org/schemas/bcsv/schema.json`)
+  always serves the latest release and MAY change without notice.
+- **Versioned URL** (e.g.
+  `https://behaverse.org/schemas/bcsv/versions/v26.0605/schema.json`) is
+  immutable. Consumers SHOULD pin to a versioned URL for production use.
 
-### Version Check (PR validation)
-- **Trigger**: Pull requests that modify schema files
-- **Checks**: 
-  - Version was bumped
-  - Old version was archived
-  - CHANGELOG was updated
-- **File**: `.github/workflows/version-check.yml`
-
-### Documentation Deployment
-- **Trigger**: Push to main branch
-- **Actions**:
-  - Fetches docs infrastructure from `gh-pages` branch
-  - Regenerates documentation from schemas
-  - Deploys to GitHub Pages
-- **File**: `.github/workflows/deploy-docs.yml`
+Because CalVer does not telegraph breaking changes, the changelog's `### Breaking`
+callouts are the authoritative signal that a new version is incompatible.
 
 ## Directory Structure
 
-Each schema has:
+Each JSON-Schema-based schema (`bcsv`, `catalog`, `dataset`) has:
+
 ```
 <schema_name>/
-├── schema.json          # Current version
-├── CHANGELOG.md         # Version history with changes
-├── versions/            # Archived versions
-│   ├── schema-v25.1201.json
-│   ├── schema-v25.1202.json
-│   └── schema-v25.1204.json
-└── ...
+├── schema.json          # Current release
+├── context.jsonld       # JSON-LD context
+├── CHANGELOG.md         # Version history
+├── README.md
+└── versions/            # Immutable archived releases (one directory per version)
+    ├── v25.1201/
+    │   ├── schema.json
+    │   ├── context.jsonld
+    │   └── README.md
+    └── v26.0605/
+        └── ...
 ```
 
-## Manual Versioning (Not Recommended)
+`studyflow` is LinkML-based (`schema.linkml.yaml`) and follows the same CalVer +
+changelog conventions; its archive layout may differ.
 
-If you need to version manually:
+## Documentation Deployment
 
-1. Copy current schema to `versions/schema-v<old_version>.json`
-2. Update `version` field in `schema.json`
-3. Add entry to `CHANGELOG.md`:
-   ```markdown
-   ## [25.1204] - 2025-12-04
-   
-   ### Changed
-   - Your change description
-   ```
-4. Commit: `git commit -m "chore(schema): bump version to 25.1204"`
-
-## Troubleshooting
-
-### "Version not bumped" error in PR
-- Run the versioning script: `python scripts/version_schema.py <schema> --message "..."`
-- The script will handle version, archiving, and changelog
-
-### Multiple updates same day
-- CalVer will show same version for multiple changes on one day
-- This is normal - the changelog will list all changes under that version
-
-### Dry run to preview changes
-```bash
-python scripts/version_schema.py bcsv --message "Test" --dry-run
-```
+Pushing to `main` triggers `.github/workflows/deploy-docs.yml` (which lives on the
+`gh-pages` branch). It fetches schema artifacts from `main`, regenerates the
+documentation site, and deploys to GitHub Pages.
 
 ## Workflow Summary
 
 ```
-1. Edit schema.json
-2. Run version_schema.py
-3. Review changes
-4. Commit and push
-5. PR validation checks version
-6. Merge triggers documentation deployment
+1. Edit schema.json (and context.jsonld / README.md as needed)
+2. Bump version + $id in schema.json
+3. Prepend a CHANGELOG entry (mark breaking changes)
+4. Snapshot the new version under versions/v<new>/
+5. Commit and push to main
+6. deploy-docs.yml regenerates and deploys the docs site
 ```
-
-The system ensures all schema changes are tracked, versioned, and automatically reflected in the online documentation.
