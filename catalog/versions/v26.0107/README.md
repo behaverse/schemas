@@ -10,7 +10,7 @@ The Behaverse `catalog` schema extends `https://schema.org/DataCatalog`. Further
 
 Catalogs can be nested hierarchically—a catalog can contain child catalogs using the `catalogs` property, enabling multi-level organization (e.g., a "Mental Health" catalog containing "Pediatric Mental Health" and "Adult Mental Health" sub-catalogs).
 
-- **Version**: v26.0605
+- **Version**: v26.0107
 - **Namespace**: `https://behaverse.org/schemas/catalog#`
 - **Format**: JSON or JSON-LD
 - **Status**: Active
@@ -524,7 +524,6 @@ Expands to:
 
 ## Version History
 
-- **v26.0605** (2026-06-05): `pretty_name` → `dc:title` (fixes collision with `name`); added structured-`curator` term mappings (`email`, `orcid`, `affiliation`)
 - **v26.0107** (2026-01-07): Renamed to Catalog, aligned with Schema.org DataCatalog
   - Renamed from "collection" to "catalog"
   - Changed base type from `schema:Collection` to `schema:DataCatalog`

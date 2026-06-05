@@ -8,12 +8,13 @@
     "bids": "https://bids-specification.readthedocs.io/en/stable/",
     "ddi": "https://ddialliance.org/Specification/DDI-Lifecycle/3.3/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "@type": "https://schema.org/DataCatalog",
     "name": {
       "@id": "https://schema.org/name",
       "@type": "xsd:string"
     },
     "pretty_name": {
-      "@id": "dc:title",
+      "@id": "https://schema.org/name",
       "@type": "xsd:string"
     },
     "description": {
@@ -60,15 +61,6 @@
     "curator": {
       "@id": "https://schema.org/curator",
       "@container": "@set"
-    },
-    "email": {
-      "@id": "https://schema.org/email"
-    },
-    "orcid": {
-      "@id": "https://schema.org/identifier"
-    },
-    "affiliation": {
-      "@id": "https://schema.org/affiliation"
     }
   }
 }
