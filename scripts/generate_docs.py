@@ -115,6 +115,33 @@ def load_schema_data(schema_name: str) -> Dict[str, Any]:
             'field_groups': [],
         }
 
+def _derive_type(prop_def: Dict[str, Any]) -> str:
+    """Human-readable type for the docs (handles enum / const / oneOf / format)."""
+    if 'enum' in prop_def:
+        return 'enum'
+    if 'const' in prop_def:
+        c = prop_def['const']
+        return c if isinstance(c, str) else str(c)
+    if 'oneOf' in prop_def:
+        types = []
+        for o in prop_def['oneOf']:
+            if 'enum' in o:
+                t = 'enum'
+            elif 'type' in o:
+                t = o['type']
+            elif '$ref' in o:
+                t = 'object'
+            else:
+                continue
+            if t not in types:
+                types.append(t)
+        return ' / '.join(types) if types else 'string'
+    t = prop_def.get('type', 'string')
+    if 'format' in prop_def:
+        t = f"{t} ({prop_def['format']})"
+    return t
+
+
 def convert_json_schema_to_fields(schema: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Convert JSON Schema properties to field definitions format"""
     fields = []
@@ -125,9 +152,9 @@ def convert_json_schema_to_fields(schema: Dict[str, Any]) -> List[Dict[str, Any]
     for prop_name, prop_def in properties.items():
         field = {
             'name': prop_name,
-            'type': prop_def.get('type', 'string'),
+            'type': _derive_type(prop_def),
             'description': prop_def.get('description', ''),
-            'status': 'required' if prop_name in required_fields else 'optional',
+            'requirement': 'required' if prop_name in required_fields else 'optional',
         }
         
         # Add mappings if equivalentProperty exists
@@ -172,13 +199,7 @@ def convert_json_schema_to_fields(schema: Dict[str, Any]) -> List[Dict[str, Any]
                     continue
                 
                 # Determine type
-                prop_type = col_prop_def.get('type', 'string')
-                if 'enum' in col_prop_def:
-                    prop_type = 'enum'
-                elif 'oneOf' in col_prop_def:
-                    # Get the most common type from oneOf
-                    types = [item.get('type') for item in col_prop_def['oneOf'] if 'type' in item]
-                    prop_type = types[0] if types else 'string'
+                prop_type = _derive_type(col_prop_def)
                 
                 field = {
                     'name': col_prop_name,
@@ -670,7 +691,7 @@ def main():
                             'name': obj_prop['name'],
                             'type': obj_prop['type'],
                             'description': obj_prop.get('description', ''),
-                            'status': 'required' if obj_prop.get('required', False) else 'optional',
+                            'requirement': 'required' if obj_prop.get('required', False) else 'optional',
                             'parent_property': parent_name,
                         }
                         if 'constraints' in obj_prop:
