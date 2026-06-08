@@ -1,0 +1,50 @@
+# Behaverse Trial Schema (WIP)
+
+**Version:** v26.0608
+**Namespace:** `https://behaverse.org/schemas/trial#`
+**Source of truth:** [`field-definitions.yaml`](field-definitions.yaml) — edit it, then run `uv run scripts/generate.py`
+
+## Overview
+
+The Behaverse Trial Schema defines a set of tidy tables describing **trial-level** behavioral data — the task-specific aggregates derived from raw events — for cognitive tests and questionnaires. It is the *Trials* layer of the Behaverse Data Model (BDM); see **[behaverse.org/data-model](https://behaverse.org/data-model)** for the human-facing guides, conventions, and explanations.
+
+A trial is a single instance of a participant interacting with a task. Trial information is spread across several related tables, joined by `_id` foreign keys.
+
+## Tables
+
+| Table | Fields | Description |
+|-------|-------:|-------------|
+| **Response** | 75 | Main table; one row per response in a trial. |
+| **Stimulus** | 19 | Each stimulus shown during a trial. |
+| **Option** | 18 | Each option a subject could choose from. |
+| **Input** | 15 | Detailed log of inputs/clicks during the trial. |
+| **StimulusComponent** | 13 | Components that make up a stimulus. |
+| **OptionComponent** | 14 | Components that make up an option. |
+| **Instrument** | 7 | The instrument (and its parameterizations) used for acquisition. |
+
+## Conventions
+
+- A trailing `_id` denotes a **foreign key** into the table of that name (e.g. `stimulus_id` → the Stimulus table).
+- When several entities occur in one trial (e.g. multiple stimuli), their ids/values are concatenated into a single string on CSV export.
+
+## Artifacts
+
+| File | Status | Purpose |
+|------|--------|---------|
+| [`field-definitions.yaml`](field-definitions.yaml) | ✅ | Source of truth (hand-maintained). |
+| [`field-definitions.json`](field-definitions.json) | ✅ generated | Render contract consumed by `behaverse/data-model` and the docs site. |
+| `schema.json` | ⏳ planned | JSON Schema for validation (per table). |
+| `context.jsonld` | ⏳ planned | JSON-LD context. |
+
+## Status & follow-ups
+
+Relocated from `behaverse/data-model` (where it was generated from a Google Sheet). Published **as-is**; these known issues are tracked as follow-ups, not yet applied:
+
+- **D1** — `Response.stimulus_id` typing (`integer` → `string | integer`) for compositional questionnaire stimuli.
+- **D3** — `Response.session_id` is typed integer but its description calls it `session_index`; rename and add a UUID `session_id`.
+- **D5** — events `agent` → `actor` (in the forthcoming `event` schema).
+- Several `description`/`range` fields still mix prose with enum listings that could become structured `enum` constraints.
+
+## Versioning
+
+CalVer `vYY.MMDD`. See the repo-wide [`VERSIONING.md`](../VERSIONING.md).
