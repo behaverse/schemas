@@ -2,7 +2,7 @@
   "schema": "event",
   "version": "26.0608",
   "namespace": "https://behaverse.org/schemas/event",
-  "description": "Raw experimental events for cognitive tests, questionnaires, and games. An xAPI-style envelope (actor / verb / object) carrying a single canonical bdm: vocabulary, so one set of analytics tooling can process every domain. Continuous signals (mouse, keyboard, EEG) are referenced via attachments, not inlined.",
+  "description": "Raw experimental events for cognitive tests, questionnaires, and games. An xAPI-style envelope (actor / verb / object) carrying a single canonical `bdm:` vocabulary, so one set of analytics tooling can process every domain. Continuous signals (mouse, keyboard, EEG) are referenced via attachments, not inlined.",
   "fields": [
     {
       "name": "actor",
@@ -12,7 +12,7 @@
     },
     {
       "name": "verb",
-      "type": "string (bdm: CURIE)",
+      "type": "string",
       "requirement": "required",
       "description": "The action that occurred, drawn from the canonical verb vocabulary below."
     },
