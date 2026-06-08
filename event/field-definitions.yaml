@@ -1,0 +1,118 @@
+# Behaverse Event Schema - Field Definitions
+# Source of truth for the event envelope and the bdm: vocabulary. Edit this file, then run:
+#   uv run scripts/generate.py
+# Seeded from behaverse questionnaire_apps schemas/events (v26.0605) + design/05e_events_vocabulary.md.
+
+schema_metadata:
+  name: Behaverse Event Schema
+  version: '26.0608'
+  namespace: https://behaverse.org/schemas/event
+  description: >-
+    Raw experimental events for cognitive tests, questionnaires, and games. An xAPI-style
+    envelope (actor / verb / object) carrying a single canonical bdm: vocabulary, so one set
+    of analytics tooling can process every domain. Continuous signals (mouse, keyboard, EEG)
+    are referenced via attachments, not inlined.
+
+# The event envelope — the shape of a single event object.
+fields:
+  - name: actor
+    type: object
+    requirement: required
+    description: Who or what performed/experienced the event — `{objectType, id, name?}`, where
+      objectType is one of the actor types below. (Renamed from `agent`; an Agent is one type of
+      actor — BDM deviation D5.)
+  - name: verb
+    type: 'string (bdm: CURIE)'
+    requirement: required
+    description: The action that occurred, drawn from the canonical verb vocabulary below.
+  - name: object
+    type: object
+    requirement: required
+    description: What the action was performed on — `{objectType, id, name?}`, where objectType is
+      one of the object types below.
+  - name: timestamp
+    type: datetime (RFC 9557)
+    requirement: required
+    description: When the event occurred, as an ISO 8601 / RFC 9557 datetime with timezone offset.
+  - name: result
+    type: object
+    requirement: optional
+    description: The outcome of the event (e.g. accuracy, response_time, score). Domain-specific
+      payload lives under `result.extensions` keyed by `bdm:*` extension keys.
+  - name: context
+    type: object
+    requirement: optional
+    description: Contextual information (study, studyflow, and the session→activity→runtime→block→trial
+      scoping hierarchy) under `context.extensions`, keyed by `bdm:*` extension keys.
+  - name: version
+    type: string
+    requirement: optional
+    description: The associated BDM/schema version (e.g. `v26.0608`). Typically populated by the LRS.
+  - name: stored
+    type: datetime (RFC 9557)
+    requirement: optional
+    description: When the event was stored in the LRS. Populated by the LRS.
+  - name: updated
+    type: datetime (RFC 9557)
+    requirement: optional
+    description: When the event was last updated in the LRS. Populated by the LRS.
+  - name: authority
+    type: object
+    requirement: optional
+    description: The authority that generated the event (e.g. the client app/developer). Populated
+      by the LRS.
+  - name: attachments
+    type: array
+    requirement: optional
+    description: References to additional files/data associated with the event (stimulus blobs,
+      recording files, timeseries), each with its own metadata. Payloads are not inlined.
+
+# The canonical bdm: vocabulary (BDM deviation D4).
+vocabularies:
+  verbs:
+    - {name: 'bdm:initialized', object_types: ['bdm:RuntimeInstance'], layer: lifecycle, description: 'RuntimeInstance record minted; instrument loaded; engine ready. Nothing shown yet.'}
+    - {name: 'bdm:started', object_types: ['bdm:RuntimeInstance'], layer: lifecycle, description: 'First content actually shown to the participant; starts the experiential clock.'}
+    - {name: 'bdm:paused', object_types: ['bdm:RuntimeInstance'], layer: lifecycle, description: 'RuntimeInstance suspended (extended visibility loss, idle threshold, or explicit pause).'}
+    - {name: 'bdm:resumed', object_types: ['bdm:RuntimeInstance'], layer: lifecycle, description: 'RuntimeInstance continued after a pause. Carries bdm:pause_duration.'}
+    - {name: 'bdm:completed', object_types: ['bdm:RuntimeInstance'], layer: lifecycle, description: 'All required content done. Distinct from submitted.'}
+    - {name: 'bdm:submitted', object_types: ['bdm:RuntimeInstance'], layer: lifecycle, description: 'Data left the engine (POST to Orchestrator acknowledged).'}
+    - {name: 'bdm:abandoned', object_types: ['bdm:RuntimeInstance'], layer: lifecycle, description: 'RuntimeInstance ended without completion. Carries bdm:abandon_reason.'}
+    - {name: 'bdm:presented', object_types: ['bdm:Screen', 'bdm:Panel', 'bdm:Stimulus', 'bdm:Option', 'bdm:Feedback', 'bdm:ConsentForm'], layer: presentation, description: 'Something became perceivable (rendered or played). Typically the response-time anchor for Stimulus/Option.'}
+    - {name: 'bdm:clicked', object_types: ['bdm:Option', 'bdm:UIComponent'], layer: interaction, description: 'Pointer click (mouse, tap, stylus); the lowest-level click event.'}
+    - {name: 'bdm:drag_and_dropped', object_types: ['bdm:Option', 'bdm:UIComponent'], layer: interaction, description: 'A drag-and-drop gesture completed. Carries bdm:drag_source and bdm:drop_target.'}
+    - {name: 'bdm:key_pressed', object_types: ['bdm:UIComponent', 'bdm:Stimulus'], layer: interaction, description: 'A single key event. Carries bdm:key and bdm:key_code.'}
+    - {name: 'bdm:typed', object_types: ['bdm:UIComponent'], layer: interaction, description: 'A text input was committed (debounced). Carries bdm:typed_text and bdm:key_sequence.'}
+    - {name: 'bdm:selected', object_types: ['bdm:Option', 'bdm:UIComponent'], layer: interaction, description: 'Discrete option selected (radio, checkbox, dropdown).'}
+    - {name: 'bdm:deselected', object_types: ['bdm:Option', 'bdm:UIComponent'], layer: interaction, description: 'Discrete option deselected (e.g. checkbox unchecked).'}
+    - {name: 'bdm:adjusted', object_types: ['bdm:UIComponent'], layer: interaction, description: 'A continuous-value control was set (slider, spinner, dial). Carries bdm:current_value.'}
+    - {name: 'bdm:got_focus', object_types: ['bdm:UIComponent', 'bdm:Window'], layer: interaction, description: 'Focus gained by an input control or by the runtime window/tab.'}
+    - {name: 'bdm:lost_focus', object_types: ['bdm:UIComponent', 'bdm:Window'], layer: interaction, description: 'Focus lost. Window-level loss may (by threshold) lead to bdm:paused.'}
+    - {name: 'bdm:consented', object_types: ['bdm:Consent'], layer: interaction, description: 'The agent committed to consent. Carries bdm:consent_text_hash and bdm:consent_scope.'}
+    - {name: 'bdm:trial_started', object_types: ['bdm:Trial'], layer: system, description: 'A trial began. Carries bdm:trial_index and (when applicable) bdm:block_index / bdm:block_type.'}
+    - {name: 'bdm:trial_ended', object_types: ['bdm:Trial'], layer: system, description: 'Trial finalised; a Response (trial) row is created. Carries the canonical response_*, response_time, correct/score, and bdm:response_id. Exactly one per trial.'}
+    - {name: 'bdm:state_changed', object_types: ['bdm:Timer', 'bdm:Scorer', 'bdm:LocaleSwitch'], layer: system, description: 'A software-internal state change not tied to a presentation (timer, scorer, locale switch).'}
+    - {name: 'bdm:recording_started', object_types: ['bdm:Recording'], layer: recording, description: 'A continuous-data recording opened. Carries bdm:source and bdm:sample_rate.'}
+    - {name: 'bdm:recording_ended', object_types: ['bdm:Recording'], layer: recording, description: 'A recording closed and was stored. Carries bdm:recording_url, bdm:recording_sha256, bdm:duration.'}
+    - {name: 'bdm:navigated', object_types: ['bdm:Screen'], layer: navigation, description: 'Participant moved between Screens. Carries bdm:from_screen_id and bdm:to_screen_id.'}
+  object_types:
+    - {name: 'bdm:RuntimeInstance', description: 'One specific runtime execution of an Activity (distinguishes restarts).'}
+    - {name: 'bdm:Screen', description: 'One screen unit (questionnaire page, instructions screen, trial screen).'}
+    - {name: 'bdm:Panel', description: 'A within-screen layout grouping (e.g. matrix rows).'}
+    - {name: 'bdm:Stimulus', description: 'A displayed/audible thing the participant perceives within a trial.'}
+    - {name: 'bdm:Option', description: 'A response option shown to the participant (radio, checkbox, dropdown entry).'}
+    - {name: 'bdm:Trial', description: 'The participant-administered unit; one Response (trial) row per Trial.'}
+    - {name: 'bdm:UIComponent', description: 'An interactive UI control (radio, checkbox, slider, text field, button, key listener).'}
+    - {name: 'bdm:Window', description: 'The runtime window or browser tab (system-wide focus context).'}
+    - {name: 'bdm:Feedback', description: 'A post-response feedback display (correctness, score, band label, explanation).'}
+    - {name: 'bdm:ConsentForm', description: 'The consent form presented for review (what was shown).'}
+    - {name: 'bdm:Consent', description: 'The consent record — the audit entity capturing the agreement (what was committed to).'}
+    - {name: 'bdm:Recording', description: 'A continuous-data capture record (mouse, keyboard, EEG, …).'}
+    - {name: 'bdm:Timer', description: 'An internal software timer (trial timeout, idle detector).'}
+    - {name: 'bdm:Scorer', description: 'A Scorer entity invocation.'}
+    - {name: 'bdm:LocaleSwitch', description: 'A programmatic locale change.'}
+  actor_types:
+    - {name: 'bdm:Agent', description: 'A specific agent — usually the human participant; may be an AI/automated participant.'}
+    - {name: 'bdm:Group', description: 'A collection of agents acting together (xAPI compatibility; rare).'}
+    - {name: 'bdm:Engine', description: 'The runtime software acting on its own (web viewer, Godot viewer, game engine, CLI runner).'}
+    - {name: 'bdm:Orchestrator', description: 'The backend service that schedules Activities, mints RuntimeInstances, manages submission.'}
+    - {name: 'bdm:Researcher', description: 'A researcher acting on the data (post-hoc annotation/correction).'}
