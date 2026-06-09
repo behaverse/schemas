@@ -51,6 +51,18 @@ SCHEMAS = {
         'name': 'Studyflow Schema',
         'icon': 'schema_S.png',
     },
+    'trial': {
+        'has_field_definitions': True,
+        'multi_table': True,  # field-definitions.yaml has `tables`, not flat `fields`
+        'name': 'Trial Schema',
+        'icon': '',
+    },
+    'event': {
+        'has_field_definitions': True,
+        'vocabulary': True,  # envelope `fields` + a bdm: `vocabularies` block
+        'name': 'Event Schema',
+        'icon': '',
+    },
 }
 
 def load_schema_data(schema_name: str) -> Dict[str, Any]:
@@ -58,7 +70,16 @@ def load_schema_data(schema_name: str) -> Dict[str, Any]:
     schema_dir = Path(__file__).parent.parent / schema_name
     
     schema_info = SCHEMAS[schema_name]
-    
+
+    if schema_info.get('multi_table'):
+        data = yaml.safe_load((schema_dir / 'field-definitions.yaml').read_text())
+        return {'metadata': data['schema_metadata'], 'tables': data['tables']}
+
+    if schema_info.get('vocabulary'):
+        data = yaml.safe_load((schema_dir / 'field-definitions.yaml').read_text())
+        return {'metadata': data['schema_metadata'], 'fields': data['fields'],
+                'vocabularies': data.get('vocabularies', {})}
+
     if schema_info['has_field_definitions']:
         # Load from field-definitions.yaml
         definitions_path = schema_dir / 'field-definitions.yaml'
@@ -626,6 +647,88 @@ def generate_sidebar_config(schema_name: str, data: Dict[str, Any]) -> Dict[str,
     
     return sidebar
 
+
+def _mdx_cell(text: str) -> str:
+    """Escape a string for safe use inside an MDX markdown table cell."""
+    s = (text or '').replace('|', '\\|').replace('\n', ' ')
+    s = s.replace('{', '&#123;').replace('}', '&#125;').replace('<', '&lt;')
+    return s.strip()
+
+
+def _schema_page_header(schema_name: str, metadata: Dict[str, Any]) -> str:
+    version_str = f"v{metadata['version']}" if metadata.get('version') else "(not versioned)"
+    return f"""---
+id: index
+title: {schema_name}
+sidebar_label: Overview
+slug: /{schema_name}
+---
+
+<!-- THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY. -->
+
+# {schema_name}
+
+**Version**: {version_str}
+**Namespace**: `{metadata['namespace']}`
+
+{metadata['description']}
+"""
+
+
+def generate_multitable_index(schema_name: str, data: Dict[str, Any]) -> str:
+    """Index page for a multi-table schema (trial): one section per table."""
+    out = [_schema_page_header(schema_name, data['metadata'])]
+    for table in data['tables']:
+        out.append(f"\n## {table['name']}\n")
+        if table.get('description'):
+            out.append(f"{table['description']}\n")
+        for note in table.get('notes') or []:
+            out.append(f"\n:::note\n{note}\n:::\n")
+        out.append("| Field | Type | Requirement | Description |")
+        out.append("|:------|:-----|:------------|:------------|")
+        for field in table['fields']:
+            cell = _mdx_cell(field.get('description', ''))
+            if field.get('range'):
+                cell = f"{cell} <br/>*Range:* {_mdx_cell(field['range'])}"
+            out.append(f"| `{field['name']}` | {_mdx_cell(field.get('type', ''))} "
+                       f"| {field.get('requirement', 'optional')} | {cell} |")
+        out.append("")
+    return "\n".join(out)
+
+
+def generate_vocabulary_index(schema_name: str, data: Dict[str, Any]) -> str:
+    """Index page for the event schema: envelope fields + the bdm: vocabulary."""
+    vocab = data.get('vocabularies', {})
+    out = [_schema_page_header(schema_name, data['metadata'])]
+    out.append("\n## Event envelope\n")
+    out.append("| Field | Type | Requirement | Description |")
+    out.append("|:------|:-----|:------------|:------------|")
+    for field in data['fields']:
+        out.append(f"| `{field['name']}` | {_mdx_cell(field.get('type', ''))} "
+                   f"| {field.get('requirement', 'optional')} | {_mdx_cell(field.get('description', ''))} |")
+    if vocab.get('verbs'):
+        out.append("\n## Verbs\n")
+        out.append("| Verb | Layer | Object types | Description |")
+        out.append("|:-----|:------|:-------------|:------------|")
+        for x in vocab['verbs']:
+            ots = ', '.join(f"`{o}`" for o in x.get('object_types', []))
+            out.append(f"| `{x['name']}` | {x.get('layer', '')} | {ots} "
+                       f"| {_mdx_cell(x.get('description', ''))} |")
+    for key, title in (('object_types', 'Object types'), ('actor_types', 'Actor types')):
+        if vocab.get(key):
+            out.append(f"\n## {title}\n")
+            out.append(f"| {title[:-1]} | Description |")
+            out.append("|:------|:------------|")
+            for x in vocab[key]:
+                out.append(f"| `{x['name']}` | {_mdx_cell(x.get('description', ''))} |")
+    return "\n".join(out)
+
+
+def generate_simple_sidebar(schema_name: str) -> List[Dict[str, Any]]:
+    """Sidebar for a single-page (index-only) schema."""
+    return [{'type': 'doc', 'id': f'{schema_name}/index', 'label': 'Overview'}]
+
+
 def main():
     """Main execution function"""
     dry_run = '--check' in sys.argv
@@ -658,7 +761,20 @@ def main():
             schema_docs_dir = docs_dir / schema_name
             if not dry_run:
                 schema_docs_dir.mkdir(parents=True, exist_ok=True)
-            
+
+            # Multi-table (trial) / vocabulary (event) schemas: a single index page
+            # (one section per table / the bdm: vocabulary), no per-property pages.
+            if schema_info.get('multi_table') or schema_info.get('vocabulary'):
+                if schema_info.get('multi_table'):
+                    index_content = generate_multitable_index(schema_name, data)
+                else:
+                    index_content = generate_vocabulary_index(schema_name, data)
+                if not dry_run:
+                    (schema_docs_dir / 'index.md').write_text(index_content)
+                sidebar_configs[f"{schema_name}Sidebar"] = generate_simple_sidebar(schema_name)
+                print(f"   ✓ Generated index page (single-page schema)")
+                continue
+
             # Generate index page
             index_content = generate_index_page(schema_name, data)
             index_path = schema_docs_dir / 'index.md'

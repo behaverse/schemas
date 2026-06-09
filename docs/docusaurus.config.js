@@ -88,6 +88,18 @@ const config = {
             label: 'studyflow',
           },
           {
+            type: 'docSidebar',
+            sidebarId: 'trialSidebar',
+            position: 'left',
+            label: 'trial',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'eventSidebar',
+            position: 'left',
+            label: 'event',
+          },
+          {
             href: 'https://github.com/behaverse/schemas',
             label: 'GitHub',
             position: 'right',
@@ -115,6 +127,14 @@ const config = {
               {
                 label: 'studyflow',
                 to: '/studyflow',
+              },
+              {
+                label: 'trial',
+                to: '/trial',
+              },
+              {
+                label: 'event',
+                to: '/event',
               },
             ],
           },
