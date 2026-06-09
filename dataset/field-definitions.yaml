@@ -67,6 +67,11 @@ field_groups:
 
 fields:
   # Core Metadata
+  - name: "@type"
+    group: core_metadata
+    type: schema:Dataset
+    requirement: optional
+    description: JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverability
   - name: name
     group: core_metadata
     type: string
@@ -134,7 +139,7 @@ fields:
       
   - name: license
     group: core_metadata
-    type: string
+    type: enum
     requirement: required
     description: License identifier in SPDX format
     mappings:
@@ -547,7 +552,7 @@ fields:
       
   - name: population_category
     group: population
-    type: string
+    type: enum
     requirement: optional
     description: Population type (clinical vs healthy)
     mappings:
@@ -788,7 +793,7 @@ fields:
   # Study Design
   - name: study_design_type
     group: study_design
-    type: string
+    type: enum
     requirement: recommended
     description: Study design category
     mappings:
@@ -969,7 +974,7 @@ fields:
   # HuggingFace-Specific
   - name: size_category
     group: huggingface
-    type: string
+    type: enum
     requirement: optional
     description: HF size bucket
     mappings:

@@ -30,6 +30,11 @@ field_groups:
 # Field definitions
 fields:
   # Core Metadata
+  - name: "@type"
+    group: core_metadata
+    type: schema:DataCatalog
+    requirement: optional
+    description: JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverability
   - name: name
     group: core_metadata
     type: string
