@@ -5,6 +5,15 @@ All notable changes to the BCSV schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0608] - 2026-06-08
+
+### Breaking
+- Table-level `description` is now **required** — a bcsv metadata document must describe what the table is about (aligns with catalog and dataset, which already require it). Conformance fixtures were regenerated to include a `description`; consumer packages should re-vendor the schema and fixtures together.
+
+### Changed
+- `$id` updated to `https://behaverse.org/schemas/bcsv/v26.0608/schema.json`.
+- `README.md` current version updated to v26.0608.
+
 ## [26.0605] - 2026-06-05
 
 ### Added

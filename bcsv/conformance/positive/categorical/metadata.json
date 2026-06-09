@@ -1,6 +1,7 @@
 {
   "@context": "https://behaverse.org/schemas/bcsv/context.jsonld",
   "url": "data.csv",
+  "description": "Conformance fixture for the bcsv schema.",
   "table_schema": {
     "columns": [
       {

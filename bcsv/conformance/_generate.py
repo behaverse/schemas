@@ -78,6 +78,7 @@ def _meta(columns: list[dict], **extra: Any) -> dict:
     meta: dict[str, Any] = {
         "@context": CONTEXT_URL,
         "url": "data.csv",
+        "description": "Conformance fixture for the bcsv schema.",
         "table_schema": {"columns": columns, **extra.pop("table_schema_extra", {})},
     }
     meta.update(extra)
