@@ -1,10 +1,9 @@
 name: Validate schemas
 
-# Guards the source-of-truth contract on `main`, and deploys on push:
+# Guards the source-of-truth contract on `main` (deploy lives in deploy-on-main.yml):
 #   1. generated artifacts (schema.json / context.jsonld / field-definitions.json) must
 #      be in sync with their field-definitions.yaml — i.e. regeneration produces no diff;
-#   2. every schema.json is well-formed and its examples validate;
-#   3. on a push to `main` (after 1–2 pass), trigger the gh-pages docs deploy.
+#   2. every schema.json is well-formed and its examples validate.
 
 on:
   pull_request:
@@ -34,18 +33,3 @@ jobs:
 
       - name: Schemas are well-formed and examples validate
         run: python scripts/validate_schemas.py
-
-  deploy-docs:
-    # On a push to main (not on PRs), once validation passes, trigger the docs deploy.
-    # The deploy workflow lives only on `gh-pages` (it builds the Docusaurus site from
-    # there and fetches schema content from `main`), so we dispatch it via the API.
-    needs: validate
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-    steps:
-      - name: Trigger the gh-pages deploy
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh workflow run deploy-docs.yml --ref gh-pages -R "${{ github.repository }}"

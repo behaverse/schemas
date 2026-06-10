@@ -52,23 +52,25 @@ its source.
 
 ## CI & deployment
 
-`/.github/workflows/validate-schemas.yml` runs on every PR and push to `main`:
+Two workflows guard and publish `main`:
 
-1. **Drift guard** — runs each generator in `--check` mode; fails if any generated file
-   is out of sync with its `field-definitions.yaml`.
-2. **Validation** — `scripts/validate_schemas.py` checks every `schema.json` is
-   well-formed (Draft-07 or 2020-12, per its `$schema`) and that its `examples/*` validate.
-3. **Deploy** — on a **push to `main`** (after 1–2 pass), it triggers the docs deploy.
-   **So merging to `main` publishes the site automatically** — you no longer need to
-   trigger a deploy by hand.
+- **`/.github/workflows/validate-schemas.yml`** (every PR and push to `main`):
+  1. **Drift guard** — runs each generator in `--check` mode; fails if any generated file
+     is out of sync with its `field-definitions.yaml`.
+  2. **Validation** — `scripts/validate_schemas.py` checks every `schema.json` is
+     well-formed (Draft-07 or 2020-12, per its `$schema`) and that its `examples/*` validate.
+- **`/.github/workflows/deploy-on-main.yml`** (every push to `main`): builds and publishes
+  the docs site. **So merging to `main` publishes automatically** — no manual deploy needed.
 
 The Docusaurus site itself lives on the **`gh-pages`** branch (its `docs/`,
-`scripts/generate_docs.py`, and `deploy-docs.yml`). The deploy fetches the schema content
-from `main` at build time, so schema edits only need to land on `main`. To deploy manually
-(e.g. after editing the site on `gh-pages`):
+`scripts/generate_docs.py`, and `deploy-docs.yml`). Both deploy workflows check out
+`gh-pages` and fetch the schema content from `main` at build time, so schema edits only
+need to land on `main`. There are **two copies of the build job** —
+`gh-pages:deploy-docs.yml` handles pushes to `gh-pages` (manual site edits),
+`main:deploy-on-main.yml` handles pushes to `main`; keep them in sync. To deploy manually:
 
 ```bash
-gh workflow run deploy-docs.yml --ref gh-pages
+gh workflow run deploy-on-main.yml --ref main      # or: deploy-docs.yml --ref gh-pages
 ```
 
 Verify a deploy against `https://behaverse.github.io/schemas/...` first — `behaverse.org`
