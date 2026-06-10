@@ -248,3 +248,36 @@ main article table thead th,
 article table thead th {
   text-align: left !important;
 }
+
+/* --- Non-4-column reference tables ---
+   The rules above force 4-column widths (25/15/16/44) on every article table, which
+   squashes narrower tables (e.g. the event vocabulary's Term | Description, where the
+   description was being forced to 15%). Give 2- and 3-column tables sane proportions. */
+
+/* 2 columns: Term | Description (event vocabulary; property-detail tables already 30/70) */
+article table:has(thead th:nth-child(2):last-child) th:nth-child(1),
+article table:has(thead th:nth-child(2):last-child) td:nth-child(1) {
+  width: 30% !important;
+  min-width: 30% !important;
+  max-width: 30% !important;
+}
+article table:has(thead th:nth-child(2):last-child) th:nth-child(2),
+article table:has(thead th:nth-child(2):last-child) td:nth-child(2) {
+  width: 70% !important;
+  min-width: 70% !important;
+  max-width: 70% !important;
+}
+
+/* 3 columns: e.g. trial Overview (Table | Fields | Description) — col 1 stays 25% */
+article table:has(thead th:nth-child(3):last-child) th:nth-child(2),
+article table:has(thead th:nth-child(3):last-child) td:nth-child(2) {
+  width: 15% !important;
+  min-width: 15% !important;
+  max-width: 15% !important;
+}
+article table:has(thead th:nth-child(3):last-child) th:nth-child(3),
+article table:has(thead th:nth-child(3):last-child) td:nth-child(3) {
+  width: 60% !important;
+  min-width: 60% !important;
+  max-width: 60% !important;
+}
