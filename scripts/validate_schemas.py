@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Validate the JSON-Schema-based schemas and their bundled examples.
 
-For each schema directory: assert `schema.json` is a well-formed Draft-07 schema,
-then validate every `examples/*.json` against it. Custom annotation keywords
+For each schema directory: assert `schema.json` is a well-formed schema (Draft-07 or
+2020-12, chosen from its `$schema`), then validate every `examples/*.json` against it
+(trial has no examples, so only well-formedness is checked). Custom annotation keywords
 (e.g. `equivalentProperty`) are ignored by the validator, as are string formats
 (uri/date/email) — we check structure, matching the `ajv --strict=false` policy.
 
@@ -20,7 +21,17 @@ from pathlib import Path
 import jsonschema
 
 ROOT = Path(__file__).resolve().parent.parent
-SCHEMAS = ["bcsv", "catalog", "dataset"]
+SCHEMAS = ["bcsv", "catalog", "dataset", "trial", "event"]
+
+
+def _validator_cls(schema: dict):
+    """Pick the JSON Schema draft validator from the schema's `$schema` (default Draft-07)."""
+    s = schema.get("$schema", "")
+    if "2020-12" in s:
+        return jsonschema.Draft202012Validator
+    if "2019-09" in s:
+        return jsonschema.Draft201909Validator
+    return jsonschema.Draft7Validator
 
 
 def main() -> int:
@@ -34,14 +45,15 @@ def main() -> int:
             continue
 
         schema = json.loads(schema_path.read_text())
+        vcls = _validator_cls(schema)
         try:
-            jsonschema.Draft7Validator.check_schema(schema)
-            print(f"✓ {name}/schema.json is a well-formed Draft-07 schema")
+            vcls.check_schema(schema)
+            print(f"✓ {name}/schema.json is a well-formed schema ({vcls.__name__})")
         except jsonschema.exceptions.SchemaError as e:
             failures.append(f"{name}/schema.json is not well-formed: {e.message}")
             continue
 
-        validator = jsonschema.Draft7Validator(schema)
+        validator = vcls(schema)
         for example in sorted((sdir / "examples").glob("*.json")):
             errors = sorted(validator.iter_errors(json.loads(example.read_text())),
                             key=lambda e: e.path)
