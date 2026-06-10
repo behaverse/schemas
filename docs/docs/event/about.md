@@ -10,6 +10,15 @@ sidebar_label: About
 
 The **Behaverse Event Schema** captures *raw experimental events* for cognitive tests, questionnaires, and games. It is the **Events** layer of the [Behaverse Data Model (BDM)](https://behaverse.org/data-model); the task-level aggregates analysts usually work with live in the [trial schema](https://behaverse.org/schemas/trial).
 
+## What we borrow vs. what we define
+
+It helps to separate the two halves of an event:
+
+- **The envelope — borrowed from [xAPI](http://adlnet.gov/projects/xapi/) (external standard).** Every event is an xAPI *Statement*: an `actor / verb / object` triple plus standard fields (`result`, `context`, `timestamp`, `stored`, `authority`, `attachments`, …). Behaverse uses these **as-is** — we don't define them. They're the *container*.
+- **The vocabulary — defined by Behaverse (`bdm:`).** What actually makes an event a *Behaverse* event is the controlled `bdm:` vocabulary that fills the envelope: the **verbs**, **object types**, and **actor types**, plus the `bdm:*` extension keys. This is the part this schema owns, and it's the focus of the Overview.
+
+In short: **xAPI gives the shape; `bdm:` gives the meaning.** Terms are written as CURIEs in the data (`bdm:initialized`), but the docs drop the prefix for readability since every term in those tables is `bdm:`-namespaced.
+
 ## Motivation
 
 Behaverse spans many task types, each historically logging events its own way. The event schema unifies them under a single **xAPI-style envelope** — *actor / verb / object* — carrying one canonical `bdm:` vocabulary, so a single set of analytics tooling can process every domain. Continuous signals (mouse, keyboard, EEG, …) are referenced via `attachments` rather than inlined, keeping each event small.

@@ -740,17 +740,42 @@ def generate_member_page(field: Dict[str, Any], schema_name: str, section_note: 
     return mdx
 
 
+def _strip_bdm(name: str) -> str:
+    """Display form of a vocabulary term: drop the `bdm:` CURIE prefix (stated once per page)."""
+    s = str(name)
+    return s.split(':', 1)[1] if s.startswith('bdm:') else s
+
+
+def _doc_frontmatter(doc_id: str, title: str) -> str:
+    """Frontmatter for a standalone generated page (a table page / a vocabulary page)."""
+    return (f"---\nid: {doc_id}\ntitle: {title}\nsidebar_label: {title}\n---\n\n"
+            f"<!-- THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY. -->\n")
+
+
 def generate_trial_pages(schema_name: str, data: Dict[str, Any],
                          schema_docs_dir: Path, dry_run: bool) -> List[Dict[str, Any]]:
-    """Trial (multi-table): one sidebar category per table, one page per field."""
+    """Trial (multi-table): an Overview hub, one page per table, one page per field.
+
+    Each table is a sidebar category whose label links to that table's page (Docusaurus
+    categories can't link to a #anchor), so clicking the header opens the table; the
+    per-field pages are nested under it.
+    """
     metadata = data['metadata']
     tables = data['tables']
     n_fields = sum(len(t.get('fields', [])) for t in tables)
 
-    out = [_schema_page_header(schema_name, metadata)]
-    out.append(f"\nThis schema is organised as **{len(tables)} tables** "
-               f"({n_fields} fields total). Each table is a section below and a group in "
-               f"the sidebar; click a field for its details.\n")
+    # --- Overview: a hub linking to each table page ---
+    idx = [_schema_page_header(schema_name, metadata)]
+    idx.append(f"\nTrial-level data is organised as **{len(tables)} tidy tables** "
+               f"({n_fields} fields total), joined by `_id` foreign keys. Open a table "
+               f"to browse its fields.\n")
+    idx.append("| Table | Fields | Description |")
+    idx.append("|:------|------:|:------------|")
+    for t in tables:
+        idx.append(f"| [{t['name']}]({_slug(t['name'])}.md) | {len(t.get('fields', []))} "
+                   f"| {_mdx_cell(t.get('description', ''))} |")
+    if not dry_run:
+        (schema_docs_dir / 'index.md').write_text("\n".join(idx))
 
     sidebar: List[Dict[str, Any]] = [
         {'type': 'doc', 'id': f'{schema_name}/index', 'label': 'Overview'},
@@ -759,107 +784,122 @@ def generate_trial_pages(schema_name: str, data: Dict[str, Any],
 
     for table in tables:
         tslug = _slug(table['name'])
-        out.append(f"\n## {table['name']}\n")
+        # --- per-table page: heading, description, notes, field table ---
+        tp = [_doc_frontmatter(tslug, table['name']), f"\n# {table['name']}\n"]
         if table.get('description'):
-            out.append(f"{_mdx_text(table['description'])}\n")
+            tp.append(f"\n{_mdx_text(table['description'])}\n")
         for note in table.get('notes') or []:
-            out.append(f"\n:::note\n{_mdx_text(str(note))}\n:::\n")
-        out.append("| Field | Type | Requirement | Description |")
-        out.append("|:------|:-----|:------------|:------------|")
+            tp.append(f"\n:::note\n{_mdx_text(str(note))}\n:::\n")
+        tp.append("\n| Field | Type | Requirement | Description |")
+        tp.append("|:------|:-----|:------------|:------------|")
         items: List[str] = []
         for field in table['fields']:
             fname = field['name']
             pname = _page_name(fname)
-            out.append(f"| [{fname}]({schema_name}/{tslug}/{pname}) "
-                       f"| {_mdx_cell(field.get('type', ''))} "
-                       f"| {field.get('requirement', 'optional')} "
-                       f"| {_mdx_cell(field.get('description', ''))} |")
+            tp.append(f"| [{fname}]({tslug}/{pname}.md) "
+                      f"| {_mdx_cell(field.get('type', ''))} "
+                      f"| {field.get('requirement', 'optional')} "
+                      f"| {_mdx_cell(field.get('description', ''))} |")
             if not dry_run:
                 tdir = schema_docs_dir / tslug
                 tdir.mkdir(parents=True, exist_ok=True)
-                note = f"Part of the **{table['name']}** table in the `{schema_name}` schema."
+                note = (f"Part of the **[{table['name']}](../{tslug}.md)** table in the "
+                        f"`{schema_name}` schema.")
                 (tdir / f"{pname}.md").write_text(generate_member_page(field, schema_name, note))
             items.append(f"{schema_name}/{tslug}/{pname}")
-        out.append("")
-        sidebar.append({'type': 'category', 'label': table['name'],
-                        'collapsed': True, 'items': items})
+        if not dry_run:
+            (schema_docs_dir / f"{tslug}.md").write_text("\n".join(tp) + "\n")
+        sidebar.append({'type': 'category', 'label': table['name'], 'collapsed': True,
+                        'link': {'type': 'doc', 'id': f'{schema_name}/{tslug}'},
+                        'items': items})
 
-    if not dry_run:
-        (schema_docs_dir / 'index.md').write_text("\n".join(out))
     return sidebar
 
 
 def generate_event_pages(schema_name: str, data: Dict[str, Any],
                          schema_docs_dir: Path, dry_run: bool) -> List[Dict[str, Any]]:
-    """Event (vocabulary): envelope field pages + verb/object/actor reference pages."""
+    """Event: foreground the Behaverse `bdm:` controlled vocabulary (what we define); the
+    xAPI Statement envelope is the external container, shown secondarily + explained in About."""
     metadata = data['metadata']
     fields = data['fields']
     vocab = data.get('vocabularies', {})
+    ex = _strip_bdm(vocab['verbs'][0]['name']) if vocab.get('verbs') else 'example'
+    bdm_note = (f"All terms live in the `bdm:` namespace; the canonical id of "
+                f"`{ex}` is `bdm:{ex}`.")
 
-    out = [_schema_page_header(schema_name, metadata)]
+    idx = [_schema_page_header(schema_name, metadata)]
+    idx.append("\nA Behaverse **event** is an [xAPI](http://adlnet.gov/projects/xapi/) "
+               "*Statement* — an `actor` / `verb` / `object` envelope — carrying the "
+               "Behaverse **`bdm:` controlled vocabulary**. The envelope is the standard "
+               "container (defined by xAPI); the vocabulary below is **what Behaverse "
+               "defines**. See [About](about.md) for the xAPI background.\n")
+
     sidebar: List[Dict[str, Any]] = [
         {'type': 'doc', 'id': f'{schema_name}/index', 'label': 'Overview'},
         {'type': 'doc', 'id': f'{schema_name}/about', 'label': 'About'},
     ]
 
-    # --- Event envelope: one page per field, grouped under a sidebar category ---
-    out.append("\n## Event envelope\n")
-    out.append("The envelope every event shares. Click a field for its details.\n")
-    out.append("| Field | Type | Requirement | Description |")
-    out.append("|:------|:-----|:------------|:------------|")
+    def write_page(slug: str, title: str, body: str) -> None:
+        if not dry_run:
+            (schema_docs_dir / f"{slug}.md").write_text(
+                _doc_frontmatter(slug, title) + f"\n# {title}\n\n{body}\n")
+
+    # --- Controlled vocabulary (the focus) ---
+    idx.append("\n## Controlled vocabulary (`bdm:`) — defined by Behaverse\n")
+    idx.append(bdm_note + "\n")
+    idx.append(f"- **[Verbs](verbs.md)** — {len(vocab.get('verbs', []))} actions an actor can perform.")
+    idx.append(f"- **[Object types](object-types.md)** — {len(vocab.get('object_types', []))} kinds of thing an event is about.")
+    idx.append(f"- **[Actor types](actor-types.md)** — {len(vocab.get('actor_types', []))} kinds of actor.\n")
+
+    vocab_items: List[Dict[str, Any]] = []
+    if vocab.get('verbs'):
+        rows = [bdm_note + "\n", "| Verb | Layer | Object types | Description |",
+                "|:-----|:------|:-------------|:------------|"]
+        for x in vocab['verbs']:
+            ots = ', '.join(f"`{_strip_bdm(o)}`" for o in x.get('object_types', []))
+            rows.append(f"| `{_strip_bdm(x['name'])}` | {x.get('layer', '')} | {ots} "
+                        f"| {_mdx_cell(x.get('description', ''))} |")
+        write_page('verbs', 'Verbs', "\n".join(rows))
+        vocab_items.append({'type': 'doc', 'id': f'{schema_name}/verbs', 'label': 'Verbs'})
+
+    for key, slug, title in (('object_types', 'object-types', 'Object types'),
+                             ('actor_types', 'actor-types', 'Actor types')):
+        if vocab.get(key):
+            rows = [bdm_note + "\n", f"| {title[:-1]} | Description |", "|:------|:------------|"]
+            for x in vocab[key]:
+                rows.append(f"| `{_strip_bdm(x['name'])}` | {_mdx_cell(x.get('description', ''))} |")
+            write_page(slug, title, "\n".join(rows))
+            vocab_items.append({'type': 'doc', 'id': f'{schema_name}/{slug}', 'label': title})
+
+    if vocab_items:
+        sidebar.append({'type': 'category', 'label': 'Controlled vocabulary (bdm:)',
+                        'collapsed': False, 'items': vocab_items})
+
+    # --- xAPI envelope (external container, shown secondarily) ---
+    idx.append("\n## Event envelope (xAPI — external)\n")
+    idx.append("These are the standard **xAPI Statement** fields; Behaverse uses them as-is. "
+               "They are the *container*, not what this schema defines — see [About](about.md).\n")
+    idx.append("| Field | Type | Requirement | Description |")
+    idx.append("|:------|:-----|:------------|:------------|")
     env_items: List[str] = []
     for field in fields:
         fname = field['name']
         pname = _page_name(fname)
-        out.append(f"| [{fname}]({schema_name}/envelope/{pname}) "
+        idx.append(f"| [{fname}](envelope/{pname}.md) "
                    f"| {_mdx_cell(field.get('type', ''))} "
                    f"| {field.get('requirement', 'optional')} "
                    f"| {_mdx_cell(field.get('description', ''))} |")
         if not dry_run:
             edir = schema_docs_dir / 'envelope'
             edir.mkdir(parents=True, exist_ok=True)
-            note = f"Part of the **event envelope** in the `{schema_name}` schema."
+            note = "Part of the **xAPI Statement envelope** (external standard) used by `event`."
             (edir / f"{pname}.md").write_text(generate_member_page(field, schema_name, note))
         env_items.append(f"{schema_name}/envelope/{pname}")
-    out.append("")
-    sidebar.append({'type': 'category', 'label': 'Event envelope',
-                    'collapsed': True, 'items': env_items})
-
-    # --- bdm: vocabulary: one reference page per category ---
-    def write_page(slug: str, title: str, body: str) -> None:
-        if dry_run:
-            return
-        (schema_docs_dir / f"{slug}.md").write_text(
-            f"---\nid: {slug}\ntitle: {title}\nsidebar_label: {title}\n---\n\n"
-            f"<!-- THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY. -->\n\n"
-            f"# {title}\n\n{body}\n")
-
-    out.append("\n## Vocabulary\n")
-    out.append(f"The `bdm:` controlled vocabulary: [Verbs]({schema_name}/verbs), "
-               f"[Object types]({schema_name}/object-types), "
-               f"[Actor types]({schema_name}/actor-types).\n")
-
-    if vocab.get('verbs'):
-        rows = ["| Verb | Layer | Object types | Description |",
-                "|:-----|:------|:-------------|:------------|"]
-        for x in vocab['verbs']:
-            ots = ', '.join(f"`{o}`" for o in x.get('object_types', []))
-            rows.append(f"| `{x['name']}` | {x.get('layer', '')} | {ots} "
-                        f"| {_mdx_cell(x.get('description', ''))} |")
-        write_page('verbs', 'Verbs', "\n".join(rows))
-        sidebar.append({'type': 'doc', 'id': f'{schema_name}/verbs', 'label': 'Verbs'})
-
-    for key, slug, title in (('object_types', 'object-types', 'Object types'),
-                             ('actor_types', 'actor-types', 'Actor types')):
-        if vocab.get(key):
-            rows = [f"| {title[:-1]} | Description |", "|:------|:------------|"]
-            for x in vocab[key]:
-                rows.append(f"| `{x['name']}` | {_mdx_cell(x.get('description', ''))} |")
-            write_page(slug, title, "\n".join(rows))
-            sidebar.append({'type': 'doc', 'id': f'{schema_name}/{slug}', 'label': title})
+    sidebar.append({'type': 'category', 'label': 'xAPI envelope', 'collapsed': True,
+                    'items': env_items})
 
     if not dry_run:
-        (schema_docs_dir / 'index.md').write_text("\n".join(out))
+        (schema_docs_dir / 'index.md').write_text("\n".join(idx))
     return sidebar
 
 
