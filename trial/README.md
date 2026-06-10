@@ -33,8 +33,8 @@ A trial is a single instance of a participant interacting with a task. Trial inf
 |------|--------|---------|
 | [`field-definitions.yaml`](field-definitions.yaml) | ✅ | Source of truth (hand-maintained). |
 | [`field-definitions.json`](field-definitions.json) | ✅ generated | Render contract consumed by `behaverse/data-model` and the docs site. |
-| `schema.json` | ⏳ planned | JSON Schema for validation (per table). |
-| `context.jsonld` | ⏳ planned | JSON-LD context. |
+| [`schema.json`](schema.json) | ✅ generated | JSON Schema (Draft-07): per-table definitions + a top-level table→rows object. Validates types + required fields (not enums/ranges/foreign keys — the source is coarse). |
+| `context.jsonld` | ⏳ planned | JSON-LD context (needs semantic `mappings` on the fields first). |
 
 ## Status & follow-ups
 
