@@ -36,7 +36,7 @@ jobs:
           git checkout origin/main -- bcsv/ catalog/ dataset/ studyflow/ trial/ event/
       
       - name: Setup Python with uv
-        uses: astral-sh/setup-uv@v8
+        uses: astral-sh/setup-uv@v8.2.0  # no moving `v8` major tag is published; pin the full version
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
