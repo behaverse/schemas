@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://behaverse.org/schemas/event/v26.0608/schema.json",
+  "version": "26.0608",
   "title": "Behaverse Event Data (BDM Events extension)",
   "description": "Per OD-19 (resolved 2026-06-05), BDM Events vocabulary covering questionnaires, cognitive tasks, and video games under a single bdm: namespace.",
   "oneOf": [

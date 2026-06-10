@@ -16,6 +16,10 @@ All notable changes to the event schema are documented here. CalVer `vYY.MMDD`.
 - Relocated from the Behaverse questionnaire project (`schemas/events` v26.0605) and **canonicalized to `event` (singular)**: `$id` and namespace rewritten from `…/schemas/events/v26.0605` to `…/schemas/event/v26.0608`.
 - Field named `actor` (not `agent`) from the outset — BDM deviation D5.
 
+### Fixed
+
+- Added the top-level `version` field (`"26.0608"`) to `schema.json`; it was missing, so the value now matches the `$id` and the convention used by bcsv/catalog/dataset.
+
 ### Notes
 
 - Realizes BDM deviations D4 (canonical events vocabulary), D5 (`agent` → `actor`), D6 (scoping hierarchy).
