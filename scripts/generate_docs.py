@@ -28,6 +28,7 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 import sys
+import re
 
 # Schema directories to process
 SCHEMAS = {
@@ -655,6 +656,11 @@ def _mdx_cell(text: str) -> str:
     return s.strip()
 
 
+def _mdx_text(text: str) -> str:
+    """Escape JSX-sensitive characters for MDX body prose (newlines preserved)."""
+    return (text or '').replace('<', '&lt;').replace('{', '&#123;').replace('}', '&#125;')
+
+
 def _schema_page_header(schema_name: str, metadata: Dict[str, Any]) -> str:
     version_str = f"v{metadata['version']}" if metadata.get('version') else "(not versioned)"
     return f"""---
@@ -675,58 +681,186 @@ slug: /{schema_name}
 """
 
 
-def generate_multitable_index(schema_name: str, data: Dict[str, Any]) -> str:
-    """Index page for a multi-table schema (trial): one section per table."""
-    out = [_schema_page_header(schema_name, data['metadata'])]
-    for table in data['tables']:
+def _slug(name: str) -> str:
+    """Path/URL-safe slug for a table or section name (CamelCase -> kebab-case)."""
+    s = re.sub(r'(?<!^)(?=[A-Z])', '-', str(name))
+    s = re.sub(r'[^A-Za-z0-9]+', '-', s).strip('-').lower()
+    return s or 'item'
+
+
+def _page_name(fname: str) -> str:
+    """Docusaurus-safe file basename: a field called `index`/`readme` would otherwise
+    become a folder-index doc and collapse its id, breaking the sidebar reference."""
+    return f"{fname}-field" if fname.lower() in ('index', 'readme') else fname
+
+
+def _member_frontmatter(page_id: str, display_name: str) -> str:
+    """Frontmatter for a per-member page; `id` drives routing, `display_name` is shown."""
+    reserved = ['null', 'true', 'false', 'yes', 'no', 'on', 'off']
+    def q(v: str) -> str:
+        return f'"{v}"' if (v.startswith('@') or v.lower() in reserved) else v
+    return f"---\nid: {q(page_id)}\ntitle: {q(display_name)}\nsidebar_label: {q(display_name)}\n---\n"
+
+
+def generate_member_page(field: Dict[str, Any], schema_name: str, section_note: str) -> str:
+    """Per-field detail page for a trial table field or an event envelope field.
+
+    Mirrors the property pages (badge + Details table) while carrying the member-level
+    attributes trial/event use (range, categories, allowed values, notes).
+    """
+    name = field['name']
+    description = field.get('description', 'No description available.')
+    field_type = field.get('type', 'string')
+    requirement = field.get('requirement', 'optional')
+
+    mdx = _member_frontmatter(_page_name(name), name)
+    mdx += "\n<!-- THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY. -->\n\n"
+    mdx += f"# {name}\n\n{generate_status_badge(requirement)}\n\n{_mdx_text(description)}\n\n"
+    mdx += f":::info\n{section_note}\n:::\n\n"
+    mdx += "## Details\n\n<div className=\"property-details\">\n\n"
+    mdx += "| Property | Value |\n|:---------|:------|\n"
+    mdx += f"| **Type** | `{field_type}` |\n"
+    mdx += f"| **Requirement** | {requirement.lower()} |\n"
+    if field.get('range'):
+        mdx += f"| **Range** | {_mdx_cell(str(field['range']))} |\n"
+    if field.get('categories'):
+        cats = ', '.join(f'`{c}`' for c in field['categories'])
+        mdx += f"| **Categories** | {cats} |\n"
+    mdx += "\n</div>\n"
+
+    constraints = field.get('constraints', {}) or {}
+    if constraints.get('enum'):
+        mdx += "\n## Allowed values\n\n" + ', '.join(f'`{v}`' for v in constraints['enum']) + "\n"
+
+    notes = field.get('notes')
+    if notes:
+        mdx += "\n## Notes\n\n"
+        for n in (notes if isinstance(notes, list) else [notes]):
+            mdx += f"- {_mdx_cell(str(n))}\n"
+    return mdx
+
+
+def generate_trial_pages(schema_name: str, data: Dict[str, Any],
+                         schema_docs_dir: Path, dry_run: bool) -> List[Dict[str, Any]]:
+    """Trial (multi-table): one sidebar category per table, one page per field."""
+    metadata = data['metadata']
+    tables = data['tables']
+    n_fields = sum(len(t.get('fields', [])) for t in tables)
+
+    out = [_schema_page_header(schema_name, metadata)]
+    out.append(f"\nThis schema is organised as **{len(tables)} tables** "
+               f"({n_fields} fields total). Each table is a section below and a group in "
+               f"the sidebar; click a field for its details.\n")
+
+    sidebar: List[Dict[str, Any]] = [
+        {'type': 'doc', 'id': f'{schema_name}/index', 'label': 'Overview'},
+        {'type': 'doc', 'id': f'{schema_name}/about', 'label': 'About'},
+    ]
+
+    for table in tables:
+        tslug = _slug(table['name'])
         out.append(f"\n## {table['name']}\n")
         if table.get('description'):
-            out.append(f"{table['description']}\n")
+            out.append(f"{_mdx_text(table['description'])}\n")
         for note in table.get('notes') or []:
-            out.append(f"\n:::note\n{note}\n:::\n")
+            out.append(f"\n:::note\n{_mdx_text(str(note))}\n:::\n")
         out.append("| Field | Type | Requirement | Description |")
         out.append("|:------|:-----|:------------|:------------|")
+        items: List[str] = []
         for field in table['fields']:
-            cell = _mdx_cell(field.get('description', ''))
-            if field.get('range'):
-                cell = f"{cell} <br/>*Range:* {_mdx_cell(field['range'])}"
-            out.append(f"| `{field['name']}` | {_mdx_cell(field.get('type', ''))} "
-                       f"| {field.get('requirement', 'optional')} | {cell} |")
+            fname = field['name']
+            pname = _page_name(fname)
+            out.append(f"| [{fname}]({schema_name}/{tslug}/{pname}) "
+                       f"| {_mdx_cell(field.get('type', ''))} "
+                       f"| {field.get('requirement', 'optional')} "
+                       f"| {_mdx_cell(field.get('description', ''))} |")
+            if not dry_run:
+                tdir = schema_docs_dir / tslug
+                tdir.mkdir(parents=True, exist_ok=True)
+                note = f"Part of the **{table['name']}** table in the `{schema_name}` schema."
+                (tdir / f"{pname}.md").write_text(generate_member_page(field, schema_name, note))
+            items.append(f"{schema_name}/{tslug}/{pname}")
         out.append("")
-    return "\n".join(out)
+        sidebar.append({'type': 'category', 'label': table['name'],
+                        'collapsed': True, 'items': items})
+
+    if not dry_run:
+        (schema_docs_dir / 'index.md').write_text("\n".join(out))
+    return sidebar
 
 
-def generate_vocabulary_index(schema_name: str, data: Dict[str, Any]) -> str:
-    """Index page for the event schema: envelope fields + the bdm: vocabulary."""
+def generate_event_pages(schema_name: str, data: Dict[str, Any],
+                         schema_docs_dir: Path, dry_run: bool) -> List[Dict[str, Any]]:
+    """Event (vocabulary): envelope field pages + verb/object/actor reference pages."""
+    metadata = data['metadata']
+    fields = data['fields']
     vocab = data.get('vocabularies', {})
-    out = [_schema_page_header(schema_name, data['metadata'])]
+
+    out = [_schema_page_header(schema_name, metadata)]
+    sidebar: List[Dict[str, Any]] = [
+        {'type': 'doc', 'id': f'{schema_name}/index', 'label': 'Overview'},
+        {'type': 'doc', 'id': f'{schema_name}/about', 'label': 'About'},
+    ]
+
+    # --- Event envelope: one page per field, grouped under a sidebar category ---
     out.append("\n## Event envelope\n")
+    out.append("The envelope every event shares. Click a field for its details.\n")
     out.append("| Field | Type | Requirement | Description |")
     out.append("|:------|:-----|:------------|:------------|")
-    for field in data['fields']:
-        out.append(f"| `{field['name']}` | {_mdx_cell(field.get('type', ''))} "
-                   f"| {field.get('requirement', 'optional')} | {_mdx_cell(field.get('description', ''))} |")
+    env_items: List[str] = []
+    for field in fields:
+        fname = field['name']
+        pname = _page_name(fname)
+        out.append(f"| [{fname}]({schema_name}/envelope/{pname}) "
+                   f"| {_mdx_cell(field.get('type', ''))} "
+                   f"| {field.get('requirement', 'optional')} "
+                   f"| {_mdx_cell(field.get('description', ''))} |")
+        if not dry_run:
+            edir = schema_docs_dir / 'envelope'
+            edir.mkdir(parents=True, exist_ok=True)
+            note = f"Part of the **event envelope** in the `{schema_name}` schema."
+            (edir / f"{pname}.md").write_text(generate_member_page(field, schema_name, note))
+        env_items.append(f"{schema_name}/envelope/{pname}")
+    out.append("")
+    sidebar.append({'type': 'category', 'label': 'Event envelope',
+                    'collapsed': True, 'items': env_items})
+
+    # --- bdm: vocabulary: one reference page per category ---
+    def write_page(slug: str, title: str, body: str) -> None:
+        if dry_run:
+            return
+        (schema_docs_dir / f"{slug}.md").write_text(
+            f"---\nid: {slug}\ntitle: {title}\nsidebar_label: {title}\n---\n\n"
+            f"<!-- THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY. -->\n\n"
+            f"# {title}\n\n{body}\n")
+
+    out.append("\n## Vocabulary\n")
+    out.append(f"The `bdm:` controlled vocabulary: [Verbs]({schema_name}/verbs), "
+               f"[Object types]({schema_name}/object-types), "
+               f"[Actor types]({schema_name}/actor-types).\n")
+
     if vocab.get('verbs'):
-        out.append("\n## Verbs\n")
-        out.append("| Verb | Layer | Object types | Description |")
-        out.append("|:-----|:------|:-------------|:------------|")
+        rows = ["| Verb | Layer | Object types | Description |",
+                "|:-----|:------|:-------------|:------------|"]
         for x in vocab['verbs']:
             ots = ', '.join(f"`{o}`" for o in x.get('object_types', []))
-            out.append(f"| `{x['name']}` | {x.get('layer', '')} | {ots} "
-                       f"| {_mdx_cell(x.get('description', ''))} |")
-    for key, title in (('object_types', 'Object types'), ('actor_types', 'Actor types')):
+            rows.append(f"| `{x['name']}` | {x.get('layer', '')} | {ots} "
+                        f"| {_mdx_cell(x.get('description', ''))} |")
+        write_page('verbs', 'Verbs', "\n".join(rows))
+        sidebar.append({'type': 'doc', 'id': f'{schema_name}/verbs', 'label': 'Verbs'})
+
+    for key, slug, title in (('object_types', 'object-types', 'Object types'),
+                             ('actor_types', 'actor-types', 'Actor types')):
         if vocab.get(key):
-            out.append(f"\n## {title}\n")
-            out.append(f"| {title[:-1]} | Description |")
-            out.append("|:------|:------------|")
+            rows = [f"| {title[:-1]} | Description |", "|:------|:------------|"]
             for x in vocab[key]:
-                out.append(f"| `{x['name']}` | {_mdx_cell(x.get('description', ''))} |")
-    return "\n".join(out)
+                rows.append(f"| `{x['name']}` | {_mdx_cell(x.get('description', ''))} |")
+            write_page(slug, title, "\n".join(rows))
+            sidebar.append({'type': 'doc', 'id': f'{schema_name}/{slug}', 'label': title})
 
-
-def generate_simple_sidebar(schema_name: str) -> List[Dict[str, Any]]:
-    """Sidebar for a single-page (index-only) schema."""
-    return [{'type': 'doc', 'id': f'{schema_name}/index', 'label': 'Overview'}]
+    if not dry_run:
+        (schema_docs_dir / 'index.md').write_text("\n".join(out))
+    return sidebar
 
 
 def main():
@@ -762,17 +896,18 @@ def main():
             if not dry_run:
                 schema_docs_dir.mkdir(parents=True, exist_ok=True)
 
-            # Multi-table (trial) / vocabulary (event) schemas: a single index page
-            # (one section per table / the bdm: vocabulary), no per-property pages.
-            if schema_info.get('multi_table') or schema_info.get('vocabulary'):
-                if schema_info.get('multi_table'):
-                    index_content = generate_multitable_index(schema_name, data)
-                else:
-                    index_content = generate_vocabulary_index(schema_name, data)
-                if not dry_run:
-                    (schema_docs_dir / 'index.md').write_text(index_content)
-                sidebar_configs[f"{schema_name}Sidebar"] = generate_simple_sidebar(schema_name)
-                print(f"   ✓ Generated index page (single-page schema)")
+            # Multi-table (trial) and vocabulary (event) schemas: full per-field pages
+            # grouped by table / section, with a structured (per-table) sidebar.
+            if schema_info.get('multi_table'):
+                sidebar_configs[f"{schema_name}Sidebar"] = generate_trial_pages(
+                    schema_name, data, schema_docs_dir, dry_run)
+                n = sum(len(t.get('fields', [])) for t in data['tables'])
+                print(f"   ✓ Generated {len(data['tables'])} tables, {n} field pages")
+                continue
+            if schema_info.get('vocabulary'):
+                sidebar_configs[f"{schema_name}Sidebar"] = generate_event_pages(
+                    schema_name, data, schema_docs_dir, dry_run)
+                print(f"   ✓ Generated envelope field pages + vocabulary pages")
                 continue
 
             # Generate index page
