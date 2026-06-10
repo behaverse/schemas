@@ -2,6 +2,17 @@
 
 All notable changes to the Catalog schema will be documented in this file.
 
+## [26.0610] - 2026-06-10
+
+### Changed
+- `schema.json` and `context.jsonld` are now regenerated from `field-definitions.yaml`, restored as the single source of truth. The generator was repaired so its output matches the published artifacts (it previously emitted an empty `required`, `"type"` instead of `const` on `@type`, and an invalid context-level `@type`, so the files had been hand-edited and had drifted from the YAML).
+- `$id` and `version` updated to `26.0610`.
+
+### Added
+- `catalogs` now also maps to `dcat:catalog` (alongside `schema:hasPart`).
+- URL-valued array terms (`datasets`, `catalogs`) declare `@type: "@id"` in `context.jsonld` so their values expand as node references rather than string literals.
+- `catalog/versions/v26.0610/` snapshot for consumer pinning.
+
 ## [26.0605] - 2026-06-05
 
 ### Breaking

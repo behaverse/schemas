@@ -25,19 +25,61 @@ def load_field_definitions() -> Dict[str, Any]:
     with open(definitions_path, 'r') as f:
         return yaml.safe_load(f)
 
+def build_member_schema(op: Dict[str, Any]) -> Dict[str, Any]:
+    """JSON Schema for a single object sub-property.
+
+    Handles nested arrays so that an `enum` constraint lands on `items` (the
+    allowed element values), never on the array itself.
+    """
+    constraints = op.get('constraints', {})
+    if op['type'] == 'array':
+        schema: Dict[str, Any] = {'type': 'array'}
+        if 'description' in op:
+            schema['description'] = op['description']
+        items: Dict[str, Any] = {'type': op.get('item_type', 'string')}
+        if 'enum' in constraints:
+            items['enum'] = constraints['enum']
+        schema['items'] = items
+        if 'min_items' in constraints:
+            schema['minItems'] = constraints['min_items']
+        if 'max_items' in constraints:
+            schema['maxItems'] = constraints['max_items']
+        return schema
+
+    schema = {'type': op['type']}
+    if 'description' in op:
+        schema['description'] = op['description']
+    for key in ('format', 'pattern', 'minimum', 'enum'):
+        if key in constraints:
+            schema[key] = constraints[key]
+    return schema
+
+
 def generate_json_schema(definitions: Dict[str, Any]) -> Dict[str, Any]:
     """Generate JSON Schema from field definitions."""
     metadata = definitions['schema_metadata']
     fields = definitions['fields']
     
     # Required fields
-    required_fields = [f['name'] for f in fields if f.get('status') == 'required']
-    
+    required_fields = [f['name'] for f in fields if f.get('requirement') == 'required']
+
     # Build properties
     properties = {}
     for field in fields:
+        # `@type` is a JSON-LD node-type declaration, not a typed property:
+        # emit it as a fixed `const`, not `type` (which would be invalid JSON Schema).
+        if field['name'] == '@type':
+            properties['@type'] = {
+                'const': field['type'],
+                'title': 'Type',
+                'description': field['description'],
+            }
+            continue
+
+        # `enum`-typed fields are string-valued; the enum values carry the constraint.
+        json_type = 'string' if field['type'] == 'enum' else field['type']
         prop = {
-            'type': field['type'],
+            'type': json_type,
             'title': field['name'].replace('_', ' ').title(),
             'description': field['description']
         }
@@ -68,9 +110,11 @@ def generate_json_schema(definitions: Dict[str, Any]) -> Dict[str, Any]:
                 prop['minItems'] = constraints['min_items']
             if 'max_items' in constraints:
                 prop['maxItems'] = constraints['max_items']
-            if 'enum' in constraints:
+            # `enum` on an array field constrains the *elements*, so it belongs on
+            # `items` (handled below), not on the array itself.
+            if 'enum' in constraints and field['type'] != 'array':
                 prop['enum'] = constraints['enum']
-        
+
         # Handle arrays
         if field['type'] == 'array':
             item_type = field.get('item_type', 'string')
@@ -79,38 +123,27 @@ def generate_json_schema(definitions: Dict[str, Any]) -> Dict[str, Any]:
                 obj_props = {}
                 obj_required = []
                 for obj_prop in field['object_properties']:
-                    obj_props[obj_prop['name']] = {'type': obj_prop['type']}
-                    if 'description' in obj_prop:
-                        obj_props[obj_prop['name']]['description'] = obj_prop['description']
-                    if 'constraints' in obj_prop:
-                        for key, value in obj_prop['constraints'].items():
-                            obj_props[obj_prop['name']][key] = value
+                    obj_props[obj_prop['name']] = build_member_schema(obj_prop)
                     if obj_prop.get('required'):
                         obj_required.append(obj_prop['name'])
-                
+
                 prop['items'] = {
                     'type': 'object',
                     'properties': obj_props
                 }
                 if obj_required:
                     prop['items']['required'] = obj_required
-            elif item_type == 'string':
-                prop['items'] = {'type': 'string'}
-            elif item_type == 'number':
-                prop['items'] = {'type': 'number'}
-            elif item_type == 'integer':
-                prop['items'] = {'type': 'integer'}
-        
+            else:
+                items = {'type': item_type}
+                if 'enum' in field.get('constraints', {}):
+                    items['enum'] = field['constraints']['enum']
+                prop['items'] = items
+
         # Handle objects
         if field['type'] == 'object' and 'object_properties' in field:
             obj_props = {}
             for obj_prop in field['object_properties']:
-                obj_props[obj_prop['name']] = {'type': obj_prop['type']}
-                if 'description' in obj_prop:
-                    obj_props[obj_prop['name']]['description'] = obj_prop['description']
-                if 'constraints' in obj_prop:
-                    for key, value in obj_prop['constraints'].items():
-                        obj_props[obj_prop['name']][key] = value
+                obj_props[obj_prop['name']] = build_member_schema(obj_prop)
             prop['properties'] = obj_props
         
         properties[field['name']] = prop
@@ -143,9 +176,12 @@ def generate_jsonld_context(definitions: Dict[str, Any]) -> Dict[str, Any]:
         'ddi': 'https://ddialliance.org/Specification/DDI-Lifecycle/3.3/',
         'xsd': 'http://www.w3.org/2001/XMLSchema#'
     }
-    
+
     # Add field mappings
     for field in fields:
+        # `@type` is the JSON-LD keyword for node type; never redefine it as a term.
+        if field['name'] == '@type':
+            continue
         field_context = {}
         
         # Find primary mapping (prefer schema.org, then datacite, then custom)
@@ -171,7 +207,7 @@ def generate_jsonld_context(definitions: Dict[str, Any]) -> Dict[str, Any]:
             field_context['@id'] = f"behaverse:{field['name']}"
         
         # Add type mappings
-        if field['type'] == 'string':
+        if field['type'] in ('string', 'enum'):
             if field.get('constraints', {}).get('format') == 'date':
                 field_context['@type'] = 'xsd:date'
             elif field.get('constraints', {}).get('format') == 'uri':
@@ -189,11 +225,24 @@ def generate_jsonld_context(definitions: Dict[str, Any]) -> Dict[str, Any]:
                 field_context['@container'] = '@list'
             else:
                 field_context['@container'] = '@set'
+            # URL-valued array items are node references, not string literals.
+            if field.get('constraints', {}).get('format') == 'uri':
+                field_context['@type'] = '@id'
         elif field['type'] == 'object':
             field_context['@type'] = '@id'
         
         context[field['name']] = field_context
-    
+
+        # Emit flat context terms for structured sub-properties that carry their own
+        # mapping (e.g. creator/curator -> email, orcid, affiliation), so they don't
+        # leak to @vocab. Skipped if already defined by a top-level field.
+        for obj_prop in field.get('object_properties', []):
+            if 'mappings' not in obj_prop:
+                continue
+            url = next((m['url'] for m in obj_prop['mappings'] if 'url' in m), None)
+            if url and obj_prop['name'] not in context:
+                context[obj_prop['name']] = {'@id': url}
+
     return {'@context': context}
 
 def save_json_file(data: Dict[str, Any], path: Path, check_mode: bool = False) -> bool:

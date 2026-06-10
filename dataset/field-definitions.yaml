@@ -4,7 +4,7 @@
 
 schema_metadata:
   name: Behaverse Dataset Schema
-  version: "25.1201"
+  version: "26.0610"
   namespace: https://behaverse.org/schemas/dataset
   description: A metadata schema for cognitive science and neuroscience datasets with mappings to Schema.org, DataCite, BIDS, and other standards
 
@@ -71,7 +71,7 @@ fields:
     group: core_metadata
     type: schema:Dataset
     requirement: optional
-    description: JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverability
+    description: JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverability.
   - name: name
     group: core_metadata
     type: string
@@ -81,9 +81,9 @@ fields:
       - standard: schema.org
         property: name
         url: https://schema.org/name
-      - standard: datacite
-        property: Identifier
-        url: https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/identifier/
+      - standard: dublin_core
+        property: identifier
+        url: http://purl.org/dc/terms/identifier
     constraints:
       pattern: "^[a-z0-9-_]+$"
     examples:
@@ -98,7 +98,7 @@ fields:
     mappings:
       - standard: huggingface
         property: pretty_name
-        url: https://github.com/huggingface/hub-docs/blob/main/datasetcard.md?plain=1#L20
+        url: https://huggingface.co/docs/hub/datasets-cards#pretty_name
     examples:
       - Axon Game EEG Dataset
       - Resting State fMRI Study
@@ -112,9 +112,9 @@ fields:
       - standard: schema.org
         property: description
         url: https://schema.org/description
-      - standard: datacite
-        property: Description
-        url: https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/
+      - standard: dublin_core
+        property: description
+        url: http://purl.org/dc/terms/description
     constraints:
       min_length: 10
     examples:
@@ -146,22 +146,19 @@ fields:
       - standard: schema.org
         property: license
         url: https://schema.org/license
-      - standard: datacite
-        property: Rights
-        url: https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/rights/
-      - standard: huggingface
-        property: license
-        url: https://github.com/huggingface/hub-docs/blob/main/datasetcard.md?plain=1#L10
+      - standard: dublin_core
+        property: rights
+        url: http://purl.org/dc/terms/rights
     constraints:
       enum:
-        - cc-by-4.0
-        - cc-by-sa-4.0
-        - cc-by-nc-4.0
-        - cc-by-nc-sa-4.0
-        - cc0-1.0
-        - mit
-        - apache-2.0
-        - gpl-3.0
+        - CC-BY-4.0
+        - CC-BY-SA-4.0
+        - CC-BY-NC-4.0
+        - CC-BY-NC-SA-4.0
+        - CC0-1.0
+        - MIT
+        - Apache-2.0
+        - GPL-3.0-only
         - other
     examples:
       - cc-by-4.0
@@ -192,9 +189,9 @@ fields:
       - standard: schema.org
         property: identifier
         url: https://schema.org/identifier
-      - standard: datacite
-        property: Identifier
-        url: https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/identifier/
+      - standard: dublin_core
+        property: identifier
+        url: http://purl.org/dc/terms/identifier
     constraints:
       pattern: "^10\\.\\d{4,}/[-._;()/:A-Za-z0-9]+$"
     examples:
@@ -210,12 +207,9 @@ fields:
       - standard: schema.org
         property: keywords
         url: https://schema.org/keywords
-      - standard: datacite
-        property: Subject
-        url: https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject/
-      - standard: huggingface
-        property: tags
-        url: https://github.com/huggingface/hub-docs/blob/main/datasetcard.md?plain=1#L16
+      - standard: dublin_core
+        property: subject
+        url: http://purl.org/dc/terms/subject
     constraints:
       min_items: 1
     examples:
@@ -231,9 +225,6 @@ fields:
       - standard: schema.org
         property: inLanguage
         url: https://schema.org/inLanguage
-      - standard: huggingface
-        property: language
-        url: https://github.com/huggingface/hub-docs/blob/main/datasetcard.md?plain=1#L6
     constraints:
       pattern: "^[a-z]{2}$"
     examples:
@@ -339,16 +330,28 @@ fields:
         description: Creator email address
         constraints:
           format: email
+        mappings:
+          - standard: schema.org
+            property: email
+            url: https://schema.org/email
       - name: orcid
         type: string
         required: false
         description: ORCID identifier
         constraints:
           pattern: "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
+        mappings:
+          - standard: schema.org
+            property: identifier
+            url: https://schema.org/identifier
       - name: affiliation
         type: string
         required: false
         description: Institutional affiliation
+        mappings:
+          - standard: schema.org
+            property: affiliation
+            url: https://schema.org/affiliation
     examples:
       - [{"name": "Jane Researcher", "email": "jane@university.edu", "orcid": "0000-0001-2345-6789", "affiliation": "University Psychology Department"}]
       
@@ -435,11 +438,13 @@ fields:
     mappings:
       - standard: ddi
         property: Universe
+        url: https://ddialliance.org/Specification/DDI-Lifecycle/3.3/XMLSchema/FieldLevelDocumentation/schemas/datacollection_xsd/elements/Universe.html
       - standard: bids
         property: participants.tsv
         url: https://bids-specification.readthedocs.io/en/stable/modality-agnostic-files.html#participants-file
       - standard: clinicaltrials.gov
         property: enrollment
+        url: https://clinicaltrials.gov/data-api/about-api/schema#enrollment
     constraints:
       minimum: 1
     examples:
@@ -473,7 +478,7 @@ fields:
     mappings:
       - standard: cdisc
         property: AGE
-        url: https://www.cdisc.org/standards/foundational/sdtm
+        url: https://www.cdisc.org/standards/foundational/sdtm#AGE
       - standard: ddi
         property: SummaryStatistic
     constraints:
@@ -504,7 +509,7 @@ fields:
     mappings:
       - standard: cdisc
         property: SEX
-        url: https://www.cdisc.org/standards/foundational/sdtm
+        url: https://www.cdisc.org/standards/foundational/sdtm#SEX
       - standard: omop
         property: gender_concept_id
     object_properties:
@@ -576,6 +581,7 @@ fields:
     mappings:
       - standard: clinicaltrials.gov
         property: eligibility
+        url: https://clinicaltrials.gov/data-api/about-api/schema#eligibility
       - standard: ddi
         property: Coverage
     examples:
@@ -590,6 +596,7 @@ fields:
     mappings:
       - standard: clinicaltrials.gov
         property: eligibility
+        url: https://clinicaltrials.gov/data-api/about-api/schema#eligibility
     examples:
       - ["MRI contraindications", "Current psychiatric medication", "History of head injury"]
 
@@ -740,7 +747,7 @@ fields:
     mappings:
       - standard: cogatlas
         property: task
-        url: http://www.cognitiveatlas.org/tasks/a
+        url: http://www.cognitiveatlas.org/task/
       - standard: schema.org
         property: variableMeasured
     object_properties:
@@ -817,6 +824,7 @@ fields:
     mappings:
       - standard: clinicaltrials.gov
         property: interventionType
+        url: https://clinicaltrials.gov/data-api/about-api/schema#interventionType
     constraints:
       enum: ["behavioral", "pharmacological", "device", "procedure", "other"]
     examples:
@@ -980,7 +988,7 @@ fields:
     mappings:
       - standard: huggingface
         property: size_categories
-        url: https://github.com/huggingface/hub-docs/blob/main/datasetcard.md?plain=1#L21
+        url: https://huggingface.co/docs/hub/datasets-cards#size_categories
     constraints:
       enum: ["n<1K", "1K<n<10K", "10K<n<100K", "100K<n<1M", "1M<n<10M", "10M<n<100M", "100M<n<1B", "1B<n<10B", "10B<n<100B", "100B<n<1T", "n>1T"]
     examples:
@@ -995,6 +1003,6 @@ fields:
     mappings:
       - standard: huggingface
         property: task_categories
-        url: https://github.com/huggingface/hub-docs/blob/main/datasetcard.md?plain=1#L25
+        url: https://huggingface.co/docs/hub/datasets-cards#task_categories
     examples:
       - ["time-series-forecasting", "reinforcement-learning"]

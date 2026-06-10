@@ -1,0 +1,33 @@
+name: Validate schemas
+
+# Guards the source-of-truth contract on `main`:
+#   1. generated artifacts (schema.json / context.jsonld) must be in sync with
+#      their field-definitions.yaml — i.e. regeneration produces no diff;
+#   2. every schema.json is well-formed and its examples validate.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install --quiet pyyaml jsonschema
+
+      - name: Generated files are in sync with field-definitions.yaml
+        run: |
+          python catalog/scripts/generate_schema_files.py --check
+          python dataset/scripts/generate_schema_files.py --check
+
+      - name: Schemas are well-formed and examples validate
+        run: python scripts/validate_schemas.py

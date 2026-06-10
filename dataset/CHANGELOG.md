@@ -5,6 +5,17 @@ All notable changes to the Dataset schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0610] - 2026-06-10
+
+### Changed
+- `schema.json` and `context.jsonld` are now regenerated from `field-definitions.yaml`, restored as the single source of truth. The generator was repaired so its output matches the published artifacts (it previously emitted an empty `required`, `"type"` instead of `const` on `@type`, `"type": "enum"` on enum fields, and put `enum` on array properties instead of their `items`).
+- `$id` and `version` updated to `26.0610`.
+
+### Added
+- Descriptions for `curator` and `sex_distribution` sub-properties, plus `format`/`pattern` constraints on `curator.email`/`curator.orcid` (matching `creator`).
+- Explicit `items` typing for the `activity` sub-arrays (`measurements`, `conditions`, `measures`, `constructs`).
+- `dataset/versions/v26.0610/` snapshot for consumer pinning.
+
 ## [26.0605] - 2026-06-05
 
 ### Breaking

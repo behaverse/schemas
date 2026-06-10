@@ -4,10 +4,10 @@
 
 schema_metadata:
   name: Behaverse Catalog Schema
-  version: "26.0107"
+  version: "26.0610"
   namespace: https://behaverse.org/schemas/catalog
   description: A metadata schema for thematic catalogs of cognitive science and neuroscience datasets
-  type: https://schema.org/DataCatalog
+  type: schema:DataCatalog
 
 # Field groups define categories for organization
 field_groups:
@@ -34,7 +34,7 @@ fields:
     group: core_metadata
     type: schema:DataCatalog
     requirement: optional
-    description: JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverability
+    description: JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverability.
   - name: name
     group: core_metadata
     type: string
@@ -57,9 +57,9 @@ fields:
     requirement: required
     description: Human-readable display title
     mappings:
-      - standard: schema.org
-        property: name
-        url: https://schema.org/name
+      - standard: dublin_core
+        property: title
+        url: http://purl.org/dc/terms/title
     examples:
       - Multi-Task Cognitive Assessments
       - Longitudinal & Test-Retest Studies
@@ -212,8 +212,8 @@ fields:
     description: People or organizations that curate this catalog
     mappings:
       - standard: schema.org
-        property: maintainer
-        url: https://schema.org/maintainer
+        property: curator
+        url: https://schema.org/curator
     object_properties:
       - name: name
         type: string
@@ -225,15 +225,27 @@ fields:
         description: Curator email address
         constraints:
           format: email
+        mappings:
+          - standard: schema.org
+            property: email
+            url: https://schema.org/email
       - name: orcid
         type: string
         required: false
         description: ORCID identifier
         constraints:
           pattern: "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
+        mappings:
+          - standard: schema.org
+            property: identifier
+            url: https://schema.org/identifier
       - name: affiliation
         type: string
         required: false
         description: Institutional affiliation
+        mappings:
+          - standard: schema.org
+            property: affiliation
+            url: https://schema.org/affiliation
     examples:
       - [{"name": "Curator Name", "email": "curator@institution.edu", "orcid": "0000-0001-2345-6789"}]
