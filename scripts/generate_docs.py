@@ -856,8 +856,8 @@ def generate_event_pages(schema_name: str, data: Dict[str, Any],
         rows = [bdm_note + "\n", "| Verb | Layer | Object types | Description |",
                 "|:-----|:------|:-------------|:------------|"]
         for x in vocab['verbs']:
-            ots = ', '.join(f"`{_strip_bdm(o)}`" for o in x.get('object_types', []))
-            rows.append(f"| `{_strip_bdm(x['name'])}` | {x.get('layer', '')} | {ots} "
+            ots = ', '.join(f"**{_strip_bdm(o)}**" for o in x.get('object_types', []))
+            rows.append(f"| **{_strip_bdm(x['name'])}** | {x.get('layer', '')} | {ots} "
                         f"| {_mdx_cell(x.get('description', ''))} |")
         write_page('verbs', 'Verbs', "\n".join(rows))
         vocab_items.append({'type': 'doc', 'id': f'{schema_name}/verbs', 'label': 'Verbs'})
@@ -867,7 +867,7 @@ def generate_event_pages(schema_name: str, data: Dict[str, Any],
         if vocab.get(key):
             rows = [bdm_note + "\n", f"| {title[:-1]} | Description |", "|:------|:------------|"]
             for x in vocab[key]:
-                rows.append(f"| `{_strip_bdm(x['name'])}` | {_mdx_cell(x.get('description', ''))} |")
+                rows.append(f"| **{_strip_bdm(x['name'])}** | {_mdx_cell(x.get('description', ''))} |")
             write_page(slug, title, "\n".join(rows))
             vocab_items.append({'type': 'doc', 'id': f'{schema_name}/{slug}', 'label': title})
 
