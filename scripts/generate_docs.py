@@ -757,8 +757,10 @@ def generate_trial_pages(schema_name: str, data: Dict[str, Any],
     """Trial (multi-table): an Overview hub, one page per table, one page per field.
 
     Each table is a sidebar category whose label links to that table's page (Docusaurus
-    categories can't link to a #anchor), so clicking the header opens the table; the
-    per-field pages are nested under it.
+    categories can't link to a #anchor), so clicking the header opens the table. Within a
+    table, fields are grouped by their `categories` value (Key, Context, Task, …) — a
+    section per category on the table page and a nested sub-category in the sidebar —
+    mirroring how the Behaverse data-model site organises each table.
     """
     metadata = data['metadata']
     tables = data['tables']
@@ -784,34 +786,53 @@ def generate_trial_pages(schema_name: str, data: Dict[str, Any],
 
     for table in tables:
         tslug = _slug(table['name'])
-        # --- per-table page: heading, description, notes, field table ---
+        # Each field carries a single category; group the table by category, preserving
+        # first-appearance order (the YAML orders fields by category).
+        cat_order: List[str] = []
+        for f in table['fields']:
+            cat = (f.get('categories') or ['Other'])[0]
+            if cat not in cat_order:
+                cat_order.append(cat)
+
+        # --- per-table page: heading, description, notes, one field table per category ---
         tp = [_doc_frontmatter(tslug, table['name']), f"\n# {table['name']}\n"]
         if table.get('description'):
             tp.append(f"\n{_mdx_text(table['description'])}\n")
         for note in table.get('notes') or []:
             tp.append(f"\n:::note\n{_mdx_text(str(note))}\n:::\n")
-        tp.append("\n| Field | Type | Requirement | Description |")
-        tp.append("|:------|:-----|:------------|:------------|")
-        items: List[str] = []
-        for field in table['fields']:
-            fname = field['name']
-            pname = _page_name(fname)
-            tp.append(f"| [{fname}]({tslug}/{pname}.md) "
-                      f"| {_mdx_cell(field.get('type', ''))} "
-                      f"| {field.get('requirement', 'optional')} "
-                      f"| {_mdx_cell(field.get('description', ''))} |")
-            if not dry_run:
-                tdir = schema_docs_dir / tslug
-                tdir.mkdir(parents=True, exist_ok=True)
-                note = (f"Part of the **[{table['name']}](../{tslug}.md)** table in the "
-                        f"`{schema_name}` schema.")
-                (tdir / f"{pname}.md").write_text(generate_member_page(field, schema_name, note))
-            items.append(f"{schema_name}/{tslug}/{pname}")
+
+        cat_groups: List[Dict[str, Any]] = []  # one sidebar sub-category per category
+        for cat in cat_order:
+            cfields = [f for f in table['fields']
+                       if (f.get('categories') or ['Other'])[0] == cat]
+            tp.append(f"\n## {cat}\n")
+            tp.append("| Field | Type | Requirement | Description |")
+            tp.append("|:------|:-----|:------------|:------------|")
+            cat_items: List[str] = []
+            for field in cfields:
+                fname = field['name']
+                pname = _page_name(fname)
+                tp.append(f"| [{fname}]({tslug}/{pname}.md) "
+                          f"| {_mdx_cell(field.get('type', ''))} "
+                          f"| {field.get('requirement', 'optional')} "
+                          f"| {_mdx_cell(field.get('description', ''))} |")
+                if not dry_run:
+                    tdir = schema_docs_dir / tslug
+                    tdir.mkdir(parents=True, exist_ok=True)
+                    note = (f"Part of the **{cat}** category of the "
+                            f"**[{table['name']}](../{tslug}.md)** table in the "
+                            f"`{schema_name}` schema.")
+                    (tdir / f"{pname}.md").write_text(
+                        generate_member_page(field, schema_name, note))
+                cat_items.append(f"{schema_name}/{tslug}/{pname}")
+            cat_groups.append({'type': 'category', 'label': cat, 'collapsed': True,
+                               'items': cat_items})
+
         if not dry_run:
             (schema_docs_dir / f"{tslug}.md").write_text("\n".join(tp) + "\n")
         sidebar.append({'type': 'category', 'label': table['name'], 'collapsed': True,
                         'link': {'type': 'doc', 'id': f'{schema_name}/{tslug}'},
-                        'items': items})
+                        'items': cat_groups})
 
     return sidebar
 
