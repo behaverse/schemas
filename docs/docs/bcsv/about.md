@@ -8,7 +8,7 @@ sidebar_label: About
 
 # <img src={require('@site/static/assets/img/schema_B.png').default} height="80" style={{verticalAlign: 'middle'}} /> About bcsv
 
-bcsv stands for **Behaverse CSV**; it is an extension of the [W3C CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) standard designed to enhance CSV metadata for use in R and Python data analysis workflows.
+bcsv stands for **Better CSV**; it is an extension of the [W3C CSV on the Web (CSVW)](https://www.w3.org/TR/tabular-data-primer/) standard designed to enhance CSV metadata for use in R and Python data analysis workflows. It's a general-purpose format (not Behaverse-specific), published here as part of the Behaverse schemas.
 
 ## Motivation
 

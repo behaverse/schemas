@@ -34,7 +34,7 @@ import re
 SCHEMAS = {
     'bcsv': {
         'has_field_definitions': False,  # Uses schema.json directly
-        'name': 'bcsv (Behaverse CSV)',
+        'name': 'bcsv (Better CSV)',
         'icon': 'schema_B.png',
     },
     'catalog': {
