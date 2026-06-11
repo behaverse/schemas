@@ -5,6 +5,13 @@ All notable changes to the BCSV schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0610] - 2026-06-10
+
+### Changed
+
+- **`bcsv` now expands to "Better CSV"** (was "Behaverse CSV") — the format is a general CSVW extension for R/Python data analysis, not Behaverse-specific. Updated `schema.json`'s `description`, the README, the root README, and the docs site. No structural change to the schema; the namespace and hosting (`behaverse.org/schemas/bcsv`) are unchanged.
+- `$id` / `version` bumped to `v26.0610`.
+
 ## [26.0608] - 2026-06-08
 
 ### Breaking

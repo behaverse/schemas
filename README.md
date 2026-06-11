@@ -12,7 +12,7 @@ This repository hosts machine-readable schemas and vocabularies for organizing, 
 
 ## Schemas
 
-### <img src="assets/img/schema_B.png" height="40" style="vertical-align: middle;"> bcsv (Behaverse CSV)
+### <img src="assets/img/schema_B.png" height="40" style="vertical-align: middle;"> bcsv (Better CSV)
 Extension of W3C CSVW with support for R/Python data types including categorical and ordered factors, missing value codes, units of measurement, and file integrity verification.
 
 - **Version**: v25.1201
