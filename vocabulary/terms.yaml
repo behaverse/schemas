@@ -1,0 +1,546 @@
+# Behaverse Vocabulary — cross-cutting controlled terminology (source of truth).
+# Edit this file, then run:  uv run scripts/generate.py
+# Seeded from behaverse/data-model assets/auto-generated/glossary.yml (the pre-redesign
+# Google-Sheet export), restructured as SKOS-style concept schemes + concepts.
+# `status: internal` = kept for reference, excluded from the public BDM glossary.
+
+vocabulary_metadata:
+  name: Behaverse Vocabulary
+  version: '26.0611'
+  namespace: https://behaverse.org/schemas/vocabulary
+  description: 'Cross-cutting controlled terminology for behaverse data: general terms, demographics,
+    and the suffix conventions used in variable names. Terms that one schema owns (e.g. trial table fields)
+    live in that schema; this resource holds the terms no single schema owns.'
+schemes:
+- id: general
+  label: General
+  description: General vocabulary
+- id: demographics
+  label: Demographics
+  description: Demographics vocabulary
+- id: generic-suffixes
+  label: Generic Suffixes
+  description: Variables may describe a feature or property of an entity, using the format <entity>_<feature>.
+    All names below are not to be used alone but rather as suffixes (e.g., "block_type", "stimulus_description").
+- id: aggregation-suffixes
+  label: Aggregation Suffixes
+  description: Use the following terms as suffixes to refer to particular operations in variable names.
+    For example the mean of a variable "age" would be called "age_mean" (and not for example age_avg or
+    age_m). We typically use the same name as the aggregation function name in Python or R. More specialized
+    terms require explicit descriptions.
+- id: transformation-suffixes
+  label: Transformation Suffixes
+  description: Use the following terms to refer to particular operations in variable names. In general,
+    use the function name that was used to do the transformation. For example the log of a variable `age`
+    would be called `age_log` (and not for example `log_age` or `age_in_log`). We typically use the same
+    name as the transformation function name in Python or R.
+- id: referencing-suffixes
+  label: Referencing Suffixes
+  description: Several variables are used to filter, identify or locate particular rows in a table or
+    across multiple tables. Below is a list of the ones that are usually used in behavioral data and how
+    they can be used.
+- id: variable-type
+  label: Variable Type
+  description: Type of the variable in behavioral data (problem space).
+  status: internal
+- id: data-type
+  label: Data Type
+  description: Type of the variable as in common programming languages (solution space).
+  status: internal
+- id: variable-category
+  label: Variable Category
+  description: Categories used to group variables within BDM tables.
+  status: internal
+concepts:
+- id: accuracy
+  label: accuracy
+  scheme: general
+  data_type: float
+  definition: Refers to a measure of performance. In many behavioral tasks, it reflects the percentage
+    (0-100%) or fraction (0-1) of correct responses. Always use *accuracy* to refer to a performance measure
+    that is a real number (float) and bounded to the [0-1] range.
+  range: 0 to 1 (inclusive)
+- id: correct
+  label: correct
+  scheme: general
+  data_type: boolean
+  definition: A boolean which indicates whether a response in a given trial was correct or not. When no
+    response was given when it should (i.e., timeout), *correct* evaluates to `FALSE` rather than `N/A`.
+    This is to avoid the case where subjects would be given a high performance score when in fact they
+    avoided all difficult trials and responded correctly only to easy trials.
+- id: response-time
+  label: response_time
+  scheme: general
+  data_type: float
+  definition: The meaning of response time or reaction time (and its unit) is not consistent across studies.
+    In BDM, `response_time` is the duration in seconds between a) the moment the subjects fully completed
+    their response on a given trial, and b) the moment that the earliest possible correct response could
+    have been completed by a hypothetical agent with perfect knowledge of the task and ability to instantaneously
+    execute the response.
+  range: In seconds
+  notes:
+  - 'Other measures of durations exist and may be useful to describe subjects'' responses.  If such additional
+    measures are needed, they should be specified explicitly; for example: `response_onset`, `response_offset`,
+    or `response_duration`.'
+  - "Units for response times are not consistent across papers and publicly available datasets. One can\
+    \ find them expressed in either seconds or milliseconds. BDM uses seconds as the default unit for\
+    \ response times to:\n- avoid \"exception\" by always using seconds as the temporal unit;\n - avoid\
+    \ additional  computation by keeping the units as they currently are in our raw data and task speicifications;\n\
+    \ - avoid the temptation to round times to integers when expressed in milliseconds;\n - take advantage\
+    \ of the fact that many popular packages to analyse response time seem to be using seconds as the\
+    \ default unit;\n- be consistent with what seems to be the default unit in fMRI data standards (e.g.,\
+    \ BIDS or DICOMs). "
+  - .warning It is tempting to abbreviate `response_time` as `rt`. However, there are several other variables
+    prefixed `response_` which do not have abbreviations. Spelling the names out, while making the name
+    longer, makes the overall data structure more consistent and explicit.
+- id: timed-out
+  label: timed_out
+  scheme: general
+  data_type: boolean
+  definition: Indicates whether the subject failed to respond within the allocated time period.
+- id: age
+  label: age
+  scheme: demographics
+  data_type: float
+  definition: Age is typically expressed in years. However, we don't recommend rounding "age" to get integer
+    values, as rounding implies losing data. It is better to leave variables as real numbers (floats when
+    they are floats) and let the data analysts decide whether or not rounding this variable is necessary
+    for their specific use case.
+- id: gender-sex
+  label: gender/sex
+  scheme: demographics
+  data_type: enum
+  definition: |-
+    Gender and sex are not exactly the same. Sex refers to a biological sex while gender is a more complex construct. A person may have a male biological sex but identify as a women for example. Depending on the question asked, the variable should therefore be either `sex` or `gender`.
+
+    For example, *"What sex were you assigned at birth, such as on an original birth certificate?"* is a question about biological sex and should be coded as `sex`. The possible values for `sex` are:
+  range: |-
+    - `female`: female (girl, woman)
+    - `male`: male (boy, man)
+    - `other`: other non-binary
+    - `skip`: prefer not to say
+- id: length
+  label: length
+  scheme: generic-suffixes
+  data_type: float
+  definition: Refers to the length in centimeters of a physical object. When possible use a more specific
+    word (e.g., height, width, distance).
+  notes:
+  - .important Don't use length to mean count or size. This is contrary to the terms used in arrays/lists
+    in programming languages.
+- id: height
+  label: height
+  scheme: generic-suffixes
+  data_type: float
+  definition: Refers to the height of a physical object in centimeters.
+- id: width
+  label: width
+  scheme: generic-suffixes
+  data_type: float
+  definition: Refers to the width of a physical object in centimeters.
+- id: weight
+  label: weight
+  scheme: generic-suffixes
+  data_type: float
+  definition: Refers to the weight of a physical object in kilogram.
+- id: count
+  label: '*_count'
+  scheme: generic-suffixes
+  data_type: integer
+  definition: Refers to the cardinality of that entity. A variable named `page_count` indicates the number
+    of pages. Or, if an observation/row has `car_count = 5` this means that this particular observation
+    involves a total count of 5 cars; this 5 is unrelated to other rows in the table.
+  notes:
+  - .warning Avoid the use of `size` as this term is ambiguous; it could refer to the height of a person,
+    the screen width $\times$ times height dimensions, or a level within a likert scale (e.g., "Medium").
+  - '"Note that "count" is different from "sum" (e.g., one can sum negative float values while count involves
+    positive integers only) and from "index" (e.g., "this is the second" versus "there are two").'
+  - .warning Avoid the use of `n` to refer to counts. While using `n` to refer to counts is much shorter
+    and might be standard in some circles, `count` is more explicit and less error-prone than `n` which
+    may mean different things in other contexts (e.g., the length of the variable, an iterator)."
+- id: type
+  label: type
+  scheme: generic-suffixes
+  data_type: enum
+  definition: Type is always an enum with known values. The meaning of the particular enum value needs
+    to be explained in a codebook.
+  notes:
+  - It can be tempting to use synonyms of "type", in particular when "type" is already used for something
+    else. Such synonyms include things like "category", "kind" or  "set". When those terms are not required,
+    they should be avoided and replaced by "type".
+- id: description
+  label: description
+  scheme: generic-suffixes
+  data_type: string
+  definition: Description is always a text (string) for human consumption. While it is not strictly necessary,
+    a textual description can greatly facilitate the understanding and processing of the data by humans.
+- id: mean
+  label: mean
+  scheme: aggregation-suffixes
+  data_type: float
+  definition: The average of a numeric variable.
+  notes:
+  - .warning Don't use `avg` or `average` to refer to the mean value.
+- id: median
+  label: median
+  scheme: aggregation-suffixes
+  data_type: float
+  definition: The median of the variable.
+  notes:
+  - .warning Don't use `med` to refer to the median.
+- id: mode
+  label: mode
+  scheme: aggregation-suffixes
+  definition: The mode of a variable.
+- id: min
+  label: min
+  scheme: aggregation-suffixes
+  definition: The minimum value of a variable.
+- id: max
+  label: max
+  scheme: aggregation-suffixes
+  definition: The maximum value of a variable.
+- id: sd
+  label: sd
+  scheme: aggregation-suffixes
+  definition: The standard deviation of a variable.
+  notes:
+  - .warning Don't use `std` or `SD` to refer to  the standard deviation.
+- id: var
+  label: var
+  scheme: aggregation-suffixes
+  definition: The variance of a variable.
+- id: iqr
+  label: iqr
+  scheme: aggregation-suffixes
+  definition: The interquartile range of a variable.
+  notes:
+  - .warning Don't use `IQR` to refer to the interquartile range.
+- id: sum
+  label: sum
+  scheme: aggregation-suffixes
+  data_type: float
+  definition: The sum of all values of a variable (e.g., `item_price_sum = sum(item_price)`).
+  notes:
+  - .warning Don't use total to designate the result of a sum operation.
+- id: quantile
+  label: quantile*
+  scheme: aggregation-suffixes
+  data_type: float
+  definition: |-
+    Quantile is similar to percentile, as both refer to the value of a parameter Q that splits the data such that a given fraction of the data is smaller than Q.
+    Quantile expresses that fraction as a number between 0 and 1 while percentiles express it as a percentage (between 0 and 100).
+  notes:
+  - "Use quantiles rather than percentiles because they allow naming the resulting variables in a simpler\
+    \ way. BDM uses the following convention to name the parameter X:\n- `quantile(x, q = 0.23)` -> `quantile23`\n\
+    - `quantile(x, q = 0.145)` -> `quantile145` "
+  - Note that `quantile(x, q = 1)` can not be expressed using this convention. However,  `quantile(x,
+    q = 1)` is in fact equivalent to `max(x)` which is the preferred expression.
+- id: rank
+  label: rank
+  scheme: aggregation-suffixes
+  data_type: integer
+  definition: Rank of a value in a set (ascending or first to last).
+  notes:
+  - Variables can be sorted (for example from the smallest to the largest values) and some values can
+    be tied (in which case the rank may no longer be represented by integers). Also, it might not be clear
+    if the ranks are descending or ascending (e.g., `age_rank`). If such confusion arises, it is prefered
+    to use a more explicit name (e.g., `youngest_to_oldest` or `youngest_first_rank`).
+- id: log
+  label: log
+  scheme: transformation-suffixes
+  data_type: float
+  definition: Natural log.
+- id: log2
+  label: log2
+  scheme: transformation-suffixes
+  data_type: float
+  definition: Log of base 2.
+- id: log10
+  label: log10
+  scheme: transformation-suffixes
+  data_type: float
+  definition: Log of base 10.
+  notes:
+  - .important Always specify the base when using the log except for the natural log.
+- id: sqrt
+  label: sqrt
+  scheme: transformation-suffixes
+  definition: Square root.
+- id: pow2
+  label: pow2
+  scheme: transformation-suffixes
+  definition: Power of 2.
+- id: floor
+  label: floor
+  scheme: transformation-suffixes
+  data_type: integer
+  definition: Flooring of a number (e.g., 3.6 becomes 3).
+- id: ceil
+  label: ceil
+  scheme: transformation-suffixes
+  data_type: integer
+  definition: Ceiling of a number (e.g., 3.6 becomes 4).
+- id: round
+  label: round
+  scheme: transformation-suffixes
+  data_type: integer
+  definition: Rounding of a number to the closest integer (e.g., 3.6 becomes 4).
+- id: id
+  label: '*_id'
+  scheme: referencing-suffixes
+  data_type: string | integer
+  definition: If a column or variable name is suffixed with `_id` (e.g., `participant_id`, `task_id`),
+    it is expected that there exists a supplementary table which has the same name ("participant", "task"),
+    with a primary key named `id` such that a value of in the first (`particiapant_id = 215`) refers to
+    an entry in the second (a row in the participant table where `id = 215`). It is expected that the
+    values in a variable postfixed `_id` are unique within a "local scope" of the source table; however,
+    it is not expected that they are unique globally—for such purposes one should use the `_uuid`.
+  range: Unique within a table or within an explicit context
+  notes:
+  - Note that "id" typically implies a context, within which the "id' is unique. That context must be
+    made explicit. For example, `trial_id` may identify trials within a trial table for one activity completed
+    by one subject.
+  - If there is a column named `id` (i.e., without prefix), it is expected to be a primary key and there
+    exists other tables or files that refer to this column; if such a link between tables does not exist,
+    use `index` or `name` instead.
+  - '.tip The postfix `_id` does not imply a particular data type: both integers and strings are valid.'
+- id: name
+  label: '*_name'
+  scheme: referencing-suffixes
+  data_type: string
+  definition: Sometimes "name" is used in a way that is similar to a unique id (e.g., `study_name` or
+    `task_name`). The difference between "id" and "name" is that "name" is expected to be a readable text
+    (e.g., `n-back` versus `f346-r23v`). As with "id", it is expected that it refers to other tables and
+    that it is unique within a certain context (contrary to, for example, "label").
+- id: uuid
+  label: '*_uuid'
+  scheme: referencing-suffixes
+  data_type: string
+  definition: '[Universally Unique Identifier (UUID)](https://en.wikipedia.org/wiki/Universally_unique_identifier)
+    is a random 32-digit label that can be generated on the fly and will most likely be unique in computer
+    systems. UUID can be used to assign a record a unique identifier without having to ensure that that
+    number is not yet used by some other records or tables.'
+  range: UUIDv7 or later
+  notes:
+  - '`*_uuid`s are expected to be globally unique.'
+  - '`*_uuid`s are not expected to be human interpretable.'
+  - Avoid using `_uid` suffix to refer to a UUID variable.
+  - 'Within BDM, string-formatted Version 7 UUIDs are preferred over older versions or  corresponding
+    128-bit integers. For example: `01934efd-35d5-79db-9aca-fc29b0451cd1`.'
+- id: hash
+  label: '*_hash'
+  scheme: referencing-suffixes
+  data_type: string
+  definition: It is sometimes useful to create a reproducible keys based on some data. A [hash](https://en.wikipedia.org/wiki/Hash_function)
+    is not strictly necessary as it can be recreated using different data but it can be convenient for
+    data processing.
+  notes:
+  - There is no single widespread standard for hashing; rather there are multiple algorithms that can
+    be used depending on the use case. You can use either CRC32 (32 hexadecimal characters; e.g., "098f6bcd4621d373cade4e832627b4f6")
+    or SHA256 (base64 characters, e.g., "d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f") depending
+    on the probability of collision (i.e., two hashes for different data being identical). When that collision
+    probability is deemed high, use SHA256.
+- id: index
+  label: '*_index'
+  scheme: referencing-suffixes
+  data_type: integer
+  definition: Indices should be favored over labels and ids when a variable is used for referencing and
+    when order is important (often, but not always, the chronological order). For example, a variable  named
+    `stimulus_position_index` implies its value points to an entry in a list of possible stimulus positions.
+  range: 1-based indices
+  notes:
+  - Note that "index" typically implies a context, within which the indexing occurs and that context must
+    be made explicit. For example, `trial_index` may index trials within a block.
+  - 'BDM follows the convention of 1-based indexing: always starting counting/indexing from 1 rather than
+    0.'
+  - .warning Avoid the use of `*_number` because it is ambiguous.
+- id: repetition
+  label: '*_repetition'
+  scheme: referencing-suffixes
+  data_type: integer
+  definition: Repetition counts the number of times the same "thing" occurred, e.g., a participant completes
+    the same test twice, the same stimulus appears multiple times.
+  range: 0-based
+  notes:
+  - 'As with index and id, repetition assumes a context which must be clarified when ambiguous. '
+  - 'Repetition is 0-based: it starts "counting" at 0 rather than 1; *_iteration instead of *_repetition
+    would make it 1-based like indices, but it is less explicit and thus less preferred.'
+- id: label
+  label: '*_label'
+  scheme: referencing-suffixes
+  data_type: string
+  definition: A text attached to a variable and identifies it. It is expected to be human readable, but
+    not always unique.
+- id: identifier
+  label: Identifier
+  scheme: variable-category
+  definition: ''
+- id: context
+  label: Context
+  scheme: variable-category
+  definition: ''
+- id: task
+  label: Task
+  scheme: variable-category
+  definition: Describes key properties of the task or activity during which this data was collected.
+- id: stimulus
+  label: Stimulus
+  scheme: variable-category
+  definition: Describes the most relevant information about the stimuli presented during a given trial
+    and provides information on where to find more detailed information about what exact stimuli were
+    presented, how and when (this sub-trial data will be in separate tables).
+- id: option
+  label: Option
+  scheme: variable-category
+  definition: Describes the set of options that were offered to the subject for responding on a given
+    trial. Information about the individual options within that set are stored in a different, sub-trial
+    table.
+- id: input
+  label: Input
+  scheme: variable-category
+  definition: Describes the kinds of actions the subject performed in a trial.
+- id: expectation
+  label: Expectation
+  scheme: variable-category
+  definition: |-
+    Describes what response is expected from the subject (i.e., which response would evaluate to correct).
+
+    In general, expectation will display/refer to a particular option among the set of options offered to the subject (in choice tasks) and will have the same structure and format as the actual response data so that expected response and actual responses can be directly compared (e.g., if response_index == expected_response_index, then correct = TRUE).
+- id: response
+  label: Response
+  scheme: variable-category
+  definition: ''
+- id: evaluation
+  label: Evaluation
+  scheme: variable-category
+  definition: ''
+- id: feedback
+  label: Feedback
+  scheme: variable-category
+  definition: Describes what feedback was shown on a given trial. Because feedback hasn’t yet been fully
+    specified in our data model we will use the most basic representation for feedback information in
+    the trial table.
+- id: experimental-design
+  label: Experimental Design
+  scheme: variable-category
+  definition: ''
+- id: accessories
+  label: Accessories
+  scheme: variable-category
+  definition: Describes what additional data was recorded in parallel to behavioral response data (e.g.,
+    EEG).
+- id: reward
+  label: Reward
+  scheme: variable-category
+  definition: Describes the reward signals subjects received.
+- id: outcome
+  label: Outcome
+  scheme: variable-category
+  definition: Describes the consequences of subjects actions within the test environment (e.g., box opened).
+- id: index
+  label: index
+  scheme: variable-type
+  data_type: integer
+  definition: ''
+  status: internal
+- id: tag
+  label: tag
+  scheme: variable-type
+  definition: ''
+  status: internal
+- id: control
+  label: control
+  scheme: variable-type
+  definition: ''
+  status: internal
+- id: parameter
+  label: parameter
+  scheme: variable-type
+  definition: ''
+  status: internal
+- id: measurement
+  label: measurement
+  scheme: variable-type
+  definition: ''
+  status: internal
+- id: fixed
+  label: fixed
+  scheme: variable-type
+  definition: ''
+  status: internal
+- id: sampled
+  label: sampled
+  scheme: variable-type
+  definition: ''
+  status: internal
+- id: controlled
+  label: controlled
+  scheme: variable-type
+  definition: ''
+  status: internal
+- id: integer
+  label: integer
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: string
+  label: string
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: list-integer
+  label: list[integer]
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: list-booleans
+  label: list[booleans]
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: enum
+  label: enum
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: list-string
+  label: list[string]
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: datetime
+  label: datetime
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: boolean
+  label: boolean
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: float
+  label: float
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: set
+  label: set
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: probability
+  label: probability
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: list-enum
+  label: list[enum]
+  scheme: data-type
+  definition: ''
+  status: internal
+- id: list
+  label: list
+  scheme: data-type
+  definition: ''
+  status: internal
