@@ -30,6 +30,7 @@ jobs:
           python dataset/scripts/generate_schema_files.py --check
           python trial/scripts/generate.py --check
           python event/scripts/generate.py --check
+          python vocabulary/scripts/generate.py --check
 
       - name: Schemas are well-formed and examples validate
         run: python scripts/validate_schemas.py
