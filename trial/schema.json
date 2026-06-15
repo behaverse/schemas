@@ -1,454 +1,1012 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://behaverse.org/schemas/trial/v26.0608/schema.json",
-  "title": "Behaverse Trial Schema",
-  "description": "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events.",
-  "version": "26.0608",
-  "type": "object",
-  "properties": {
-    "Response": {
-      "type": "array",
-      "description": "Main table where each row describes a response in a trial.",
-      "items": {
-        "$ref": "#/definitions/Response"
-      }
-    },
-    "Stimulus": {
-      "type": "array",
-      "description": "Describes each of the stimuli that were shown during an trial.",
-      "items": {
-        "$ref": "#/definitions/Stimulus"
-      }
-    },
-    "Option": {
-      "type": "array",
-      "description": "Describes each option that a subject could choose from in a trial.",
-      "items": {
-        "$ref": "#/definitions/Option"
-      }
-    },
+  "$defs": {
     "Input": {
-      "type": "array",
+      "additionalProperties": false,
       "description": "A detailed log of all inputs and clicks recorded during the trial.",
-      "items": {
-        "$ref": "#/definitions/Input"
-      }
-    },
-    "StimulusComponent": {
-      "type": "array",
-      "description": "Stimuli can comprise multiple components. This table describes each component of a stimulus.",
-      "items": {
-        "$ref": "#/definitions/StimulusComponent"
-      }
-    },
-    "OptionComponent": {
-      "type": "array",
-      "description": "Options can comprise multiple components. This table describes each component of an option.",
-      "items": {
-        "$ref": "#/definitions/OptionComponent"
-      }
-    },
-    "Instrument": {
-      "type": "array",
-      "description": "Describes the instrument used for data acquisition.",
-      "items": {
-        "$ref": "#/definitions/Instrument"
-      }
-    }
-  },
-  "definitions": {
-    "Response": {
-      "type": "object",
       "properties": {
-        "response_id": {
+        "duration": {
+          "description": "Describes for how long the mouse button was pressed, in seconds.",
           "type": [
-            "integer",
-            "string"
+            "number",
+            "null"
           ],
-          "description": "A unique identifier assigned to responses in temporal order, meaning that larger IDs correspond to more recent responses that occurred later in time. This ID is unique within this table; no two rows share the same value.",
-          "category": "Key"
+          "title": "Duration"
         },
-        "study_name": {
+        "input_id": {
+          "description": "Primary key; each input or click has its own identifier value that is unique within the table.",
           "type": "string",
-          "description": "The name of the study or experiment.",
-          "category": "Context"
+          "title": "Input Id"
         },
-        "group_name": {
-          "type": "string",
-          "description": "Subjects may be assigned to different groups. Typically, different groups will have different experiences within a study.",
-          "category": "Context"
-        },
-        "agent_id": {
-          "type": "string",
-          "description": "A unique identifier assigned to the agent (typically person) generating the responses. This ID tracks their participation and responses throughout the study. See `Agent` table.",
-          "category": "Context"
-        },
-        "session_id": {
-          "type": "integer",
-          "description": "When there are multiple sessions, this variable indicates the order of each session (i.e., the first session completed by the subject has `session_index` = 1, the second session has `session_index` = 2; even if the second session is an exact repetition of the first one.",
-          "category": "Context"
-        },
-        "activity_index": {
-          "type": "integer",
-          "description": "When subjects complete multiple activities (e.g., a cognitive test followed by a questionnaire), this variable indicates the order of each activity (i.e., the first activity completed by the subject has `activity_index` = 1, the second session has `activity_index` = 2; even if the second activity is an exact repetition of the first one.",
-          "category": "Context"
-        },
-        "language": {
-          "type": "string",
-          "description": "The language the task was completed in, expressed as a two-letter code within the [ISO_639-1 standard](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).",
-          "category": "Task"
-        },
-        "instrument_id": {
-          "type": "string",
-          "description": "The unique identifier of the instrument used for collecting data (e.g., the name of the computer script used to run the test). Unique in the `Instrument` table and corresponding files in the `instruments/` folder.",
-          "category": "Task"
-        },
-        "instrument_repetition": {
-          "type": "integer",
-          "description": "The number of times this particular instrument has already been completed anytime in the past by this particular subject in this study. This variable has a value 0 the first time an instrument is used.",
-          "category": "Task"
-        },
-        "timeline_id": {
-          "type": "string",
-          "description": "Timelines are specific parameterization of an instrument and their identifiers are unique within the corresponding table for the instrument in the `instruments/` folder.",
-          "category": "Task"
-        },
-        "timeline_repetition": {
-          "type": "integer",
-          "description": "The number of times this particular timeline has already been completed anytime in the past by this particular subject in this study. This variable has a value 0 the first time a timeline is completed.",
-          "category": "Task"
-        },
-        "multitask_type": {
-          "type": "string",
-          "description": "Subjects may be required to perform multiple tasks at the same time. This variable indicates the type of multitasking required.",
-          "category": "Task"
-        },
-        "task_index": {
-          "type": "integer",
-          "description": "when `multitask_type` is not empty, `task_index` refers to each of the individual tasks. For example, for auditoy-visual dual N-back, `task_index=1` is the auditory task and `task_index=2` is the visual task.",
-          "category": "Task"
-        },
-        "job_type": {
-          "type": "string",
-          "description": "The general type of operation the subject needs to perform. The job typically is expressed as a verb (e.g., \"recall\", \"sort\") and can be the same for different instruments (e.g., Digit Span test and Spatial Span test both have a job of type \"recall-forward\").",
-          "category": "Task"
-        },
-        "job_description": {
-          "type": "string",
-          "description": "The more specific description of a job, which gives more information about what the participant sees and has to do. Whereas the `job_type` typically uses only verbs and adjectives, the `job_description` also contains nouns (e.g., “recall-digits-forward”, “recall-letters-backward”).",
-          "category": "Task"
-        },
-        "job_repeat": {
-          "type": "string",
-          "description": "Whether this trial's job has not been seen before in this timeline (i.e., specific version of the instrument).",
-          "category": "Task"
-        },
-        "block_index": {
-          "type": "integer",
-          "description": "Refers to the order in which this block has been experienced by the subject. When there are multiple blocks, this variable indicates the order of each block (i.e., the first block completed by the subject has `block_index=1`, the second block has `block_index=2`, even if the second block is an exact repetition of the first one).",
-          "category": "Task"
-        },
-        "block_name": {
-          "type": "string",
-          "description": "The name of a particular block in a timeline. If the same block is completed twice in a row, they would have different `block_index` values (1 and 2, respectively) but they would have the same `block_name` (e.g., “NB_timeline1_block1”). More details about the `block_name` is available in the `Instrument` table.",
-          "category": "Task"
-        },
-        "block_type": {
-          "type": "string",
-          "description": "Specifies the experimental role of the block (e.g., tutorial, practice, test, instruction).",
-          "category": "Task"
-        },
-        "transformation_name": {
-          "type": "string",
-          "description": "Refers to the specific events-to-trials function used to construct rows of this table from raw events. The transformation (or projection in DDD terminology) embodies the definition of a trial for a particular task. The transformer name refers to a code in the format of a function `f(trial_state, event) => trial_state`, where `event` is the event occurred during the performance of the task, and `trial_state` is the data stored for the trial. The final state of a trial is thus the result of applying a sequence of projections such that `trial = f(f(f(initial()), e), e), e)`.'",
-          "category": "Task"
-        },
-        "trial_index": {
+        "is_object_enabled": {
+          "description": "Indicates whether the object that was clicked on was enabled (clickable) or not.",
           "type": [
-            "integer",
-            "string"
+            "boolean",
+            "null"
           ],
-          "description": "Sequential identifier representing number of times transformation rule to the events occurred. It increases with each re-computation of the trial based on updated or newly received events.",
-          "category": "Task"
+          "title": "Is Object Enabled"
         },
-        "episode_index": {
-          "type": "integer",
-          "description": "Episodes are temporally distinct bins of time (no overlap and discrete). The binning of the time into successive episodes depends on the task; it is mostly used and necessary to group data in cases where two distinct trials occurred at the same time (e.g., dual N-back).",
-          "category": "Task"
-        },
-        "trial_start_datetime": {
+        "object_name": {
+          "description": "The human-readable name of the object that was clicked on (e.g., \"sos_box_1_3\").",
           "type": "string",
-          "format": "date-time",
-          "description": "The the first event of the trial occured.",
-          "category": "Task"
+          "title": "Object Name"
         },
-        "trial_seed": {
+        "object_state": {
+          "description": "Describes the state the object was in *before* it was clicked on. The meaning of \"state\" depends on the particular task (e.g., \"new empty\").",
           "type": [
-            "integer",
-            "string"
+            "string",
+            "null"
           ],
-          "description": "Random seed used in the trial (if any).",
-          "category": "Task"
+          "title": "Object State"
         },
-        "stimulus_index": {
-          "type": "array",
-          "items": {
-            "type": "integer"
-          },
-          "description": "Indexes in chronological (or spatial) order the stimuli shown within an instrument (counting one stimulus per response). `stimulus_index` may for instance be used to refer to the nth question asked within a questionnaire.",
-          "category": "Stimulus"
-        },
-        "stimulus_id": {
-          "type": "integer",
-          "description": "Is a unique identifier for the (unitary, set or sequence of) stimuli presented during a trial; if those exact same stimuli are repeated in a different trial, that trial would have the same value for stimulus_id. stimulus_id may also be used to refer to a specific message or question in a questionnaire.",
-          "category": "Stimulus"
-        },
-        "stimulus_type": {
+        "object_type": {
+          "description": "Describes the type of object that was clicked on (e.g., \"button\").",
           "type": "string",
-          "description": "BDM distinguishes the following stimulus types: messages and questions",
-          "category": "Stimulus"
+          "title": "Object Type"
         },
-        "stimulus_onset": {
+        "onset": {
+          "description": "Duration between the start of the trial and the moment the mouse button press occured, in seconds.",
           "type": "number",
-          "description": "Duration between the start of the trial and the appearance of the stimulus, in seconds.",
-          "category": "Stimulus"
-        },
-        "stimulus_panel_count": {
-          "type": "integer",
-          "description": "The number of panels or screen areas stimuli may appear on during the trial. For example, in a task where stimuli to be compared are presented on the left and right side of the screen, stimulus_panel_count = 2.",
-          "category": "Stimulus"
-        },
-        "stimulus_structure": {
-          "type": "string",
-          "description": "We distinguish three stimulus structures: unitary, set, sequence",
-          "category": "Stimulus"
-        },
-        "stimulus_structure_source_type": {
-          "type": "string",
-          "description": "Indicates the type of method used to generate the stimulus_structure (this is relevant when a trial displays a sequence of or set of stimuli): none, preset, generator",
-          "category": "Stimulus"
-        },
-        "stimulus_structure_source": {
-          "type": "string",
-          "description": "Refers to the specific generator used to produce the stimulus_structure (e.g., sequence of digits in a digit span test). When no generator was used, this variable has a value of none.",
-          "category": "Stimulus"
-        },
-        "stimulus_set_size": {
-          "type": "integer",
-          "description": "The number of different values each presented stimulus could have taken. This value gives an indication of the complexity of the stimulus space. When this number is large we set this variable to infinity, when for any reason it was not computed, it has a value of NA.",
-          "category": "Stimulus"
-        },
-        "stimulus_count": {
-          "type": "integer",
-          "description": "The number of stimuli shown to the participant during the trial.",
-          "category": "Stimulus"
-        },
-        "stimulus_source_type": {
-          "type": "string",
-          "description": "A stimulus is typically created using a particular procedure/algorithm (\"generator\") or is sampled from a particular set (\"set\"). This variable indicates which of these two applies for the current stimulus.",
-          "category": "Stimulus"
-        },
-        "stimulus_source": {
-          "type": "string",
-          "description": "Refers to the specific generator or set the stimulus belongs to. Stimuli that stem from the same source have the same data scheme and could thus be described in a table named after stimulus_source (i.e., stimulus_source indicates which table contains the full information about the stimulus; e.g., \"digit1to9\").",
-          "category": "Stimulus"
-        },
-        "stimulus_index_in_source": {
-          "type": "integer",
-          "description": "Index of the stimulus within the table referred to by stimulus_source. : For example, if stimulus_source == \"digit1to9\", stimulus_index_in_source = 1 refers to \"1\" while for stimulus_source == \"LettersAtoD\", stimulus_index_in_source = 1 refers to \"A\".",
-          "category": "Stimulus"
-        },
-        "stimulus_position_index": {
-          "type": "integer",
-          "description": "Refers to discrete positions on the screen the stimulus may appear on. The set and ordering of possible positions depends on the test. Whenever possible, it follows a natural order (left to right, top to bottom), but in free-form layouts, indices are arbitrary.",
-          "category": "Stimulus"
-        },
-        "stimulus_description": {
-          "type": "string",
-          "description": "A human readable, compact description of the main aspects of the stimulus. The description for a given stimulus depends on the task but follows a specific template for a given task. Because of this, it looks like the stimulus_description could be \"parsed\" and \"tidied\"---however, this is not the intention; parsed/tidied data will be available in other tables; description is for human readability and facilitates the understanding of the data.",
-          "category": "Stimulus"
-        },
-        "stimulus_role": {
-          "type": "string",
-          "description": "A stimulus may play different roles within a trial. Below is a list of some possible roles:",
-          "category": "Stimulus"
-        },
-        "option_source_type": {
-          "type": "string",
-          "description": "A set of options is typically created using a particular procedure/algorithm (“generator”) or is sampled from a particular set (“set”). This variable indicates which of these two applies for the current options.",
-          "category": "Option"
-        },
-        "option_source": {
-          "type": "string",
-          "description": "Refers to the specific generator or set that determined the options on a given trial. Option that stem from the same source have the same data scheme and could thus be described in a table named after option_source (i.e., option_source indicates which table contains the full information about the option set).",
-          "category": "Option"
-        },
-        "option_count": {
-          "type": "integer",
-          "description": "The number of options the participant can choose from on a given trial.",
-          "category": "Option"
+          "title": "Onset"
         },
         "option_id": {
-          "type": "integer",
-          "description": "Is a unique identifier for the option (set or generator) used on a given trial.",
-          "category": "Option"
+          "description": "If the click is on an option, this variable indicates which option it was.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Option Id"
         },
-        "option_data_type": {
+        "response_element_index": {
+          "description": "Indicates which of the clicks is used and in what order to form the actual response in the response table when `response_structure` is \"sequence\" or \"set\".",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Response Element Index"
+        },
+        "response_id": {
+          "description": "Indexing all the clicks that occurred within a given trial; ranging from 1 to `input_count` in the corresponding `Response` table.",
           "type": "string",
-          "description": "Describes the type of data this option entails. Possible values include:",
-          "category": "Option"
+          "title": "Response Id"
         },
-        "measurement_type": {
+        "stimulus_id": {
+          "description": "If the click is on a stimulus, this variable indicates which stimulus it was.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Stimulus Id"
+        },
+        "x_screen": {
+          "description": "X coordinates of the click relative to the left edge of the screen in pixels.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "X Screen"
+        },
+        "x_viewport": {
+          "description": "X coordinates of the click relative to the left edge of the screen expressed as a fraction of the screen width.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "X Viewport"
+        },
+        "y_screen": {
+          "description": "Y coordinates of the click relative to the top edge of the screen in pixels.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Y Screen"
+        },
+        "y_viewport": {
+          "description": "Y coordinates of the click relative to the top edge of the screen expressed as a fraction of the screen height.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Y Viewport"
+        }
+      },
+      "required": [
+        "input_id",
+        "response_id",
+        "onset",
+        "object_type",
+        "object_name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "Instrument": {
+      "additionalProperties": false,
+      "description": "Describes the instrument used for data acquisition.",
+      "properties": {
+        "block_id": {
+          "description": "Specific parameterization of the instrument for a single block of trials (e.g., \"DS_FORWARD_PRACTICE\" and \"DS_FOWARD_TEST\"). Block-level parameters override timeline-level parameters.",
           "type": "string",
-          "description": "Describes the type of measurement implied by Option which in turn has implications on how that data should be processed during analysis; takes a value in:",
-          "category": "Option"
+          "title": "Block Id"
         },
-        "input_interface_type": {
+        "description": {
+          "description": "A human readable, compact description of the main aspects of the instrument.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Description"
+        },
+        "instrument_id": {
+          "description": "Unique identifier of an instrument. It can be formed by combining name and version (e.g., \"DS_v2024.01\").",
           "type": "string",
-          "description": "Refers to the type of interface subjects used to input actions. Possible values include (non-exhaustive):",
-          "category": "Input"
+          "title": "Instrument Id"
         },
-        "input_action_type": {
+        "link": {
+          "description": "External link, if any, the provides more information about the instrument, e.g., on Cognitive Atlas.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Link"
+        },
+        "name": {
+          "description": "Name of the toolkit (scene, code, or configuration) that is used to collect the data, e.g., \"DS\" for a software that runs digit span task in forward OR backward order. The specific parameterization of the instrument is defined by the \"Timeline\" (e.g., a variant of instrument called \"DS_FORWARD\").",
           "type": "string",
-          "description": "Refers to the type of action the subject performs to give a response. Possible values include (non-exhaustive):",
-          "category": "Input"
+          "title": "Name"
         },
-        "input_count": {
-          "type": "integer",
-          "description": "The number of inputs (i.e., actions) the user made during the trial.",
-          "category": "Input"
-        },
-        "expected_response_option_index": {
-          "type": "integer",
-          "description": "The index of the option the subject is expected to choose from the set of options.",
-          "category": "Expectation"
-        },
-        "expected_response_description": {
+        "timeline_id": {
+          "description": "Identifier for a timeline. Timeline is a variant of an instrument with specific parametrization, for the whole experiment or for multiple block of trials (e.g., \"DS_FORWARD\" and \"DS_BACKWARD\" for digit span task). Timelines are configurations that specify instrument parameters.",
           "type": "string",
-          "description": "A description of the expected response using the same convention as response_description.",
-          "category": "Expectation"
+          "title": "Timeline Id"
         },
-        "response_structure": {
+        "version": {
+          "description": "Refers to the specific version/build of a particular instrument. We will use a calendar based versioning system ([calver.org](https://calver.org/); e.g., \"v2024.01\").",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Version"
+        }
+      },
+      "required": [
+        "instrument_id",
+        "timeline_id",
+        "block_id",
+        "name"
+      ],
+      "title": "Instrument",
+      "type": "object"
+    },
+    "Option": {
+      "additionalProperties": false,
+      "description": "Describes each option that a subject could choose from in a trial.",
+      "properties": {
+        "animation": {
+          "description": "Describes the animation used to display a specific option in a human-readable format. For example, \"fadeIn 3s ease-in-out\" indicates a 3-second fade-in animation.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Animation"
+        },
+        "description": {
+          "description": "A human readable, compact description of the main aspects of the option. The description for a given option depends on the task but follows a specific template for a given task. Because of this, it looks like the option description could be parsed---however, this is not the intention; structured, parsed data will be available in other fields; description is for human readability and facilitates the understanding of the data.",
           "type": "string",
-          "description": "The structure of the response required by the subject; can take values in:",
-          "category": "Response"
+          "title": "Description"
         },
-        "response_count": {
-          "type": "integer",
-          "description": "Each trial contains by definition only one response. However, when response_structure is other than unitary, a response comprises multiple pieces of information (e.g., “3-5-7” could be one response in the digit span task and this response contains three components, namely “3”, “5” and “7”). response_count refers to the number of components that make up a response (not the number of responses within a trial).",
-          "category": "Response"
-        },
-        "response_option_index": {
-          "type": "integer",
-          "description": "The index of the option the participant chose, starting from 1.",
-          "category": "Response"
-        },
-        "response_description": {
-          "type": "string",
-          "description": "A description of participant’s response; typically the description of the option that was chosen.",
-          "category": "Response"
-        },
-        "response_numeric": {
+        "duration": {
+          "description": "How long the option was displayed or active in seconds, starting from the `onset`, in seconds.",
           "type": "number",
-          "description": "A numeric value associated with a particular response; this could be a numeric value entered directly by the subject or the numeric meaning of a selected option (for example, the choice of option \"Never\" may be associated with the numeric value of 0). Note that this variable describes the subject's response; it does not describe the value (e.g., correctness or goodness) that is associated with that response.",
-          "category": "Response"
+          "title": "Duration"
         },
-        "response_time": {
+        "index_in_source": {
+          "description": "When a option is picked from a particular set (e.g., `digits1to9`), this index refers to the index within that set.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Index In Source"
+        },
+        "index_in_trial": {
+          "description": "Indexing each of the options within the set of options that were available to subjects on a given trial.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Index In Trial"
+        },
+        "object_id": {
+          "description": "An option is defined by a set of features. This variable is used to identify each time the same features were used. For example, if the same white digit \"3\" is used as an option in the Digit Span task, all those instances would have the same `object_id` although they would have different `id`s (as they appeared at different times).",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Object Id"
+        },
+        "onset": {
+          "description": "Duration between the start of the trial and the moment the option was displayed or activated, in seconds.",
           "type": "number",
-          "description": "The duration, in seconds, between the earliest possible time a response could have been completed and the moment that response was actually completed (and NOT when it was initiated).",
-          "category": "Response"
+          "title": "Onset"
         },
-        "response_datetime": {
+        "option_id": {
+          "description": "Primary key of the `Option` table. Reference to this identifier in other tables are thus named `option_id`.",
           "type": "string",
-          "format": "date-time",
-          "description": "The datetime corresponding to the completion of the response.",
-          "category": "Response"
+          "title": "Option Id"
         },
-        "response_validation_time": {
-          "type": "number",
-          "description": "In some cases, subjects may need to press an extra key to validate previous responses. When relevant, this variable may encode this duration.",
-          "category": "Response"
+        "panel_id": {
+          "description": "Identifier of the pane this option was displayed over.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Panel Id"
         },
-        "response_initiation_time": {
-          "type": "number",
-          "description": "In some cases (e.g., a reaching movement) it might be useful to encode when a response was initiated.",
-          "category": "Response"
+        "response_id": {
+          "description": "Refers to the `response_id` in the `Response` table and indicates for which response this option was shown.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Response Id"
         },
-        "response_skipped": {
-          "type": "boolean",
-          "description": "In some cases (e.g., in some questionnaires), subjects have the option to skip a question.",
-          "category": "Response"
+        "source": {
+          "description": "Refers to the specific generator or set from which the option originates. Options sharing the same source have the same data structure and can be thus collectively described in a table named after `option_source` (e.g., \"digit1to9\").",
+          "type": "string",
+          "title": "Source"
         },
-        "timed_out": {
-          "type": "boolean",
-          "description": "Some tasks require subjects to give a response within a certain time limit. When subjects fail to respond before that time runs out, timed_out is set to TRUE.",
-          "category": "Response"
+        "source_type": {
+          "description": "An option is typically created using a particular procedure/algorithm or is sampled from a particular set. This variable indicates which of these two applies for the current option.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Source Type"
         },
+        "trial_index": {
+          "description": "Refers to the `trial_index` in the `Response` table and indicates in which trial this option was shown.",
+          "type": "string",
+          "title": "Trial Index"
+        },
+        "value": {
+          "description": "A numeric value associated with a particular response option; typically indicating the \"worth\" of a response (e.g., `value=1` for the correct response).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Value"
+        },
+        "x_screen": {
+          "description": "X coordinates of the option component on the screen in pixels.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "X Screen"
+        },
+        "x_viewport": {
+          "description": "X coordinates of the option component on the screen expressed as a fraction of the screen width.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "X Viewport"
+        },
+        "y_screen": {
+          "description": "Y coordinates of the option component on the screen in pixels.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Y Screen"
+        },
+        "y_viewport": {
+          "description": "Y coordinates of the option component on the screen expressed as a fraction of the screen height.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Y Viewport"
+        }
+      },
+      "required": [
+        "option_id",
+        "trial_index",
+        "onset",
+        "duration",
+        "description",
+        "source"
+      ],
+      "title": "Option",
+      "type": "object"
+    },
+    "OptionComponent": {
+      "additionalProperties": false,
+      "description": "Options can comprise multiple components. This table describes each component of an option.",
+      "properties": {
+        "color_hex": {
+          "description": "The hexadecimal RGB color code of the component (e.g., #FF0000 for red) with optional alpha channel for transparency.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Color Hex"
+        },
+        "color_name": {
+          "description": "The human-readable name of the component color, e.g., `red`.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Color Name"
+        },
+        "description": {
+          "description": "A human readable, compact description of the component.",
+          "type": "string",
+          "title": "Description"
+        },
+        "index": {
+          "description": "A 1-based index differentiating each part and indicating the stacking order of them. An option component with a higher `index` is displayed on top of those with lower values, similar to CSS z-index property.",
+          "type": "integer",
+          "title": "Index"
+        },
+        "option_id": {
+          "description": "A reference to the key `option_id` in the `Option` table.",
+          "type": "string",
+          "title": "Option Id"
+        },
+        "orientation": {
+          "description": "Indicates the symbol orientation.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Orientation"
+        },
+        "panel_id": {
+          "description": "Identifier of the panel this option is displayed over.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Panel Id"
+        },
+        "symbol_count": {
+          "description": "The number of symbols represented in this component.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Symbol Count"
+        },
+        "symbol_layout": {
+          "description": "How the symbols are laid out.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Symbol Layout"
+        },
+        "symbol_name": {
+          "description": "The name of the displayed symbol.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Symbol Name"
+        },
+        "x_screen": {
+          "description": "X coordinates of the option component relative to the left edge of the screen in pixels.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "X Screen"
+        },
+        "x_viewport": {
+          "description": "X coordinates of the option component relative to the left edge of the screen expressed as a fraction of the screen width.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "X Viewport"
+        },
+        "y_screen": {
+          "description": "Y coordinates of the option component relative to the top edge of the screen in pixels.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Y Screen"
+        },
+        "y_viewport": {
+          "description": "Y coordinates of the option component relative to the top edge of the screen expressed as a fraction of the screen height.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Y Viewport"
+        }
+      },
+      "required": [
+        "index",
+        "option_id",
+        "description"
+      ],
+      "title": "OptionComponent",
+      "type": "object"
+    },
+    "Response": {
+      "additionalProperties": false,
+      "description": "Main table where each row describes a response in a trial.",
+      "properties": {
         "accuracy": {
-          "type": "number",
           "description": "A task-dependent accuracy measure ranging from 0 to 1 (inclusive).",
-          "category": "Evaluation"
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Accuracy"
         },
-        "correct": {
-          "type": "boolean",
-          "description": "Indicates whether the response matches the expected response (i.e., correct = TRUE) or not (i.e., correct = FALSE).",
-          "category": "Evaluation"
-        },
-        "score": {
-          "type": "number",
-          "description": "A numeric value associated with a particular response in a given context. This variable may be used to compute a performance metric or a questionnaire level index (e.g., a well-being score).",
-          "category": "Evaluation"
-        },
-        "evaluation_label": {
-          "type": "string",
-          "description": "There are several labels that can be assigned to a given response to specify what that response means in terms of evaluation within a task. The most general terms are \"correct” and \"error\" (which are already given by the correct variable). There are however more specific sets of terms that may apply in different contexts. For example, in a signal detection task, it is common to use labels from the signal detection theory framework (i.e., “hit”, “miss”, “false alarm”, “correct rejection”). In other contexts, researchers might use terms like “omission” or “commission” errors or even things like “perseveration” error (e.g., in the Wisconsin Card Sorting Test). Note that these terms are not always well defined or exclusive. For example, a “hit” is also a “correct” response and a “false alarm” may be synonymous to “commission error”. Whenever possible use the more specific terms (i.e., always use “hit” rather than “correct” when applicable). Here are few evaluation labels that are commonly used:",
-          "category": "Evaluation"
-        },
-        "feedback_description": {
-          "type": "string",
-          "description": "Lists the different kinds of feedback that were shown on a given trial. When multiple types of feedback were used, feedback will list them using `;` as a separator. If a given type of feedback was shown multiple times during a trial, that feedback type is listed only once (i.e., feedback_description does NOT represent the sequence of feedbacks). The possible values for feedback are:",
-          "category": "Feedback"
-        },
-        "outcome_description": {
-          "type": "string",
-          "description": "Describes the observable consequences of the subject's response (e.g., \"the opened box is empty\").",
-          "category": "Outcome"
-        },
-        "outcome_numeric": {
-          "type": "number",
-          "description": "A numeric value describing the observable consequences of the subject's response (e.g., +3 points).",
-          "category": "Outcome"
-        },
-        "additional_measures": {
-          "type": "string",
-          "description": "Indicates whether additional measures have been recorded during this trial and if so what kind of measures they are. Possible values include (non-exhaustive):",
-          "category": "Accessory"
-        },
-        "adaptive_method_name": {
-          "type": "string",
-          "description": "Specifies the adaptive procedure used to modify instrument parameters in response to subject performance (e.g., `staircase`).",
-          "category": "Experimental Design"
+        "activity_index": {
+          "description": "When subjects complete multiple activities (e.g., a cognitive test followed by a questionnaire), this variable indicates the order of each activity (i.e., the first activity completed by the subject has `activity_index` = 1, the second session has `activity_index` = 2; even if the second activity is an exact repetition of the first one.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Activity Index"
         },
         "adaptive_method_config": {
-          "type": "string",
           "description": "More detailed configuration for the adaptive method, including initial values, step sizes, and termination criteria.",
-          "category": "Experimental Design"
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Adaptive Method Config"
+        },
+        "adaptive_method_name": {
+          "description": "Specifies the adaptive procedure used to modify instrument parameters in response to subject performance (e.g., `staircase`).",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Adaptive Method Name"
         },
         "adaptive_parameter_name": {
-          "type": "string",
           "description": "Specific instrument parameter that is dynamically modified based on the subject's performance.",
-          "category": "Experimental Design"
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Adaptive Parameter Name"
         },
         "adaptive_parameter_value": {
           "description": "The specific value of the instrument parameter that was used for this trial. This value is updated as the adaptive algorithm adjusts the parameter based on the subject's responses.",
-          "category": "Experimental Design"
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Adaptive Parameter Value"
         },
         "adaptive_parameter_value_next": {
           "description": "The next value of the adaptive parameter that will be used in the subsequent trial, as determined by the adaptive algorithm.",
-          "category": "Experimental Design"
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Adaptive Parameter Value Next"
+        },
+        "additional_measures": {
+          "description": "Indicates whether additional measures have been recorded during this trial and if so what kind of measures they are. Possible values include (non-exhaustive):",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Additional Measures"
+        },
+        "agent_id": {
+          "description": "A unique identifier assigned to the agent (typically person) generating the responses. This ID tracks their participation and responses throughout the study. See `Agent` table.",
+          "type": "string",
+          "title": "Agent Id"
+        },
+        "block_index": {
+          "description": "Refers to the order in which this block has been experienced by the subject. When there are multiple blocks, this variable indicates the order of each block (i.e., the first block completed by the subject has `block_index=1`, the second block has `block_index=2`, even if the second block is an exact repetition of the first one).",
+          "type": "integer",
+          "title": "Block Index"
+        },
+        "block_name": {
+          "description": "The name of a particular block in a timeline. If the same block is completed twice in a row, they would have different `block_index` values (1 and 2, respectively) but they would have the same `block_name` (e.g., “NB_timeline1_block1”). More details about the `block_name` is available in the `Instrument` table.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Block Name"
+        },
+        "block_type": {
+          "description": "Specifies the experimental role of the block (e.g., tutorial, practice, test, instruction).",
+          "type": "string",
+          "title": "Block Type"
+        },
+        "correct": {
+          "description": "Indicates whether the response matches the expected response (i.e., correct = TRUE) or not (i.e., correct = FALSE).",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "title": "Correct"
+        },
+        "episode_index": {
+          "description": "Episodes are temporally distinct bins of time (no overlap and discrete). The binning of the time into successive episodes depends on the task; it is mostly used and necessary to group data in cases where two distinct trials occurred at the same time (e.g., dual N-back).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Episode Index"
+        },
+        "evaluation_label": {
+          "description": "There are several labels that can be assigned to a given response to specify what that response means in terms of evaluation within a task. The most general terms are \"correct” and \"error\" (which are already given by the correct variable). There are however more specific sets of terms that may apply in different contexts. For example, in a signal detection task, it is common to use labels from the signal detection theory framework (i.e., “hit”, “miss”, “false alarm”, “correct rejection”). In other contexts, researchers might use terms like “omission” or “commission” errors or even things like “perseveration” error (e.g., in the Wisconsin Card Sorting Test). Note that these terms are not always well defined or exclusive. For example, a “hit” is also a “correct” response and a “false alarm” may be synonymous to “commission error”. Whenever possible use the more specific terms (i.e., always use “hit” rather than “correct” when applicable). Here are few evaluation labels that are commonly used:",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Evaluation Label"
+        },
+        "expected_response_description": {
+          "description": "A description of the expected response using the same convention as response_description.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Expected Response Description"
+        },
+        "expected_response_option_index": {
+          "description": "The index of the option the subject is expected to choose from the set of options.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Expected Response Option Index"
+        },
+        "feedback_description": {
+          "description": "Lists the different kinds of feedback that were shown on a given trial. When multiple types of feedback were used, feedback will list them using `;` as a separator. If a given type of feedback was shown multiple times during a trial, that feedback type is listed only once (i.e., feedback_description does NOT represent the sequence of feedbacks). The possible values for feedback are:",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Feedback Description"
+        },
+        "group_name": {
+          "description": "Subjects may be assigned to different groups. Typically, different groups will have different experiences within a study.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Group Name"
+        },
+        "input_action_type": {
+          "description": "Refers to the type of action the subject performs to give a response. Possible values include (non-exhaustive):",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Input Action Type"
+        },
+        "input_count": {
+          "description": "The number of inputs (i.e., actions) the user made during the trial.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Input Count"
+        },
+        "input_interface_type": {
+          "description": "Refers to the type of interface subjects used to input actions. Possible values include (non-exhaustive):",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Input Interface Type"
+        },
+        "instrument_id": {
+          "description": "The unique identifier of the instrument used for collecting data (e.g., the name of the computer script used to run the test). Unique in the `Instrument` table and corresponding files in the `instruments/` folder.",
+          "type": "string",
+          "title": "Instrument Id"
+        },
+        "instrument_repetition": {
+          "description": "The number of times this particular instrument has already been completed anytime in the past by this particular subject in this study. This variable has a value 0 the first time an instrument is used.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Instrument Repetition"
+        },
+        "job_description": {
+          "description": "The more specific description of a job, which gives more information about what the participant sees and has to do. Whereas the `job_type` typically uses only verbs and adjectives, the `job_description` also contains nouns (e.g., “recall-digits-forward”, “recall-letters-backward”).",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Job Description"
+        },
+        "job_repeat": {
+          "description": "Whether this trial's job has not been seen before in this timeline (i.e., specific version of the instrument).",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Job Repeat"
+        },
+        "job_type": {
+          "description": "The general type of operation the subject needs to perform. The job typically is expressed as a verb (e.g., \"recall\", \"sort\") and can be the same for different instruments (e.g., Digit Span test and Spatial Span test both have a job of type \"recall-forward\").",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Job Type"
+        },
+        "language": {
+          "description": "The language the task was completed in, expressed as a two-letter code within the [ISO_639-1 standard](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Language"
+        },
+        "measurement_type": {
+          "description": "Describes the type of measurement implied by Option which in turn has implications on how that data should be processed during analysis; takes a value in:",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Measurement Type"
+        },
+        "multitask_type": {
+          "description": "Subjects may be required to perform multiple tasks at the same time. This variable indicates the type of multitasking required.",
+          "type": "string",
+          "title": "Multitask Type"
+        },
+        "option_count": {
+          "description": "The number of options the participant can choose from on a given trial.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Option Count"
+        },
+        "option_data_type": {
+          "description": "Describes the type of data this option entails. Possible values include:",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Option Data Type"
+        },
+        "option_id": {
+          "description": "Is a unique identifier for the option (set or generator) used on a given trial.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Option Id"
+        },
+        "option_source": {
+          "description": "Refers to the specific generator or set that determined the options on a given trial. Option that stem from the same source have the same data scheme and could thus be described in a table named after option_source (i.e., option_source indicates which table contains the full information about the option set).",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Option Source"
+        },
+        "option_source_type": {
+          "description": "A set of options is typically created using a particular procedure/algorithm (“generator”) or is sampled from a particular set (“set”). This variable indicates which of these two applies for the current options.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Option Source Type"
+        },
+        "outcome_description": {
+          "description": "Describes the observable consequences of the subject's response (e.g., \"the opened box is empty\").",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Outcome Description"
+        },
+        "outcome_numeric": {
+          "description": "A numeric value describing the observable consequences of the subject's response (e.g., +3 points).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Outcome Numeric"
+        },
+        "response_count": {
+          "description": "Each trial contains by definition only one response. However, when response_structure is other than unitary, a response comprises multiple pieces of information (e.g., “3-5-7” could be one response in the digit span task and this response contains three components, namely “3”, “5” and “7”). response_count refers to the number of components that make up a response (not the number of responses within a trial).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Response Count"
+        },
+        "response_datetime": {
+          "description": "The datetime corresponding to the completion of the response.",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Response Datetime"
+        },
+        "response_description": {
+          "description": "A description of participant’s response; typically the description of the option that was chosen.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Response Description"
+        },
+        "response_id": {
+          "description": "A unique identifier assigned to responses in temporal order, meaning that larger IDs correspond to more recent responses that occurred later in time. This ID is unique within this table; no two rows share the same value.",
+          "type": "string",
+          "title": "Response Id"
+        },
+        "response_initiation_time": {
+          "description": "In some cases (e.g., a reaching movement) it might be useful to encode when a response was initiated.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Response Initiation Time"
+        },
+        "response_numeric": {
+          "description": "A numeric value associated with a particular response; this could be a numeric value entered directly by the subject or the numeric meaning of a selected option (for example, the choice of option \"Never\" may be associated with the numeric value of 0). Note that this variable describes the subject's response; it does not describe the value (e.g., correctness or goodness) that is associated with that response.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Response Numeric"
+        },
+        "response_option_index": {
+          "description": "The index of the option the participant chose, starting from 1.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Response Option Index"
+        },
+        "response_skipped": {
+          "description": "In some cases (e.g., in some questionnaires), subjects have the option to skip a question.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "title": "Response Skipped"
+        },
+        "response_structure": {
+          "description": "The structure of the response required by the subject; can take values in:",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Response Structure"
+        },
+        "response_time": {
+          "description": "The duration, in seconds, between the earliest possible time a response could have been completed and the moment that response was actually completed (and NOT when it was initiated).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Response Time"
+        },
+        "response_validation_time": {
+          "description": "In some cases, subjects may need to press an extra key to validate previous responses. When relevant, this variable may encode this duration.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Response Validation Time"
+        },
+        "score": {
+          "description": "A numeric value associated with a particular response in a given context. This variable may be used to compute a performance metric or a questionnaire level index (e.g., a well-being score).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Score"
+        },
+        "session_id": {
+          "description": "When there are multiple sessions, this variable indicates the order of each session (i.e., the first session completed by the subject has `session_index` = 1, the second session has `session_index` = 2; even if the second session is an exact repetition of the first one.",
+          "type": "integer",
+          "title": "Session Id"
+        },
+        "stimulus_count": {
+          "description": "The number of stimuli shown to the participant during the trial.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Stimulus Count"
+        },
+        "stimulus_description": {
+          "description": "A human readable, compact description of the main aspects of the stimulus. The description for a given stimulus depends on the task but follows a specific template for a given task. Because of this, it looks like the stimulus_description could be \"parsed\" and \"tidied\"---however, this is not the intention; parsed/tidied data will be available in other tables; description is for human readability and facilitates the understanding of the data.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Stimulus Description"
+        },
+        "stimulus_id": {
+          "description": "Is a unique identifier for the (unitary, set or sequence of) stimuli presented during a trial; if those exact same stimuli are repeated in a different trial, that trial would have the same value for stimulus_id. stimulus_id may also be used to refer to a specific message or question in a questionnaire.",
+          "type": "integer",
+          "title": "Stimulus Id"
+        },
+        "stimulus_index": {
+          "description": "Indexes in chronological (or spatial) order the stimuli shown within an instrument (counting one stimulus per response). `stimulus_index` may for instance be used to refer to the nth question asked within a questionnaire.",
+          "items": {
+            "type": "integer"
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Stimulus Index"
+        },
+        "stimulus_index_in_source": {
+          "description": "Index of the stimulus within the table referred to by stimulus_source. : For example, if stimulus_source == \"digit1to9\", stimulus_index_in_source = 1 refers to \"1\" while for stimulus_source == \"LettersAtoD\", stimulus_index_in_source = 1 refers to \"A\".",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Stimulus Index In Source"
+        },
+        "stimulus_onset": {
+          "description": "Duration between the start of the trial and the appearance of the stimulus, in seconds.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Stimulus Onset"
+        },
+        "stimulus_panel_count": {
+          "description": "The number of panels or screen areas stimuli may appear on during the trial. For example, in a task where stimuli to be compared are presented on the left and right side of the screen, stimulus_panel_count = 2.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Stimulus Panel Count"
+        },
+        "stimulus_position_index": {
+          "description": "Refers to discrete positions on the screen the stimulus may appear on. The set and ordering of possible positions depends on the test. Whenever possible, it follows a natural order (left to right, top to bottom), but in free-form layouts, indices are arbitrary.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Stimulus Position Index"
+        },
+        "stimulus_role": {
+          "description": "A stimulus may play different roles within a trial. Below is a list of some possible roles:",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Stimulus Role"
+        },
+        "stimulus_set_size": {
+          "description": "The number of different values each presented stimulus could have taken. This value gives an indication of the complexity of the stimulus space. When this number is large we set this variable to infinity, when for any reason it was not computed, it has a value of NA.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Stimulus Set Size"
+        },
+        "stimulus_source": {
+          "description": "Refers to the specific generator or set the stimulus belongs to. Stimuli that stem from the same source have the same data scheme and could thus be described in a table named after stimulus_source (i.e., stimulus_source indicates which table contains the full information about the stimulus; e.g., \"digit1to9\").",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Stimulus Source"
+        },
+        "stimulus_source_type": {
+          "description": "A stimulus is typically created using a particular procedure/algorithm (\"generator\") or is sampled from a particular set (\"set\"). This variable indicates which of these two applies for the current stimulus.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Stimulus Source Type"
+        },
+        "stimulus_structure": {
+          "description": "We distinguish three stimulus structures: unitary, set, sequence",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Stimulus Structure"
+        },
+        "stimulus_structure_source": {
+          "description": "Refers to the specific generator used to produce the stimulus_structure (e.g., sequence of digits in a digit span test). When no generator was used, this variable has a value of none.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Stimulus Structure Source"
+        },
+        "stimulus_structure_source_type": {
+          "description": "Indicates the type of method used to generate the stimulus_structure (this is relevant when a trial displays a sequence of or set of stimuli): none, preset, generator",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Stimulus Structure Source Type"
+        },
+        "stimulus_type": {
+          "description": "BDM distinguishes the following stimulus types: messages and questions",
+          "type": "string",
+          "title": "Stimulus Type"
+        },
+        "study_name": {
+          "description": "The name of the study or experiment.",
+          "type": "string",
+          "title": "Study Name"
+        },
+        "task_index": {
+          "description": "when `multitask_type` is not empty, `task_index` refers to each of the individual tasks. For example, for auditoy-visual dual N-back, `task_index=1` is the auditory task and `task_index=2` is the visual task.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Task Index"
+        },
+        "timed_out": {
+          "description": "Some tasks require subjects to give a response within a certain time limit. When subjects fail to respond before that time runs out, timed_out is set to TRUE.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "title": "Timed Out"
+        },
+        "timeline_id": {
+          "description": "Timelines are specific parameterization of an instrument and their identifiers are unique within the corresponding table for the instrument in the `instruments/` folder.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Timeline Id"
+        },
+        "timeline_repetition": {
+          "description": "The number of times this particular timeline has already been completed anytime in the past by this particular subject in this study. This variable has a value 0 the first time a timeline is completed.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Timeline Repetition"
+        },
+        "transformation_name": {
+          "description": "Refers to the specific events-to-trials function used to construct rows of this table from raw events. The transformation (or projection in DDD terminology) embodies the definition of a trial for a particular task. The transformer name refers to a code in the format of a function `f(trial_state, event) => trial_state`, where `event` is the event occurred during the performance of the task, and `trial_state` is the data stored for the trial. The final state of a trial is thus the result of applying a sequence of projections such that `trial = f(f(f(initial()), e), e), e)`.'",
+          "type": "string",
+          "title": "Transformation Name"
+        },
+        "trial_index": {
+          "description": "Sequential identifier representing number of times transformation rule to the events occurred. It increases with each re-computation of the trial based on updated or newly received events.",
+          "type": "string",
+          "title": "Trial Index"
+        },
+        "trial_seed": {
+          "description": "Random seed used in the trial (if any).",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Trial Seed"
+        },
+        "trial_start_datetime": {
+          "description": "The the first event of the trial occured.",
+          "format": "date-time",
+          "type": "string",
+          "title": "Trial Start Datetime"
         }
       },
-      "description": "Main table where each row describes a response in a trial.",
       "required": [
         "response_id",
         "study_name",
@@ -463,117 +1021,146 @@
         "trial_start_datetime",
         "stimulus_id",
         "stimulus_type"
-      ]
+      ],
+      "title": "Response",
+      "type": "object"
     },
     "Stimulus": {
-      "type": "object",
+      "additionalProperties": false,
+      "description": "Describes each of the stimuli that were shown during an trial.",
       "properties": {
-        "stimulus_id": {
+        "animation": {
+          "description": "Describes the animation used to display a specific stimulus in a human-readable format. For example, \"fadeIn 3s\" indicates a 3-second fade-in animation.",
           "type": [
-            "integer",
-            "string"
+            "string",
+            "null"
           ],
-          "description": "Primary key of the `Stimulus` table. Reference to this identifier in other tables are thus named `stimulus_id`.",
-          "category": "Key"
-        },
-        "trial_id": {
-          "type": [
-            "integer",
-            "string"
-          ],
-          "description": "Refers to the `trial_index` in the `Response` table and indicates in which trial this stimulus was shown.",
-          "category": "Context"
-        },
-        "response_id": {
-          "type": [
-            "integer",
-            "string"
-          ],
-          "description": "Refers to the `response_id` in the `Response` table and indicates for which response this stimulus was shown.",
-          "category": "Context"
-        },
-        "object_id": {
-          "type": "string",
-          "description": "A stimulus is defined by a set of features. This variable is used to identify each time the same stimulus features were used.",
-          "category": "Context"
-        },
-        "presentation_id": {
-          "type": "string",
-          "description": "In a multitasking setting, a particular instance of a stimulus (e.g., the current letter \"A\") may be used by multiple tasks at the same time (e.g, in the dual N-back task). Because these are different trials, they will have different `trial_id` values and hence will have different rows in the `Stimulus` table. We use `presentation_id` to indicate that a given stimulus is in fact the same instance across those trials.",
-          "category": "Context"
-        },
-        "index_in_trial": {
-          "type": "integer",
-          "description": "Refers to individual stimuli within the sequence or set of stimuli shown during a trial.",
-          "category": "Context"
-        },
-        "onset": {
-          "type": "number",
-          "description": "Duration between the start of the trial and the appearance of the stimulus, in seconds.",
-          "category": "When"
-        },
-        "duration": {
-          "type": "number",
-          "description": "Describes for how long this stimulus was displayed after its onset, in seconds.",
-          "category": "When"
-        },
-        "panel_id": {
-          "type": "string",
-          "description": "Identifier of the panel this stimulus is displayed over.",
-          "category": "Where"
-        },
-        "x_screen": {
-          "type": "integer",
-          "description": "X coordinates of the stimulus on the screen in pixels.",
-          "category": "Where"
-        },
-        "y_screen": {
-          "type": "integer",
-          "description": "Y coordinates of the stimulus on the screen in pixels.",
-          "category": "Where"
-        },
-        "x_viewport": {
-          "type": "number",
-          "description": "X coordinates of the stimulus on the screen expressed as a fraction of the screen width.",
-          "category": "Where"
-        },
-        "y_viewport": {
-          "type": "number",
-          "description": "Y coordinates of the stimulus on the screen expressed as a fraction of the screen height.",
-          "category": "Where"
+          "title": "Animation"
         },
         "description": {
-          "type": "string",
           "description": "A human readable, compact description of the main aspects of the stimulus. The description for a given stimulus depends on the task but follows a specific template for a given task. Because of this, it looks like the `description` could be parsed and converted into a more structured format---however, this is not the intention; structured data will be available in other tables; here, description is for human readability and facilitates the understanding of the data.",
-          "category": "What"
-        },
-        "source": {
           "type": "string",
-          "description": "Refers to the specific generator or set the stimulus belongs to.",
-          "category": "What"
+          "title": "Description"
         },
-        "source_type": {
-          "type": "string",
-          "description": "A stimulus is typically created using a particular procedure/algorithm (\"generator\") or is sampled from a particular set (\"set\"). This variable indicates which of these two applies for the current stimulus.",
-          "category": "What"
+        "duration": {
+          "description": "Describes for how long this stimulus was displayed after its onset, in seconds.",
+          "type": "number",
+          "title": "Duration"
         },
         "index_in_source": {
-          "type": "integer",
           "description": "When a stimulus is picked from a particular set (e.g., \"digits1to9\"), this index refers to the index within that set.",
-          "category": "What"
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Index In Source"
+        },
+        "index_in_trial": {
+          "description": "Refers to individual stimuli within the sequence or set of stimuli shown during a trial.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Index In Trial"
+        },
+        "object_id": {
+          "description": "A stimulus is defined by a set of features. This variable is used to identify each time the same stimulus features were used.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Object Id"
+        },
+        "onset": {
+          "description": "Duration between the start of the trial and the appearance of the stimulus, in seconds.",
+          "type": "number",
+          "title": "Onset"
+        },
+        "panel_id": {
+          "description": "Identifier of the panel this stimulus is displayed over.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Panel Id"
+        },
+        "presentation_id": {
+          "description": "In a multitasking setting, a particular instance of a stimulus (e.g., the current letter \"A\") may be used by multiple tasks at the same time (e.g, in the dual N-back task). Because these are different trials, they will have different `trial_id` values and hence will have different rows in the `Stimulus` table. We use `presentation_id` to indicate that a given stimulus is in fact the same instance across those trials.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Presentation Id"
+        },
+        "response_id": {
+          "description": "Refers to the `response_id` in the `Response` table and indicates for which response this stimulus was shown.",
+          "type": "string",
+          "title": "Response Id"
         },
         "role": {
-          "type": "string",
           "description": "Describe the role that the stimulus plays in the trial, e.g., \"target\".",
-          "category": "What"
-        },
-        "animation": {
           "type": "string",
-          "description": "Describes the animation used to display a specific stimulus in a human-readable format. For example, \"fadeIn 3s\" indicates a 3-second fade-in animation.",
-          "category": "How"
+          "title": "Role"
+        },
+        "source": {
+          "description": "Refers to the specific generator or set the stimulus belongs to.",
+          "type": "string",
+          "title": "Source"
+        },
+        "source_type": {
+          "description": "A stimulus is typically created using a particular procedure/algorithm (\"generator\") or is sampled from a particular set (\"set\"). This variable indicates which of these two applies for the current stimulus.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Source Type"
+        },
+        "stimulus_id": {
+          "description": "Primary key of the `Stimulus` table. Reference to this identifier in other tables are thus named `stimulus_id`.",
+          "type": "string",
+          "title": "Stimulus Id"
+        },
+        "trial_id": {
+          "description": "Refers to the `trial_index` in the `Response` table and indicates in which trial this stimulus was shown.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Trial Id"
+        },
+        "x_screen": {
+          "description": "X coordinates of the stimulus on the screen in pixels.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "X Screen"
+        },
+        "x_viewport": {
+          "description": "X coordinates of the stimulus on the screen expressed as a fraction of the screen width.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "X Viewport"
+        },
+        "y_screen": {
+          "description": "Y coordinates of the stimulus on the screen in pixels.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Y Screen"
+        },
+        "y_viewport": {
+          "description": "Y coordinates of the stimulus on the screen expressed as a fraction of the screen height.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Y Viewport"
         }
       },
-      "description": "Describes each of the stimuli that were shown during an trial.",
       "required": [
         "stimulus_id",
         "response_id",
@@ -582,427 +1169,294 @@
         "description",
         "source",
         "role"
-      ]
-    },
-    "Option": {
-      "type": "object",
-      "properties": {
-        "option_id": {
-          "type": [
-            "integer",
-            "string"
-          ],
-          "description": "Primary key of the `Option` table. Reference to this identifier in other tables are thus named `option_id`.",
-          "category": "Key"
-        },
-        "trial_index": {
-          "type": [
-            "integer",
-            "string"
-          ],
-          "description": "Refers to the `trial_index` in the `Response` table and indicates in which trial this option was shown.",
-          "category": "Context"
-        },
-        "response_id": {
-          "type": [
-            "integer",
-            "string"
-          ],
-          "description": "Refers to the `response_id` in the `Response` table and indicates for which response this option was shown.",
-          "category": "Context"
-        },
-        "index_in_trial": {
-          "type": "integer",
-          "description": "Indexing each of the options within the set of options that were available to subjects on a given trial.",
-          "category": "Context"
-        },
-        "object_id": {
-          "type": "string",
-          "description": "An option is defined by a set of features. This variable is used to identify each time the same features were used. For example, if the same white digit \"3\" is used as an option in the Digit Span task, all those instances would have the same `object_id` although they would have different `id`s (as they appeared at different times).",
-          "category": "Context"
-        },
-        "onset": {
-          "type": "number",
-          "description": "Duration between the start of the trial and the moment the option was displayed or activated, in seconds.",
-          "category": "When"
-        },
-        "duration": {
-          "type": "number",
-          "description": "How long the option was displayed or active in seconds, starting from the `onset`, in seconds.",
-          "category": "When"
-        },
-        "panel_id": {
-          "type": "string",
-          "description": "Identifier of the pane this option was displayed over.",
-          "category": "Where"
-        },
-        "x_screen": {
-          "type": "number",
-          "description": "X coordinates of the option component on the screen in pixels.",
-          "category": "Where"
-        },
-        "y_screen": {
-          "type": "number",
-          "description": "Y coordinates of the option component on the screen in pixels.",
-          "category": "Where"
-        },
-        "x_viewport": {
-          "type": "number",
-          "description": "X coordinates of the option component on the screen expressed as a fraction of the screen width.",
-          "category": "Where"
-        },
-        "y_viewport": {
-          "type": "number",
-          "description": "Y coordinates of the option component on the screen expressed as a fraction of the screen height.",
-          "category": "Where"
-        },
-        "description": {
-          "type": "string",
-          "description": "A human readable, compact description of the main aspects of the option. The description for a given option depends on the task but follows a specific template for a given task. Because of this, it looks like the option description could be parsed---however, this is not the intention; structured, parsed data will be available in other fields; description is for human readability and facilitates the understanding of the data.",
-          "category": "What"
-        },
-        "value": {
-          "type": "number",
-          "description": "A numeric value associated with a particular response option; typically indicating the \"worth\" of a response (e.g., `value=1` for the correct response).",
-          "category": "What"
-        },
-        "source": {
-          "type": "string",
-          "description": "Refers to the specific generator or set from which the option originates. Options sharing the same source have the same data structure and can be thus collectively described in a table named after `option_source` (e.g., \"digit1to9\").",
-          "category": "What"
-        },
-        "source_type": {
-          "type": "string",
-          "description": "An option is typically created using a particular procedure/algorithm or is sampled from a particular set. This variable indicates which of these two applies for the current option.",
-          "category": "What"
-        },
-        "index_in_source": {
-          "type": "integer",
-          "description": "When a option is picked from a particular set (e.g., `digits1to9`), this index refers to the index within that set.",
-          "category": "What"
-        },
-        "animation": {
-          "type": "string",
-          "description": "Describes the animation used to display a specific option in a human-readable format. For example, \"fadeIn 3s ease-in-out\" indicates a 3-second fade-in animation.",
-          "category": "How"
-        }
-      },
-      "description": "Describes each option that a subject could choose from in a trial.",
-      "required": [
-        "option_id",
-        "trial_index",
-        "onset",
-        "duration",
-        "description",
-        "source"
-      ]
-    },
-    "Input": {
-      "type": "object",
-      "properties": {
-        "input_id": {
-          "type": [
-            "integer",
-            "string"
-          ],
-          "description": "Primary key; each input or click has its own identifier value that is unique within the table.",
-          "category": "Key"
-        },
-        "response_id": {
-          "type": [
-            "integer",
-            "string"
-          ],
-          "description": "Indexing all the clicks that occurred within a given trial; ranging from 1 to `input_count` in the corresponding `Response` table.",
-          "category": "Context"
-        },
-        "response_element_index": {
-          "type": "integer",
-          "description": "Indicates which of the clicks is used and in what order to form the actual response in the response table when `response_structure` is \"sequence\" or \"set\".",
-          "category": "Context"
-        },
-        "onset": {
-          "type": "number",
-          "description": "Duration between the start of the trial and the moment the mouse button press occured, in seconds.",
-          "category": "When"
-        },
-        "duration": {
-          "type": "number",
-          "description": "Describes for how long the mouse button was pressed, in seconds.",
-          "category": "When"
-        },
-        "x_screen": {
-          "type": "integer",
-          "description": "X coordinates of the click relative to the left edge of the screen in pixels.",
-          "category": "Where"
-        },
-        "y_screen": {
-          "type": "integer",
-          "description": "Y coordinates of the click relative to the top edge of the screen in pixels.",
-          "category": "Where"
-        },
-        "x_viewport": {
-          "type": "number",
-          "description": "X coordinates of the click relative to the left edge of the screen expressed as a fraction of the screen width.",
-          "category": "Where"
-        },
-        "y_viewport": {
-          "type": "number",
-          "description": "Y coordinates of the click relative to the top edge of the screen expressed as a fraction of the screen height.",
-          "category": "Where"
-        },
-        "object_type": {
-          "type": "string",
-          "description": "Describes the type of object that was clicked on (e.g., \"button\").",
-          "category": "What"
-        },
-        "object_name": {
-          "type": "string",
-          "description": "The human-readable name of the object that was clicked on (e.g., \"sos_box_1_3\").",
-          "category": "What"
-        },
-        "is_object_enabled": {
-          "type": "boolean",
-          "description": "Indicates whether the object that was clicked on was enabled (clickable) or not.",
-          "category": "What"
-        },
-        "object_state": {
-          "type": "string",
-          "description": "Describes the state the object was in *before* it was clicked on. The meaning of \"state\" depends on the particular task (e.g., \"new empty\").",
-          "category": "What"
-        },
-        "option_id": {
-          "type": [
-            "integer",
-            "string"
-          ],
-          "description": "If the click is on an option, this variable indicates which option it was.",
-          "category": "What"
-        },
-        "stimulus_id": {
-          "type": [
-            "integer",
-            "string"
-          ],
-          "description": "If the click is on a stimulus, this variable indicates which stimulus it was.",
-          "category": "What"
-        }
-      },
-      "description": "A detailed log of all inputs and clicks recorded during the trial.",
-      "required": [
-        "input_id",
-        "response_id",
-        "onset",
-        "object_type",
-        "object_name"
-      ]
+      ],
+      "title": "Stimulus",
+      "type": "object"
     },
     "StimulusComponent": {
-      "type": "object",
+      "additionalProperties": false,
+      "description": "Stimuli can comprise multiple components. This table describes each component of a stimulus.",
       "properties": {
-        "stimulus_id": {
-          "description": "A reference to the primary key `id` of the `Stimulus` table.",
-          "category": "Key"
-        },
-        "index": {
-          "type": "integer",
-          "description": "A 1-based index indicating the stacking order of stimulus components. A stimulus component with a higher `index` is displayed on top of those with lower values, similar to CSS z-index property.",
-          "category": "Key"
-        },
-        "x_screen": {
-          "type": "integer",
-          "description": "X coordinates of the stimulus component relative to the left edge of the screen in pixels.",
-          "category": "Where"
-        },
-        "y_screen": {
-          "type": "integer",
-          "description": "Y coordinates of the stimulus component relative to the top edge of the screen in pixels.",
-          "category": "Where"
-        },
-        "x_viewport": {
-          "type": "number",
-          "description": "X coordinates of the stimulus component relative to the left edge of the screen expressed as a fraction of the screen width.",
-          "category": "Where"
-        },
-        "y_viewport": {
-          "type": "number",
-          "description": "Y coordinates of the stimulus component relative to the top edge of the screen expressed as a fraction of the screen height.",
-          "category": "Where"
-        },
-        "description": {
-          "type": "string",
-          "description": "A human readable, compact description of the component.",
-          "category": "What"
-        },
-        "symbol_name": {
-          "type": "string",
-          "description": "The human-readable name of the displayed symbol.",
-          "category": "What"
-        },
-        "symbol_count": {
-          "type": "integer",
-          "description": "The number of symbols represented in this component.",
-          "category": "What"
-        },
-        "symbol_layout": {
-          "type": "string",
-          "description": "How the symbols are laid out.",
-          "category": "What"
+        "color_hex": {
+          "description": "The hexadecimal RGB color code of the component (e.g., #FF0000 for red) with optional alpha channel for transparency.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Color Hex"
         },
         "color_name": {
-          "type": "string",
           "description": "The human-readable name of the component color, e.g., `red`.",
-          "category": "What"
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Color Name"
         },
-        "color_hex": {
+        "description": {
+          "description": "A human readable, compact description of the component.",
           "type": "string",
-          "description": "The hexadecimal RGB color code of the component (e.g., #FF0000 for red) with optional alpha channel for transparency.",
-          "category": "What"
+          "title": "Description"
+        },
+        "index": {
+          "description": "A 1-based index indicating the stacking order of stimulus components. A stimulus component with a higher `index` is displayed on top of those with lower values, similar to CSS z-index property.",
+          "type": "integer",
+          "title": "Index"
         },
         "orientation": {
-          "type": "string",
           "description": "Indicates the symbol orientation.",
-          "category": "What"
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Orientation"
+        },
+        "stimulus_id": {
+          "description": "A reference to the primary key `id` of the `Stimulus` table.",
+          "type": "string",
+          "title": "Stimulus Id"
+        },
+        "symbol_count": {
+          "description": "The number of symbols represented in this component.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Symbol Count"
+        },
+        "symbol_layout": {
+          "description": "How the symbols are laid out.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Symbol Layout"
+        },
+        "symbol_name": {
+          "description": "The human-readable name of the displayed symbol.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Symbol Name"
+        },
+        "x_screen": {
+          "description": "X coordinates of the stimulus component relative to the left edge of the screen in pixels.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "X Screen"
+        },
+        "x_viewport": {
+          "description": "X coordinates of the stimulus component relative to the left edge of the screen expressed as a fraction of the screen width.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "X Viewport"
+        },
+        "y_screen": {
+          "description": "Y coordinates of the stimulus component relative to the top edge of the screen in pixels.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Y Screen"
+        },
+        "y_viewport": {
+          "description": "Y coordinates of the stimulus component relative to the top edge of the screen expressed as a fraction of the screen height.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Y Viewport"
         }
       },
-      "description": "Stimuli can comprise multiple components. This table describes each component of a stimulus.",
       "required": [
         "stimulus_id",
         "index",
         "description"
-      ]
+      ],
+      "title": "StimulusComponent",
+      "type": "object"
     },
-    "OptionComponent": {
-      "type": "object",
+    "TrialData": {
+      "additionalProperties": false,
+      "description": "Root container mapping each trial table to an array of its rows.",
       "properties": {
-        "index": {
-          "type": "integer",
-          "description": "A 1-based index differentiating each part and indicating the stacking order of them. An option component with a higher `index` is displayed on top of those with lower values, similar to CSS z-index property.",
-          "category": "Key"
-        },
-        "option_id": {
+        "Input": {
+          "description": "Rows of the Input table.",
+          "items": {
+            "$ref": "#/$defs/Input"
+          },
           "type": [
-            "integer",
-            "string"
+            "array",
+            "null"
           ],
-          "description": "A reference to the key `option_id` in the `Option` table.",
-          "category": "Key"
+          "title": "Input"
         },
-        "panel_id": {
-          "type": "string",
-          "description": "Identifier of the panel this option is displayed over.",
-          "category": "Where"
+        "Instrument": {
+          "description": "Rows of the Instrument table.",
+          "items": {
+            "$ref": "#/$defs/Instrument"
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Instrument"
         },
-        "x_screen": {
-          "type": "integer",
-          "description": "X coordinates of the option component relative to the left edge of the screen in pixels.",
-          "category": "Where"
+        "Option": {
+          "description": "Rows of the Option table.",
+          "items": {
+            "$ref": "#/$defs/Option"
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Option"
         },
-        "y_screen": {
-          "type": "integer",
-          "description": "Y coordinates of the option component relative to the top edge of the screen in pixels.",
-          "category": "Where"
+        "OptionComponent": {
+          "description": "Rows of the OptionComponent table.",
+          "items": {
+            "$ref": "#/$defs/OptionComponent"
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Optioncomponent"
         },
-        "x_viewport": {
-          "type": "number",
-          "description": "X coordinates of the option component relative to the left edge of the screen expressed as a fraction of the screen width.",
-          "category": "Where"
+        "Response": {
+          "description": "Rows of the Response table.",
+          "items": {
+            "$ref": "#/$defs/Response"
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Response"
         },
-        "y_viewport": {
-          "type": "number",
-          "description": "Y coordinates of the option component relative to the top edge of the screen expressed as a fraction of the screen height.",
-          "category": "Where"
+        "Stimulus": {
+          "description": "Rows of the Stimulus table.",
+          "items": {
+            "$ref": "#/$defs/Stimulus"
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Stimulus"
         },
-        "description": {
-          "type": "string",
-          "description": "A human readable, compact description of the component.",
-          "category": "What"
-        },
-        "symbol_name": {
-          "type": "string",
-          "description": "The name of the displayed symbol.",
-          "category": "What"
-        },
-        "symbol_count": {
-          "type": "integer",
-          "description": "The number of symbols represented in this component.",
-          "category": "What"
-        },
-        "symbol_layout": {
-          "type": "string",
-          "description": "How the symbols are laid out.",
-          "category": "What"
-        },
-        "color_name": {
-          "type": "string",
-          "description": "The human-readable name of the component color, e.g., `red`.",
-          "category": "What"
-        },
-        "color_hex": {
-          "type": "string",
-          "description": "The hexadecimal RGB color code of the component (e.g., #FF0000 for red) with optional alpha channel for transparency.",
-          "category": "What"
-        },
-        "orientation": {
-          "type": "string",
-          "description": "Indicates the symbol orientation.",
-          "category": "What"
+        "StimulusComponent": {
+          "description": "Rows of the StimulusComponent table.",
+          "items": {
+            "$ref": "#/$defs/StimulusComponent"
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Stimuluscomponent"
         }
       },
-      "description": "Options can comprise multiple components. This table describes each component of an option.",
-      "required": [
-        "index",
-        "option_id",
-        "description"
-      ]
+      "title": "TrialData",
+      "type": "object"
+    }
+  },
+  "$id": "https://behaverse.org/schemas/trial/v26.0608/schema.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "additionalProperties": true,
+  "description": "Root container mapping each trial table to an array of its rows.",
+  "metamodel_version": "1.7.0",
+  "properties": {
+    "@type": {
+      "const": "trial:TrialData",
+      "title": "Type",
+      "description": "JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverability."
+    },
+    "Input": {
+      "description": "Rows of the Input table.",
+      "items": {
+        "$ref": "#/$defs/Input"
+      },
+      "type": [
+        "array",
+        "null"
+      ],
+      "title": "Input"
     },
     "Instrument": {
-      "type": "object",
-      "properties": {
-        "instrument_id": {
-          "type": "string",
-          "description": "Unique identifier of an instrument. It can be formed by combining name and version (e.g., \"DS_v2024.01\").",
-          "category": "Identifier"
-        },
-        "timeline_id": {
-          "type": "string",
-          "description": "Identifier for a timeline. Timeline is a variant of an instrument with specific parametrization, for the whole experiment or for multiple block of trials (e.g., \"DS_FORWARD\" and \"DS_BACKWARD\" for digit span task). Timelines are configurations that specify instrument parameters.",
-          "category": "Identifier"
-        },
-        "block_id": {
-          "type": "string",
-          "description": "Specific parameterization of the instrument for a single block of trials (e.g., \"DS_FORWARD_PRACTICE\" and \"DS_FOWARD_TEST\"). Block-level parameters override timeline-level parameters.",
-          "category": "Identifier"
-        },
-        "name": {
-          "type": "string",
-          "description": "Name of the toolkit (scene, code, or configuration) that is used to collect the data, e.g., \"DS\" for a software that runs digit span task in forward OR backward order. The specific parameterization of the instrument is defined by the \"Timeline\" (e.g., a variant of instrument called \"DS_FORWARD\").",
-          "category": "What"
-        },
-        "version": {
-          "type": "string",
-          "description": "Refers to the specific version/build of a particular instrument. We will use a calendar based versioning system ([calver.org](https://calver.org/); e.g., \"v2024.01\").",
-          "category": "What"
-        },
-        "description": {
-          "type": "string",
-          "description": "A human readable, compact description of the main aspects of the instrument.",
-          "category": "What"
-        },
-        "link": {
-          "type": "string",
-          "format": "uri",
-          "description": "External link, if any, the provides more information about the instrument, e.g., on Cognitive Atlas.",
-          "category": "What"
-        }
+      "description": "Rows of the Instrument table.",
+      "items": {
+        "$ref": "#/$defs/Instrument"
       },
-      "description": "Describes the instrument used for data acquisition.",
-      "required": [
-        "instrument_id",
-        "timeline_id",
-        "block_id",
-        "name"
-      ]
+      "type": [
+        "array",
+        "null"
+      ],
+      "title": "Instrument"
+    },
+    "Option": {
+      "description": "Rows of the Option table.",
+      "items": {
+        "$ref": "#/$defs/Option"
+      },
+      "type": [
+        "array",
+        "null"
+      ],
+      "title": "Option"
+    },
+    "OptionComponent": {
+      "description": "Rows of the OptionComponent table.",
+      "items": {
+        "$ref": "#/$defs/OptionComponent"
+      },
+      "type": [
+        "array",
+        "null"
+      ],
+      "title": "Optioncomponent"
+    },
+    "Response": {
+      "description": "Rows of the Response table.",
+      "items": {
+        "$ref": "#/$defs/Response"
+      },
+      "type": [
+        "array",
+        "null"
+      ],
+      "title": "Response"
+    },
+    "Stimulus": {
+      "description": "Rows of the Stimulus table.",
+      "items": {
+        "$ref": "#/$defs/Stimulus"
+      },
+      "type": [
+        "array",
+        "null"
+      ],
+      "title": "Stimulus"
+    },
+    "StimulusComponent": {
+      "description": "Rows of the StimulusComponent table.",
+      "items": {
+        "$ref": "#/$defs/StimulusComponent"
+      },
+      "type": [
+        "array",
+        "null"
+      ],
+      "title": "Stimuluscomponent"
     }
-  }
+  },
+  "title": "trial",
+  "type": "object",
+  "version": "26.0608"
 }
