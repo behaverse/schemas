@@ -1,0 +1,561 @@
+# yaml-language-server: $schema=https://linkml.io/linkml-model/linkml_model/jsonschema/meta.schema.json
+id: https://behaverse.org/schemas/dataset
+name: dataset
+title: Behaverse Dataset Schema
+description: A metadata schema for cognitive science and neuroscience datasets with mappings to Schema.org, DataCite, BIDS, and other standards
+version: '26.0615'
+license: MIT
+
+prefixes:
+  dataset: https://behaverse.org/schemas/dataset#
+  behaverse: https://behaverse.org/schemas/dataset#
+  sdo: https://schema.org/
+  dc: http://purl.org/dc/terms/
+  hf: https://huggingface.co/docs/hub/datasets-cards#
+  cdisc: https://www.cdisc.org/standards/foundational/sdtm#
+  ct: https://clinicaltrials.gov/data-api/about-api/schema#
+  cogatlas: http://www.cognitiveatlas.org/
+  bidssession: https://bids-specification.readthedocs.io/en/stable/common-principles.html#
+  bidsparticipants: https://bids-specification.readthedocs.io/en/stable/modality-agnostic-files.html#
+  ddiuniverse: https://ddialliance.org/Specification/DDI-Lifecycle/3.3/XMLSchema/FieldLevelDocumentation/schemas/datacollection_xsd/elements/
+  linkml: https://w3id.org/linkml/
+default_prefix: dataset
+default_range: string
+imports:
+  - linkml:types
+
+enums:
+  License:
+    description: License identifier in SPDX format
+    permissible_values:
+      CC-BY-4.0:
+      CC-BY-SA-4.0:
+      CC-BY-NC-4.0:
+      CC-BY-NC-SA-4.0:
+      CC0-1.0:
+      MIT:
+      Apache-2.0:
+      GPL-3.0-only:
+      other:
+  AgeCategory:
+    description: Age group classification
+    permissible_values:
+      children:
+      adolescent:
+      adult:
+      elderly:
+  PopulationCategory:
+    description: Population type (clinical vs healthy)
+    permissible_values:
+      healthy:
+      clinical:
+      patient:
+      mixed:
+  StudyDesignType:
+    description: Study design category
+    permissible_values:
+      cross-sectional:
+      longitudinal:
+      intervention:
+      observational:
+  InterventionType:
+    description: Type of intervention
+    permissible_values:
+      behavioral:
+      pharmacological:
+      device:
+      procedure:
+      other:
+  SizeCategory:
+    description: HuggingFace size bucket
+    permissible_values:
+      n<1K:
+      1K<n<10K:
+      10K<n<100K:
+      100K<n<1M:
+      1M<n<10M:
+      10M<n<100M:
+      100M<n<1B:
+      1B<n<10B:
+      10B<n<100B:
+      100B<n<1T:
+      n>1T:
+  CitationType:
+    description: Citation type
+    permissible_values:
+      primary:
+      methods:
+      related:
+      preprint:
+  MeasurementCategory:
+    description: High-level category of measurement
+    permissible_values:
+      behavior:
+      neuroimaging:
+      electrophysiology:
+      physiological:
+      video:
+      audio:
+      other:
+  MeasurementTechniqueType:
+    description: Specific measurement technique
+    permissible_values:
+      EEG:
+      MEG:
+      iEEG:
+      fMRI:
+      T1w:
+      T2w:
+      DWI:
+      ASL:
+      PET:
+      NIRS:
+      behavior:
+      voice:
+      eye-tracking:
+      key-presses:
+      mouse-tracking:
+      motion-capture:
+      video:
+      audio:
+      heart-rate:
+      GSR:
+      EDA:
+      ECG:
+      EMG:
+      other:
+  ResponseType:
+    description: Types of behavior responses
+    permissible_values:
+      button-press:
+      key-press:
+      mouse:
+      voice:
+      eye-gaze:
+      touchscreen:
+  Granularity:
+    description: Granularity of the measurement
+    permissible_values:
+      event-data:
+      timecourse-data:
+      trial-data:
+      construct-data:
+      aggregate-data:
+  ActivityType:
+    description: Activity type/category
+    permissible_values:
+      task:
+      rest:
+      stimulus-presentation:
+      free-viewing:
+      interview:
+      other:
+
+classes:
+  Dataset:
+    description: A metadata record for a cognitive science or neuroscience dataset.
+    class_uri: sdo:Dataset
+    tree_root: true
+    attributes:
+      name:
+        required: true
+        slot_uri: sdo:name
+        exact_mappings: [dc:identifier]
+        pattern: "^[a-z0-9-_]+$"
+        description: Short URL-friendly identifier
+        examples: [{value: axon-game-eeg}, {value: resting-state-fmri}]
+      pretty_name:
+        recommended: true
+        slot_uri: hf:pretty_name
+        description: Human-readable display title
+        examples: [{value: Axon Game EEG Dataset}, {value: Resting State fMRI Study}]
+      description:
+        required: true
+        slot_uri: sdo:description
+        exact_mappings: [dc:description]
+        pattern: "^[\\s\\S]{10,}$"
+        description: Comprehensive dataset description
+        examples: [{value: EEG recordings from 100 young adults performing cognitive gaming tasks}]
+      version:
+        recommended: true
+        slot_uri: sdo:version
+        pattern: "^\\d+\\.\\d+\\.\\d+$"
+        description: Dataset version (semantic versioning)
+        examples: [{value: "1.0.0"}, {value: "2.1.3"}]
+      license:
+        required: true
+        range: License
+        slot_uri: sdo:license
+        exact_mappings: [dc:rights]
+        description: License identifier in SPDX format
+        examples: [{value: cc-by-4.0}, {value: mit}]
+      url:
+        recommended: true
+        range: uri
+        slot_uri: sdo:url
+        description: Dataset homepage or landing page
+        examples: [{value: https://example.org/datasets/axon-game}]
+      doi:
+        recommended: true
+        slot_uri: sdo:identifier
+        exact_mappings: [dc:identifier]
+        pattern: "^10\\.\\d{4,}/[-._;()/:A-Za-z0-9]+$"
+        description: Digital Object Identifier
+        examples: [{value: 10.1234/example.2024}]
+      keywords:
+        recommended: true
+        multivalued: true
+        range: string
+        minimum_cardinality: 1
+        slot_uri: sdo:keywords
+        exact_mappings: [dc:subject]
+        description: Keywords for discovery
+        examples: [{value: neuroscience}, {value: eeg}, {value: attention}, {value: working-memory}]
+      language:
+        multivalued: true
+        range: string
+        slot_uri: sdo:inLanguage
+        pattern: "^[a-z]{2}$"
+        description: ISO 639-1 language codes
+        examples: [{value: en}, {value: de}]
+      date_created:
+        recommended: true
+        range: date
+        slot_uri: sdo:dateCreated
+        description: Date dataset was originally created (ISO 8601)
+        examples: [{value: "2024-01-01"}]
+      date_published:
+        recommended: true
+        range: date
+        slot_uri: sdo:datePublished
+        description: Date first published (ISO 8601)
+        examples: [{value: "2024-06-15"}]
+      date_modified:
+        range: date
+        slot_uri: sdo:dateModified
+        description: Date of last modification (ISO 8601)
+        examples: [{value: "2024-11-20"}]
+      date_added:
+        required: true
+        range: date
+        slot_uri: behaverse:dateAdded
+        description: Date added to catalog (ISO 8601, internal)
+        examples: [{value: "2024-07-01"}]
+      last_verified:
+        range: date
+        slot_uri: behaverse:lastVerified
+        description: Date metadata was last verified (ISO 8601, internal)
+        examples: [{value: "2024-11-15"}]
+      creator:
+        recommended: true
+        multivalued: true
+        range: Person
+        slot_uri: sdo:creator
+        description: Primary dataset creators/authors
+      curator:
+        multivalued: true
+        range: Person
+        slot_uri: sdo:maintainer
+        exact_mappings: [sdo:editor]
+        description: Dataset curators responsible for maintenance and quality
+      citation:
+        recommended: true
+        multivalued: true
+        range: Citation
+        slot_uri: sdo:citation
+        description: Published papers or references
+      sample_size:
+        required: true
+        range: integer
+        slot_uri: ddiuniverse:Universe.html
+        exact_mappings: [bidsparticipants:participants-file, ct:enrollment]
+        minimum_value: 1
+        description: Total number of participants
+        examples: [{value: "100"}, {value: "250"}]
+      age_range:
+        recommended: true
+        multivalued: true
+        range: float
+        minimum_cardinality: 2
+        maximum_cardinality: 2
+        slot_uri: cdisc:AGE
+        description: "[min, max] age in years"
+        examples: [{value: "18"}, {value: "35"}]
+      age_mean:
+        range: float
+        slot_uri: cdisc:AGE
+        minimum_value: 0
+        description: Mean participant age
+        examples: [{value: "23.5"}, {value: "45.2"}]
+      age_std:
+        range: float
+        minimum_value: 0
+        description: Standard deviation of age
+        examples: [{value: "4.2"}, {value: "12.8"}]
+      sex_distribution:
+        range: SexDistribution
+        slot_uri: cdisc:SEX
+        description: Participant counts by sex
+      age_category:
+        multivalued: true
+        range: AgeCategory
+        slot_uri: behaverse:ageCategory
+        description: Age group classification
+        examples: [{value: adult}]
+      population_category:
+        range: PopulationCategory
+        slot_uri: sdo:healthCondition
+        description: Population type (clinical vs healthy)
+        examples: [{value: healthy}, {value: clinical}]
+      inclusion_criteria:
+        multivalued: true
+        range: string
+        slot_uri: ct:eligibility
+        description: Participant inclusion criteria
+      exclusion_criteria:
+        multivalued: true
+        range: string
+        slot_uri: ct:eligibility
+        description: Participant exclusion criteria
+      spatial_coverage:
+        slot_uri: sdo:spatialCoverage
+        description: Geographic location/region
+        examples: [{value: United States}, {value: Europe}]
+      temporal_coverage:
+        slot_uri: sdo:temporalCoverage
+        description: Time period data covers
+        examples: [{value: "2023-2024"}, {value: January 2024}]
+      measurement_technique:
+        recommended: true
+        multivalued: true
+        range: MeasurementTechnique
+        slot_uri: sdo:measurementTechnique
+        description: Measurement techniques used with optional detailed specifications
+      constructs_measured:
+        multivalued: true
+        range: string
+        slot_uri: sdo:variableMeasured
+        description: Cognitive or psychological constructs measured in the dataset
+      activity:
+        recommended: true
+        multivalued: true
+        range: Activity
+        slot_uri: cogatlas:task/
+        description: Activities or tasks performed by participants with associated measurements
+      study_design_type:
+        recommended: true
+        range: StudyDesignType
+        slot_uri: sdo:MedicalStudy
+        description: Study design category
+        examples: [{value: cross-sectional}, {value: longitudinal}]
+      intervention_type:
+        multivalued: true
+        range: InterventionType
+        slot_uri: ct:interventionType
+        description: Type(s) of intervention (applies when study_design_type is intervention)
+      session_count:
+        range: integer
+        slot_uri: bidssession:sessions
+        minimum_value: 1
+        description: Number of experimental sessions per participant
+        examples: [{value: "1"}, {value: "3"}]
+      session_description:
+        slot_uri: behaverse:session_description
+        description: Brief description of session structure (if multi-session)
+        examples: [{value: "Single session with EEG and behavioral tasks"}]
+      data_formats:
+        recommended: true
+        multivalued: true
+        range: string
+        slot_uri: sdo:encodingFormat
+        description: File formats (csv, json, edf, etc.)
+      data_size_gb:
+        range: float
+        slot_uri: sdo:contentSize
+        minimum_value: 0
+        description: Total dataset size (GB)
+        examples: [{value: "2.5"}, {value: "150"}]
+      data_structure:
+        slot_uri: behaverse:dataStructure
+        description: Organization of data files
+        examples: [{value: BIDS-compliant}, {value: One CSV per participant}]
+      download_url:
+        range: uri
+        slot_uri: sdo:contentUrl
+        description: Direct URL to download dataset files (e.g., .zip archive or direct file download)
+        examples: [{value: https://example.org/download/dataset.zip}]
+      access_url:
+        range: uri
+        slot_uri: sdo:url
+        description: URL to dataset landing page with documentation, access instructions, and metadata (not direct download)
+        examples: [{value: https://example.org/access/dataset}]
+      access_conditions:
+        range: AccessConditions
+        slot_uri: sdo:conditionsOfAccess
+        description: Access requirements and restrictions for the dataset
+      ethical_approval:
+        range: EthicalApproval
+        slot_uri: behaverse:ethical_approval
+        description: Ethical approval and IRB information
+      size_category:
+        range: SizeCategory
+        slot_uri: hf:size_categories
+        description: HF size bucket
+        examples: [{value: "10K<n<100K"}]
+      task_categories:
+        multivalued: true
+        range: string
+        slot_uri: hf:task_categories
+        description: ML task types
+
+  Person:
+    description: A person (creator or curator) associated with a dataset.
+    attributes:
+      name:
+        required: true
+        description: Creator full name
+      email:
+        slot_uri: sdo:email
+        description: Creator email address
+      orcid:
+        slot_uri: sdo:identifier
+        pattern: "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
+        description: ORCID identifier
+      affiliation:
+        slot_uri: sdo:affiliation
+        description: Institutional affiliation
+
+  Citation:
+    description: A published paper or reference associated with a dataset.
+    attributes:
+      type:
+        range: CitationType
+        description: Citation type
+      doi:
+        description: DOI of cited paper
+      url:
+        description: URL of cited resource
+      text:
+        description: Full citation text
+      arxiv_id:
+        description: ArXiv preprint ID
+
+  SexDistribution:
+    description: Participant counts by sex.
+    attributes:
+      female:
+        range: integer
+        minimum_value: 0
+        description: Number of female participants
+      male:
+        range: integer
+        minimum_value: 0
+        description: Number of male participants
+      other:
+        range: integer
+        minimum_value: 0
+        description: Number of participants with other gender identity
+      not_reported:
+        range: integer
+        minimum_value: 0
+        description: Number of participants who did not report gender
+
+  MeasurementTechnique:
+    description: A measurement technique used in a dataset, with optional detailed specifications.
+    attributes:
+      type:
+        range: MeasurementCategory
+        description: High-level category of measurement
+      technique:
+        required: true
+        range: MeasurementTechniqueType
+        description: Specific measurement technique
+      channels:
+        range: integer
+        minimum_value: 1
+        description: Number of channels/electrodes (for EEG, MEG)
+      sampling_rate:
+        range: float
+        minimum_value: 0
+        description: Sampling rate in Hz (for EEG, MEG, physiological)
+      reference:
+        description: Reference type (for EEG, MEG)
+      manufacturer:
+        description: Equipment manufacturer/system
+      field_strength:
+        range: float
+        minimum_value: 0
+        description: Magnetic field strength in Tesla (for MRI)
+      tr:
+        range: float
+        minimum_value: 0
+        description: Repetition time in ms (for fMRI)
+      te:
+        range: float
+        minimum_value: 0
+        description: Echo time in ms (for MRI)
+      details:
+        description: Additional technique-specific details
+      response_type:
+        multivalued: true
+        range: ResponseType
+        description: Types of behavior responses (applies when technique is behavior)
+      format:
+        description: File format for this specific measurement (e.g., edf, bdf, nii, csv)
+      granularity:
+        range: Granularity
+        description: Granularity of the measurement (e.g., per trial, per subject, per session)
+
+  Activity:
+    description: An activity or task performed by participants, with associated measurements.
+    attributes:
+      name:
+        required: true
+        description: Activity/task name
+      type:
+        range: ActivityType
+        description: Activity type/category
+      measurements:
+        multivalued: true
+        range: string
+        description: List of measurement techniques collected during this activity (reference by technique name)
+      trials:
+        range: integer
+        minimum_value: 1
+        description: Number of trials
+      duration:
+        range: float
+        minimum_value: 0
+        description: Typical duration in minutes
+      conditions:
+        multivalued: true
+        range: string
+        description: Experimental conditions
+      measures:
+        multivalued: true
+        range: string
+        description: Primary dependent variables
+      constructs:
+        multivalued: true
+        range: string
+        description: Constructs measured
+
+  AccessConditions:
+    description: Access requirements and restrictions for a dataset.
+    attributes:
+      is_free:
+        range: boolean
+        description: Whether the dataset is freely accessible without cost
+      requirements:
+        description: Access restrictions or requirements (e.g., registration, data use agreement)
+
+  EthicalApproval:
+    description: Ethical approval and IRB information.
+    attributes:
+      obtained:
+        range: boolean
+        description: Whether ethics approval was obtained
+      institution:
+        description: IRB or ethics board institution
+      protocol:
+        description: Protocol or approval number
