@@ -511,12 +511,12 @@ Expands to:
 
 ## Files in This Schema
 
-- **field-definitions.yaml**: Source of truth for all field definitions
-- **schema.json**: JSON Schema for validation
-- **context.jsonld**: JSON-LD context for semantic web
+- **schema.linkml.yaml**: Source of truth (LinkML); run `python scripts/generate.py` to regenerate artifacts
+- **schema.json**: JSON Schema for validation (generated)
+- **context.jsonld**: JSON-LD context for semantic web (generated)
 - **README.md**: This documentation
 - **examples/**: Example catalog files
-- **scripts/**: Schema generation scripts
+- **field-definitions.yaml**: Deprecated / non-authoritative (retained only for the docs site)
 
 ## Related Schemas
 

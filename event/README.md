@@ -2,7 +2,7 @@
 
 **Version:** v26.0608
 **Namespace:** `https://behaverse.org/schemas/event#`
-**Source of truth:** [`field-definitions.yaml`](field-definitions.yaml) (envelope + vocabulary) — run `uv run scripts/generate.py`. [`schema.json`](schema.json) is the validation contract.
+**Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) (envelope + vocabulary) — run `python scripts/generate.py`. [`schema.json`](schema.json) is the validation contract.
 
 ## Overview
 
@@ -24,7 +24,8 @@ Events are positioned in a five-level hierarchy carried in `context.extensions`:
 
 | File | Status | Purpose |
 |------|--------|---------|
-| [`field-definitions.yaml`](field-definitions.yaml) | ✅ | Source of truth (envelope + vocabulary). |
+| [`schema.linkml.yaml`](schema.linkml.yaml) | ✅ | Source of truth (LinkML; envelope + vocabulary). |
+| [`field-definitions.yaml`](field-definitions.yaml) | ⚠️ deprecated | Non-authoritative; retained only for the docs site. |
 | [`field-definitions.json`](field-definitions.json) | ✅ generated | Render contract consumed by `behaverse/data-model` and the docs site. |
 | [`schema.json`](schema.json) | ✅ | JSON Schema (Draft 2020-12) for validation. |
 | [`context.jsonld`](context.jsonld) | ✅ | JSON-LD context (`bdm:`, `xapi:`, `schema:`, `as2:`). |

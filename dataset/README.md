@@ -271,23 +271,22 @@ This schema maps to widely-used standards:
 
 ## Generating Schema Files
 
-The schema files (`schema.json` and `context.jsonld`) are generated from `field-definitions.yaml`:
+The schema files (`schema.json` and `context.jsonld`) are generated from `schema.linkml.yaml`:
 
 ```bash
-cd dataset
-python scripts/generate_schema_files.py
+python scripts/generate.py
 ```
 
-This ensures consistency between the source YAML, JSON Schema validation, and JSON-LD context.
+This ensures consistency between the LinkML source, JSON Schema validation, and JSON-LD context.
 
 ## Files in this Directory
 
-- **field-definitions.yaml**: Source of truth with all field specifications
-- **schema.json**: JSON Schema for validation
-- **context.jsonld**: JSON-LD context for semantic web
+- **schema.linkml.yaml**: Source of truth (LinkML)
+- **schema.json**: JSON Schema for validation (generated)
+- **context.jsonld**: JSON-LD context for semantic web (generated)
 - **README.md**: This documentation
 - **examples/**: Example dataset metadata files
-- **scripts/generate_schema_files.py**: Schema generation script
+- **field-definitions.yaml**: Deprecated / non-authoritative (retained only for the docs site)
 
 ## Related Resources
 

@@ -1,6 +1,8 @@
 # Behaverse Dataset Schema - Field Definitions
-# This is the source of truth for all fields in the schema
-# Edit this file, then run: python scripts/generate_schema_files.py
+# DEPRECATED / NON-AUTHORITATIVE. The source of truth is `schema.linkml.yaml`
+# (generated artifacts come from `python scripts/generate.py`). This file is retained
+# only until the docs site (gh-pages) Overview generator is migrated off it; do NOT edit
+# it to change the schema — edit schema.linkml.yaml instead.
 
 schema_metadata:
   name: Behaverse Dataset Schema

@@ -2,7 +2,7 @@
 
 **Version:** v26.0608
 **Namespace:** `https://behaverse.org/schemas/trial#`
-**Source of truth:** [`field-definitions.yaml`](field-definitions.yaml) — edit it, then run `uv run scripts/generate.py`
+**Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) — edit it, then run `python scripts/generate.py`
 
 ## Overview
 
@@ -31,7 +31,8 @@ A trial is a single instance of a participant interacting with a task. Trial inf
 
 | File | Status | Purpose |
 |------|--------|---------|
-| [`field-definitions.yaml`](field-definitions.yaml) | ✅ | Source of truth (hand-maintained). |
+| [`schema.linkml.yaml`](schema.linkml.yaml) | ✅ | Source of truth (LinkML). |
+| [`field-definitions.yaml`](field-definitions.yaml) | ⚠️ deprecated | Non-authoritative; retained only for the docs site. |
 | [`field-definitions.json`](field-definitions.json) | ✅ generated | Render contract consumed by `behaverse/data-model` and the docs site. |
 | [`schema.json`](schema.json) | ✅ generated | JSON Schema (Draft-07): per-table definitions + a top-level table→rows object. Validates types + required fields (not enums/ranges/foreign keys — the source is coarse). |
 | `context.jsonld` | ⏳ planned | JSON-LD context (needs semantic `mappings` on the fields first). |
