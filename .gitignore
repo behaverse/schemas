@@ -87,3 +87,5 @@ git_ignored/
 
 # Migration baselines (frozen pre-migration generated artifacts)
 baselines/
+# Local planning/working notes (not published, not tracked)
+docs/superpowers/
