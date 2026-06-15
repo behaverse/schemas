@@ -31,8 +31,19 @@ from linkml_postprocess import postprocess_context, postprocess_schema  # noqa: 
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# All schemas the unified pipeline owns; dirs lacking schema.linkml.yaml are skipped.
-SCHEMAS = ["catalog", "dataset", "trial", "event"]
+# Per-schema artifact config. Every schema with a schema.linkml.yaml emits schema.json;
+# the flags below toggle the two optional render artifacts:
+#   emits_context           -> context.jsonld (JSON-LD discoverability)
+#   emits_field_definitions -> field-definitions.json (multi-table render artifact, via
+#                              scripts/emit_field_definitions.py)
+# trial carries no semantic mappings, so it deliberately emits NO context.jsonld.
+# Dirs lacking schema.linkml.yaml are skipped (migrated later). bcsv is excluded entirely.
+SCHEMAS: list[dict[str, Any]] = [
+    {"name": "catalog", "emits_context": True, "emits_field_definitions": False},
+    {"name": "dataset", "emits_context": True, "emits_field_definitions": False},
+    {"name": "trial", "emits_context": False, "emits_field_definitions": True},
+    {"name": "event", "emits_context": True, "emits_field_definitions": True},
+]
 
 LINKML_SRC = "schema.linkml.yaml"
 
@@ -46,17 +57,28 @@ def _run(cmd: list[str]) -> str:
     return proc.stdout
 
 
-def generate_artifacts(src: Path) -> tuple[Dict[str, Any], Dict[str, Any]]:
-    """Return (schema_json, context_jsonld) dicts, post-processed, for a source."""
+def generate_schema(src: Path) -> Dict[str, Any]:
+    """Return the post-processed schema.json dict for a LinkML source."""
     schema = json.loads(_run([
         "gen-json-schema", "--no-metadata", "--inline", str(src)
     ]))
-    context = json.loads(_run(["gen-jsonld-context", str(src)]))
-
     sv = SchemaView(str(src))
-    schema = postprocess_schema(schema, sv)
-    context = postprocess_context(context, sv)
-    return schema, context
+    return postprocess_schema(schema, sv)
+
+
+def generate_context(src: Path) -> Dict[str, Any]:
+    """Return the post-processed context.jsonld dict for a LinkML source."""
+    context = json.loads(_run(["gen-jsonld-context", str(src)]))
+    sv = SchemaView(str(src))
+    return postprocess_context(context, sv)
+
+
+def _emit_field_definitions(name: str, check: bool) -> bool:
+    """Invoke the field-definitions.json emitter. Returns True on drift (check mode)."""
+    cmd = [sys.executable, str(Path(__file__).resolve().parent / "emit_field_definitions.py"), name]
+    if check:
+        cmd.append("--check")
+    return subprocess.run(cmd).returncode != 0
 
 
 def _dumps(data: Dict[str, Any]) -> str:
@@ -87,16 +109,22 @@ def main() -> int:
 
     drift = False
     processed = 0
-    for name in SCHEMAS:
+    for cfg in SCHEMAS:
+        name = cfg["name"]
         sdir = ROOT / name
         src = sdir / LINKML_SRC
         if not src.exists():
             continue
         processed += 1
         print(f"{name}:")
-        schema, context = generate_artifacts(src)
-        drift |= _write_or_check(schema, sdir / "schema.json", args.check)
-        drift |= _write_or_check(context, sdir / "context.jsonld", args.check)
+        # schema.json: every LinkML schema emits one (LinkML gen + post-process).
+        drift |= _write_or_check(generate_schema(src), sdir / "schema.json", args.check)
+        # context.jsonld: only schemas that publish semantic mappings (trial does not).
+        if cfg["emits_context"]:
+            drift |= _write_or_check(generate_context(src), sdir / "context.jsonld", args.check)
+        # field-definitions.json: multi-table render artifact (trial/event).
+        if cfg["emits_field_definitions"]:
+            drift |= _emit_field_definitions(name, args.check)
 
     if processed == 0:
         print("no schemas with schema.linkml.yaml found")
