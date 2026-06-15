@@ -5,6 +5,27 @@ All notable changes to the Dataset schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0615] - 2026-06-15
+
+### Changed
+- Source of truth switched to LinkML: `schema.json` and `context.jsonld` are now generated from `schema.linkml.yaml` via `scripts/generate.py` (replacing `field-definitions.yaml` + the legacy generator).
+- Artifact shape changes inherited from LinkML's `gen-json-schema`: nested objects (`Person` for `creator`/`curator`, `Citation`, `SexDistribution`, `MeasurementTechnique`, `Activity`, `AccessConditions`, `EthicalApproval`) and every enum (`License`, `AgeCategory`, `MeasurementTechniqueType`, etc.) are factored into `$defs` and referenced via `$ref`; optional/recommended properties use explicit nullable unions (`"type": ["array", "null"]`, or `anyOf: [{$ref}, {"type": "null"}]` for optional objects/enums); `$schema` is now JSON Schema draft 2019-09 (was draft-07); `additionalProperties: false` on the inlined classes and `additionalProperties: true` at the root (so JSON-LD keys like `@type`/`@context` are permitted). The schema-level `description` now comes from the root class description.
+- `language`'s `^[a-z]{2}$` pattern now sits on the array `items` (per-element) rather than on the array itself, where it had no effect.
+- `description`'s `minLength: 10` is expressed as the equivalent `pattern: "^[\\s\\S]{10,}$"` (LinkML 1.8.5 has no string-min-length facet); the ≥10-character constraint is preserved.
+- `version` updated to `26.0615`.
+
+### Preserved
+- JSON-LD fidelity is restored by a post-process step (`scripts/linkml_postprocess.py`): the published artifacts use the `schema:` prefix (not the internal `sdo:` generation workaround); the `@type` const (`schema:Dataset`) discoverability guard is re-injected; `@container: @set` is added to every multivalued term (and `@container: @list` to `age_range`); the reserved-slot `name` term maps to `schema:name` again; per-property `title`s are restored; and secondary mappings (e.g. `dc:identifier`, `dc:description`, `dc:rights`, `dc:subject`, `schema:editor`, BIDS/ClinicalTrials sample-size mappings) are surfaced in the context.
+- All validation constraints are unchanged: identical `required` sets (root and nested), all enum permissible values (incl. the full SPDX `license` list), all patterns/formats, `keywords` `minItems: 1`, `age_range` `minItems/maxItems: 2`, and numeric `minimum`s. `creator`/`curator` inner mappings (`schema:email`, `schema:identifier` for ORCID, `schema:affiliation`) and `pretty_name`'s HuggingFace mapping are retained.
+
+### Note
+- The redundant `equivalentProperty` annotation is intentionally dropped from `schema.json`; the same property→IRI mappings live in `context.jsonld`, the canonical location.
+- `dataset/examples/demo-dataset.json`: `sex_distribution.non_binary` changed to the modeled `other` key (nested objects are now closed; `other` is the schema's field for non-binary/other gender).
+
+### Added
+- `dataset/schema.linkml.yaml` as the LinkML source of truth.
+- `dataset/versions/v26.0615/` snapshot for consumer pinning.
+
 ## [26.0610] - 2026-06-10
 
 ### Changed
