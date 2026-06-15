@@ -100,6 +100,12 @@ const config = {
             label: 'event',
           },
           {
+            type: 'docSidebar',
+            sidebarId: 'vocabularySidebar',
+            position: 'left',
+            label: 'vocabulary',
+          },
+          {
             href: 'https://github.com/behaverse/schemas',
             label: 'GitHub',
             position: 'right',
@@ -135,6 +141,10 @@ const config = {
               {
                 label: 'event',
                 to: '/event',
+              },
+              {
+                label: 'vocabulary',
+                to: '/vocabulary',
               },
             ],
           },

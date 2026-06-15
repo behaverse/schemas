@@ -78,6 +78,12 @@ SCHEMAS = {
         'name': 'Event Schema',
         'icon': '',
     },
+    'vocabulary': {
+        'source': 'terms',  # SKOS-style terms.yaml: schemes + concepts
+        'skos_vocabulary': True,  # grouped Overview (one section per public scheme)
+        'name': 'Behaverse Vocabulary',
+        'icon': '',
+    },
 }
 
 # Map a slot's `class_uri` / `slot_uri` CURIE (e.g. `sdo:Dataset`) to the `schema:`
@@ -346,6 +352,55 @@ def load_linkml_tree_root(schema_name: str, schema_dir: Path) -> Dict[str, Any]:
         'field_groups': field_groups,
     }
 
+def load_vocabulary_terms(schema_dir: Path) -> Dict[str, Any]:
+    """Load the SKOS-style vocabulary from terms.yaml.
+
+    Returns docs metadata + the public schemes (with their concepts grouped under each),
+    EXCLUDING any scheme or concept with `status: internal` (kept for reference only).
+    """
+    terms = yaml.safe_load((schema_dir / 'terms.yaml').read_text())
+    meta = terms.get('vocabulary_metadata', {}) or {}
+
+    # Public schemes only (drop status: internal).
+    schemes = []
+    for scheme in terms.get('schemes', []) or []:
+        if (scheme or {}).get('status') == 'internal':
+            continue
+        schemes.append({
+            'id': scheme['id'],
+            'label': scheme.get('label', scheme['id']),
+            'description': scheme.get('description', ''),
+            'concepts': [],
+        })
+    by_id = {s['id']: s for s in schemes}
+
+    # Group public concepts under their (public) scheme.
+    for concept in terms.get('concepts', []) or []:
+        concept = concept or {}
+        if concept.get('status') == 'internal':
+            continue
+        scheme = by_id.get(concept.get('scheme'))
+        if scheme is None:
+            continue  # scheme is internal/missing -> concept excluded with it
+        scheme['concepts'].append({
+            'id': concept['id'],
+            'label': concept.get('label', concept['id']),
+            'definition': concept.get('definition', ''),
+            'data_type': concept.get('data_type', ''),
+        })
+
+    return {
+        'metadata': {
+            'name': meta.get('name', 'Behaverse Vocabulary'),
+            'version': str(meta.get('version', '')).lstrip('v'),
+            'namespace': meta.get('namespace',
+                                  'https://behaverse.org/schemas/vocabulary'),
+            'description': meta.get('description', ''),
+        },
+        'schemes': schemes,
+    }
+
+
 def _json_metadata(data: Dict[str, Any], schema_name: str) -> Dict[str, Any]:
     """Map a field-definitions.json top level to the docs `metadata` dict."""
     return {
@@ -376,6 +431,10 @@ def load_schema_data(schema_name: str) -> Dict[str, Any]:
         return {'metadata': _json_metadata(data, schema_name),
                 'fields': data['fields'],
                 'vocabularies': data.get('vocabularies', {})}
+
+    # vocabulary: SKOS-style terms.yaml (schemes + concepts), excludes internal terms.
+    if schema_info.get('skos_vocabulary'):
+        return load_vocabulary_terms(schema_dir)
 
     # catalog, dataset: LinkML source of truth (tree_root class + field_groups).
     if schema_info.get('source') == 'linkml':
@@ -1214,6 +1273,47 @@ def generate_event_pages(schema_name: str, data: Dict[str, Any],
     return sidebar
 
 
+def generate_vocabulary_pages(schema_name: str, data: Dict[str, Any],
+                              schema_docs_dir: Path, dry_run: bool) -> List[Dict[str, Any]]:
+    """Vocabulary (SKOS): a single grouped Overview page — one section per public
+    concept scheme, each listing its concepts in a table (label, definition,
+    data_type when present). Internal-status schemes/concepts are already excluded
+    by the loader. Sidebar mirrors the simpler schemas: Overview (+ About if present).
+    """
+    metadata = data['metadata']
+    schemes = data['schemes']
+    n_concepts = sum(len(s['concepts']) for s in schemes)
+
+    idx = [_schema_page_header(schema_name, metadata)]
+    idx.append(f"\nThis controlled vocabulary defines **{n_concepts} terms** across "
+               f"**{len(schemes)} concept schemes**. Terms a single schema owns live "
+               f"in that schema; this resource holds the cross-cutting terms no single "
+               f"schema owns.\n")
+
+    for scheme in schemes:
+        idx.append(f"\n## {scheme['label']}\n")
+        if scheme.get('description'):
+            idx.append(f"\n{_mdx_text(scheme['description'])}\n")
+        idx.append("| Term | Type | Definition |")
+        idx.append("|:-----|:-----|:-----------|")
+        for c in scheme['concepts']:
+            dt = f"`{c['data_type']}`" if c.get('data_type') else ''
+            idx.append(f"| **{_mdx_cell(c['label'])}** | {dt} "
+                       f"| {_mdx_cell(c['definition'])} |")
+
+    if not dry_run:
+        (schema_docs_dir / 'index.md').write_text("\n".join(idx) + "\n")
+
+    sidebar: List[Dict[str, Any]] = [
+        {'type': 'doc', 'id': f'{schema_name}/index', 'label': 'Overview'},
+    ]
+    # Include a hand-written About page in the nav if one exists (trial/event convention).
+    if (schema_docs_dir / 'about.md').exists():
+        sidebar.append({'type': 'doc', 'id': f'{schema_name}/about', 'label': 'About'})
+
+    return sidebar
+
+
 def main():
     """Main execution function"""
     dry_run = '--check' in sys.argv
@@ -1259,6 +1359,13 @@ def main():
                 sidebar_configs[f"{schema_name}Sidebar"] = generate_event_pages(
                     schema_name, data, schema_docs_dir, dry_run)
                 print(f"   ✓ Generated envelope field pages + vocabulary pages")
+                continue
+            if schema_info.get('skos_vocabulary'):
+                sidebar_configs[f"{schema_name}Sidebar"] = generate_vocabulary_pages(
+                    schema_name, data, schema_docs_dir, dry_run)
+                n = sum(len(s['concepts']) for s in data['schemes'])
+                print(f"   ✓ Generated Overview with {len(data['schemes'])} schemes, "
+                      f"{n} concepts")
                 continue
 
             # Generate index page
