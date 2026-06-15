@@ -172,7 +172,7 @@
       "type": "object"
     }
   },
-  "$id": "https://behaverse.org/schemas/catalog",
+  "$id": "https://behaverse.org/schemas/catalog/v26.0615/schema.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "additionalProperties": true,
   "description": "A thematic catalog of datasets.",

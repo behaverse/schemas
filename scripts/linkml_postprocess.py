@@ -55,8 +55,15 @@ def _slot_uri_published(sv: SchemaView, slot) -> str:
 
 
 def postprocess_schema(schema: Dict[str, Any], sv: SchemaView) -> Dict[str, Any]:
-    """Apply schema.json transforms (a-type-const, f-titles, a-sdo-normalize)."""
+    """Apply schema.json transforms (a-type-const, f-titles, a-sdo-normalize, g-versioned-$id)."""
     tree_root = _tree_root_class(sv)
+
+    # (g) Versioned, self-identifying `$id` (VERSIONING.md: each release bumps `$id`,
+    # and snapshots under versions/vYY.MMDD/ must carry their own immutable identifier).
+    # LinkML emits the bare schema `id`; restore the `.../vYY.MMDD/schema.json` form.
+    schema_id = str(sv.schema.id).rstrip("/")
+    if sv.schema.version:
+        schema["$id"] = f"{schema_id}/v{sv.schema.version}/schema.json"
 
     # (f) Per-property titles on every `properties` block (top-level + $defs).
     for props in _iter_property_blocks(schema):
