@@ -303,6 +303,7 @@ classes:
         range: Person
         slot_uri: sdo:creator
         description: Primary dataset creators/authors
+        examples: [{value: '[{"name": "Jane Researcher", "email": "jane@university.edu", "orcid": "0000-0001-2345-6789", "affiliation": "University Psychology Department"}]'}]
       curator:
         multivalued: true
         range: Person
@@ -344,9 +345,11 @@ classes:
         description: Standard deviation of age
         examples: [{value: "4.2"}, {value: "12.8"}]
       sex_distribution:
+        recommended: true
         range: SexDistribution
         slot_uri: cdisc:SEX
         description: Participant counts by sex
+        examples: [{value: '{"female": 52, "male": 45, "other": 2, "not_reported": 1}'}]
       age_category:
         multivalued: true
         range: AgeCategory
@@ -363,11 +366,13 @@ classes:
         range: string
         slot_uri: ct:eligibility
         description: Participant inclusion criteria
+        examples: [{value: '["Age 18-35 years", "Native English speaker", "Normal or corrected-to-normal vision"]'}]
       exclusion_criteria:
         multivalued: true
         range: string
         slot_uri: ct:eligibility
         description: Participant exclusion criteria
+        examples: [{value: '["MRI contraindications", "Current psychiatric medication", "History of head injury"]'}]
       spatial_coverage:
         slot_uri: sdo:spatialCoverage
         description: Geographic location/region
@@ -382,17 +387,24 @@ classes:
         range: MeasurementTechnique
         slot_uri: sdo:measurementTechnique
         description: Measurement techniques used with optional detailed specifications
+        examples:
+          - value: '[{"type": "electrophysiology", "technique": "EEG", "channels": 64, "sampling_rate": 512, "reference": "average", "manufacturer": "BioSemi", "granularity": "event-data"}]'
+          - value: '[{"type": "neuroimaging", "technique": "fMRI", "field_strength": 3.0, "tr": 2000, "te": 30}, {"type": "behavior", "technique": "eye-tracking", "sampling_rate": 120}]'
       constructs_measured:
         multivalued: true
         range: string
         slot_uri: sdo:variableMeasured
         description: Cognitive or psychological constructs measured in the dataset
+        examples: [{value: '["working memory", "depression", "decision-making"]'}]
       activity:
         recommended: true
         multivalued: true
         range: Activity
         slot_uri: cogatlas:task/
         description: Activities or tasks performed by participants with associated measurements
+        examples:
+          - value: '[{"name": "N-Back", "type": "task", "measurements": ["EEG", "eye-tracking", "response-device"], "trials": 150, "duration": 20, "conditions": ["0-back", "2-back"], "measures": ["d_prime", "reaction_time"], "constructs": ["working memory"]}]'
+          - value: '[{"name": "resting-state", "type": "rest", "measurements": ["fMRI"], "duration": 5}]'
       study_design_type:
         recommended: true
         range: StudyDesignType
@@ -404,6 +416,9 @@ classes:
         range: InterventionType
         slot_uri: ct:interventionType
         description: Type(s) of intervention (applies when study_design_type is intervention)
+        examples:
+          - value: '["behavioral"]'
+          - value: '["pharmacological", "behavioral"]'
       session_count:
         range: integer
         slot_uri: bidssession:sessions
@@ -420,6 +435,7 @@ classes:
         range: string
         slot_uri: sdo:encodingFormat
         description: File formats (csv, json, edf, etc.)
+        examples: [{value: '["csv", "json", "edf"]'}]
       data_size_gb:
         range: float
         slot_uri: sdo:contentSize
@@ -444,10 +460,16 @@ classes:
         range: AccessConditions
         slot_uri: sdo:conditionsOfAccess
         description: Access requirements and restrictions for the dataset
+        examples:
+          - value: '{"is_free": true, "requirements": "Publicly available"}'
+          - value: '{"is_free": false, "requirements": "Requires institutional login and signed DUA"}'
       ethical_approval:
         range: EthicalApproval
         slot_uri: behaverse:ethical_approval
         description: Ethical approval and IRB information
+        examples:
+          - value: '{"obtained": true, "institution": "University IRB", "protocol": "IRB-2024-001"}'
+          - value: '{"obtained": true}'
       size_category:
         range: SizeCategory
         slot_uri: hf:size_categories
@@ -458,6 +480,7 @@ classes:
         range: string
         slot_uri: hf:task_categories
         description: ML task types
+        examples: [{value: '["time-series-forecasting", "reinforcement-learning"]'}]
 
   Person:
     description: A person (creator or curator) associated with a dataset.

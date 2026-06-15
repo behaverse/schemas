@@ -63,58 +63,69 @@ classes:
         slot_uri: sdo:description
         exact_mappings: [dc:description]
         description: Comprehensive description of the catalog's purpose and scope
+        examples: [{value: "Datasets where participants completed multiple distinct cognitive tasks or assessments within the same study, enabling cross-task analysis and cognitive profiling."}]
       keywords:
         recommended: true
         multivalued: true
         range: string
         slot_uri: sdo:keywords
         description: Keywords describing the catalog's focus areas
+        examples: [{value: '["multi-task", "cognitive assessment", "battery", "neuropsychology"]'}]
       inclusion_criteria:
         required: true
         multivalued: true
         range: string
         slot_uri: behaverse:inclusionCriteria
         description: Specific rules a dataset must meet to be included in this catalog (all criteria must be met)
+        examples: [{value: '["Participants must have completed 2 or more distinct cognitive tasks", "Tasks must measure different cognitive constructs", "All tasks must be from the same participants (within-subject design)"]'}]
       exclusion_criteria:
         multivalued: true
         range: string
         slot_uri: behaverse:exclusionCriteria
         description: Criteria that would exclude a dataset from this catalog
+        examples: [{value: '["Single-task studies", "Between-subject designs only", "Non-human subjects"]'}]
       datasets:
         multivalued: true
         range: uri
         slot_uri: sdo:dataset
         description: List of dataset URLs or DOIs that belong to this catalog (use stable identifiers like DOIs or canonical URLs)
+        examples: [{value: '["https://behaverse.org/datasets/axon-game-eeg", "https://doi.org/10.5281/zenodo.1234567", "https://openneuro.org/datasets/ds003097"]'}]
       catalogs:
         multivalued: true
         range: uri
         slot_uri: sdo:hasPart
         exact_mappings: [dcat:catalog]
         description: List of child catalog URLs that belong to this catalog (for hierarchical organization)
+        examples: [{value: '["https://behaverse.org/catalogs/neuroimaging-mental-health", "https://behaverse.org/catalogs/behavioral-adhd"]'}]
       dataset_count:
         range: integer
         slot_uri: behaverse:datasetCount
         description: Number of datasets currently in this catalog
+        examples: [{value: "15"}]
       related_catalogs:
         multivalued: true
         range: string
         slot_uri: behaverse:relatedCatalogs
         description: Names of other catalogs that frequently overlap with this one
+        examples: [{value: '["multimodal", "longitudinal"]'}]
       date_created:
         recommended: true
         range: date
         slot_uri: sdo:dateCreated
         description: Date this catalog was created (ISO 8601)
+        examples: [{value: "2025-12-02"}]
       date_modified:
         range: date
         slot_uri: sdo:dateModified
         description: Date this catalog definition was last modified (ISO 8601)
+        examples: [{value: "2025-12-02"}]
       curator:
         recommended: true
         multivalued: true
         range: Curator
         slot_uri: sdo:curator
         description: People or organizations that curate this catalog
+        examples: [{value: '[{"name": "Curator Name", "email": "curator@institution.edu", "orcid": "0000-0001-2345-6789"}]'}]
 
   Curator:
     description: A person or organization that curates a catalog.
