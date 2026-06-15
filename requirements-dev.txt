@@ -1,0 +1,5 @@
+# requirements-dev.txt — generation + validation toolchain (main branch)
+linkml==1.8.5
+linkml-runtime==1.8.3
+jsonschema>=4.21
+PyYAML>=6.0

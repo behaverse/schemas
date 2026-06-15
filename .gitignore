@@ -33,6 +33,7 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
 ENV/
 build/
 develop-eggs/
@@ -83,3 +84,6 @@ scratch/
 
 
 git_ignored/
+
+# Migration baselines (frozen pre-migration generated artifacts)
+baselines/
