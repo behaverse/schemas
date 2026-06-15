@@ -74,7 +74,10 @@ def postprocess_schema(schema: Dict[str, Any], sv: SchemaView) -> Dict[str, Any]
                 pschema["title"] = _title_case(pname)
 
     # (b) @type const for the tree_root class, in the published `schema:` form.
-    if tree_root is not None:
+    # Skipped for an abstract tree_root: an abstract umbrella (e.g. event's
+    # EventDocument = Event | EventBatch) is not itself a concrete node type, so a
+    # single top-level @type const would be wrong. Concrete roots are unchanged.
+    if tree_root is not None and not tree_root.abstract:
         class_uri = sv.get_uri(tree_root, expand=False)  # e.g. sdo:DataCatalog
         const = _to_published_curie(class_uri)
         # Inject into the top-level (root) properties block only.
@@ -91,10 +94,49 @@ def postprocess_schema(schema: Dict[str, Any], sv: SchemaView) -> Dict[str, Any]
             # Place @type first for readability.
             schema["properties"] = {"@type": type_entry, **props}
 
+    # (h) Abstract tree_root -> root `oneOf` over its concrete descendants.
+    # gen-json-schema emits a bare permissive `type: object` root for an abstract
+    # tree_root; replace its validation with a oneOf of the non-abstract descendant
+    # `$defs` (e.g. Event, EventBatch), preserving $defs/$schema/$id/title/version.
+    if tree_root is not None and tree_root.abstract:
+        _abstract_root_to_oneof(schema, sv, tree_root)
+
     # (a) Normalize any lingering `sdo:` CURIE strings (e.g. const values) to `schema:`.
     _normalize_sdo_in_place(schema)
 
     return schema
+
+
+def _abstract_root_to_oneof(schema: Dict[str, Any], sv: SchemaView, tree_root) -> None:
+    """Rewrite the root validation to a oneOf over the abstract tree_root's concrete descendants.
+
+    Driven generically from SchemaView: the concrete (non-abstract) descendants of the
+    abstract tree_root become the `oneOf` branches, ordered to match class definition
+    order. The structural inventory ($defs, $schema, $id, title, version, description) is
+    preserved; the loose root `properties`/`type`/`required`/`additionalProperties` that
+    gen-json-schema emitted for the empty umbrella class are removed.
+    """
+    descendants = {tree_root.name, *sv.class_descendants(tree_root.name)}
+    concrete = [
+        cname for cname in sv.all_classes()
+        if cname in descendants and cname != tree_root.name
+        and not sv.get_class(cname).abstract
+    ]
+    if not concrete:
+        return
+    for key in ("properties", "type", "required", "additionalProperties"):
+        schema.pop(key, None)
+    schema["oneOf"] = [{"$ref": f"#/$defs/{cname}"} for cname in concrete]
+
+
+def _uses_sdo(sv: SchemaView) -> bool:
+    """True iff the LinkML source actually declares the internal `sdo` prefix.
+
+    The `sdo`->`schema` normalization is a workaround for one specific collision and
+    must be a no-op for schemas that never use `sdo` (e.g. event, whose published
+    context legitimately carries `schema: http://schema.org/`).
+    """
+    return SDO_INTERNAL_PREFIX in sv.namespaces()
 
 
 def postprocess_context(context_doc: Dict[str, Any], sv: SchemaView) -> Dict[str, Any]:
@@ -107,14 +149,17 @@ def postprocess_context(context_doc: Dict[str, Any], sv: SchemaView) -> Dict[str
     context_doc.pop("comments", None)
 
     # (a) Rename the `sdo` prefix entry -> `schema`, and rewrite every `sdo:` CURIE.
-    if SDO_INTERNAL_PREFIX in ctx:
-        del ctx[SDO_INTERNAL_PREFIX]
-    ctx[SDO_PUBLISHED_PREFIX] = SDO_NAMESPACE
-    for key, val in list(ctx.items()):
-        if isinstance(val, str):
-            ctx[key] = _to_published_curie(val)
-        elif isinstance(val, dict) and "@id" in val and isinstance(val["@id"], str):
-            val["@id"] = _to_published_curie(val["@id"])
+    # Only when the source actually uses `sdo`; otherwise leave the context alone so
+    # a schema that publishes its own `schema:` prefix (e.g. event) is not clobbered.
+    if _uses_sdo(sv):
+        if SDO_INTERNAL_PREFIX in ctx:
+            del ctx[SDO_INTERNAL_PREFIX]
+        ctx[SDO_PUBLISHED_PREFIX] = SDO_NAMESPACE
+        for key, val in list(ctx.items()):
+            if isinstance(val, str):
+                ctx[key] = _to_published_curie(val)
+            elif isinstance(val, dict) and "@id" in val and isinstance(val["@id"], str):
+                val["@id"] = _to_published_curie(val["@id"])
 
     # Build a name->slot lookup once (induced slots of every class, plus all slots).
     slots_by_name = {s.name: s for s in sv.all_slots().values()}
@@ -141,8 +186,56 @@ def postprocess_context(context_doc: Dict[str, Any], sv: SchemaView) -> Dict[str
     # (e) Secondary mappings (exact_mappings) surfaced as additional context terms.
     _add_secondary_mappings(ctx, sv, slots_by_name)
 
+    # (h) Deep-merge the schema-level `context_overrides` annotation (bespoke JSON-LD
+    # constructs LinkML cannot generate from slots alone — e.g. objectType->@type,
+    # @container:@list, extra prefixes, @type:@id terms). Applied last so it wins.
+    overrides = _schema_annotation_json(sv, "context_overrides")
+    if isinstance(overrides, dict):
+        _deep_merge(ctx, overrides)
+
     context_doc["@context"] = ctx
     return context_doc
+
+
+def _plain(obj):
+    """Recursively convert LinkML/jsonasobj2 structures into plain dict/list/scalars."""
+    # jsonasobj2 JsonObj exposes its items via _as_dict / iteration; detect by attr.
+    if hasattr(obj, "_as_dict"):
+        return {k: _plain(v) for k, v in obj._as_dict.items()}
+    if isinstance(obj, dict):
+        return {k: _plain(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_plain(v) for v in obj]
+    return obj
+
+
+def _schema_annotation_json(sv: SchemaView, key: str):
+    """Return a schema-level annotation's value as a plain JSON-compatible structure.
+
+    LinkML may surface the value as a jsonasobj2 `JsonObj`, a plain dict/list, or a
+    raw JSON string; all are normalized to plain Python here.
+    """
+    anns = sv.schema.annotations or {}
+    a = anns.get(key)
+    if a is None:
+        return None
+    val = a.value
+    if isinstance(val, str):
+        try:
+            import json as _json
+            return _json.loads(val)
+        except (ValueError, TypeError):
+            return None
+    return _plain(val)
+
+
+def _deep_merge(base: Dict[str, Any], overlay: Dict[str, Any]) -> None:
+    """Recursively merge `overlay` into `base` in place (overlay wins on conflicts)."""
+    for k, v in overlay.items():
+        if isinstance(v, dict) and isinstance(base.get(k), dict):
+            _deep_merge(base[k], v)
+        else:
+            base[k] = v
 
 
 def _add_secondary_mappings(ctx, sv, slots_by_name) -> None:

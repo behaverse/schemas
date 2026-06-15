@@ -114,16 +114,26 @@ def build_trial(sv: SchemaView, meta: dict) -> dict:
     }
 
 
+def _plain(obj):
+    """Recursively convert jsonasobj2/LinkML structures into plain dict/list/scalars."""
+    if hasattr(obj, "_as_dict"):
+        return {k: _plain(v) for k, v in obj._as_dict.items()}
+    if isinstance(obj, dict):
+        return {k: _plain(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_plain(v) for v in obj]
+    return obj
+
+
 def build_event(sv: SchemaView, meta: dict) -> dict:
-    """Single-envelope model: the tree_root Event class -> a flat `fields` list."""
-    envelope = None
-    for cname in sv.all_classes():
-        c = sv.get_class(cname)
-        if c.tree_root:
-            envelope = c
-            break
+    """Single-envelope model: the concrete `Event` class -> a flat `fields` list.
+
+    The render artifact's fields come specifically from the `Event` envelope class —
+    NOT the abstract `EventDocument` tree_root and NOT `EventBatch`.
+    """
+    envelope = sv.get_class("Event")
     if envelope is None:
-        raise SystemExit("event: no tree_root class found")
+        raise SystemExit("event: no `Event` class found")
     fields = [_field(a) for a in (envelope.attributes or {}).values()]
     out: dict = {
         "schema": meta["schema"],
@@ -134,7 +144,7 @@ def build_event(sv: SchemaView, meta: dict) -> dict:
     }
     vocab = _ann(sv.schema, "vocabularies")
     if vocab is not _MISSING:
-        out["vocabularies"] = vocab
+        out["vocabularies"] = _plain(vocab)
     return out
 
 
