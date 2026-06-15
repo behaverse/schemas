@@ -3,7 +3,7 @@ id: https://behaverse.org/schemas/catalog
 name: catalog
 title: Behaverse Catalog Schema
 description: A metadata schema for thematic catalogs of cognitive science and neuroscience datasets
-version: '26.0610'
+version: '26.0615'
 license: MIT
 
 prefixes:
@@ -51,7 +51,7 @@ classes:
         multivalued: true
         range: string
         slot_uri: behaverse:inclusionCriteria
-        description: Specific rules a dataset must meet to be included in this catalog
+        description: Specific rules a dataset must meet to be included in this catalog (all criteria must be met)
       exclusion_criteria:
         multivalued: true
         range: string
@@ -61,13 +61,13 @@ classes:
         multivalued: true
         range: uri
         slot_uri: sdo:dataset
-        description: Dataset URLs or DOIs that belong to this catalog
+        description: List of dataset URLs or DOIs that belong to this catalog (use stable identifiers like DOIs or canonical URLs)
       catalogs:
         multivalued: true
         range: uri
         slot_uri: sdo:hasPart
         exact_mappings: [dcat:catalog]
-        description: Child catalog URLs (hierarchical organization)
+        description: List of child catalog URLs that belong to this catalog (for hierarchical organization)
       dataset_count:
         range: integer
         slot_uri: behaverse:datasetCount

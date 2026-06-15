@@ -2,6 +2,22 @@
 
 All notable changes to the Catalog schema will be documented in this file.
 
+## [26.0615] - 2026-06-15
+
+### Changed
+- Source of truth switched to LinkML: `schema.json` and `context.jsonld` are now generated from `schema.linkml.yaml` via `scripts/generate.py` (replacing `field-definitions.yaml` + the legacy `scripts/schema_gen.py`).
+- Artifact shape changes inherited from LinkML's `gen-json-schema`: the `Curator` sub-object is factored into `$defs/Curator` and referenced via `$ref`; optional/recommended properties use explicit nullable unions (e.g. `"type": ["array", "null"]`); `$schema` is now JSON Schema draft 2019-09 (was draft-07); `additionalProperties: false` on the inlined classes and `additionalProperties: true` at the root (so JSON-LD keys like `@type`/`@context` are permitted). The schema-level `description` now comes from the root class description.
+- `version` updated to `26.0615`.
+
+### Preserved
+- JSON-LD fidelity is restored by a post-process step (`scripts/linkml_postprocess.py`): the published artifacts use the `schema:` prefix (not the internal `sdo:` generation workaround); the `@type` const (`schema:DataCatalog`) discoverability guard is re-injected; `@container: @set` is added to every multivalued term; the reserved-slot `name` term maps to `schema:name` again; per-property `title`s are restored; and secondary mappings (`dc:description`, `dcat:catalog`) are surfaced in the context.
+
+### Note
+- The redundant `equivalentProperty` annotation is intentionally dropped from `schema.json`; the same property→IRI mappings live in `context.jsonld`, the canonical location.
+
+### Added
+- `catalog/versions/v26.0615/` snapshot for consumer pinning.
+
 ## [26.0610] - 2026-06-10
 
 ### Changed
