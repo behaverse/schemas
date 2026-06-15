@@ -1,0 +1,111 @@
+# yaml-language-server: $schema=https://linkml.io/linkml-model/linkml_model/jsonschema/meta.schema.json
+id: https://behaverse.org/schemas/catalog
+name: catalog
+title: Behaverse Catalog Schema
+description: A metadata schema for thematic catalogs of cognitive science and neuroscience datasets
+version: '26.0610'
+license: MIT
+
+prefixes:
+  catalog: https://behaverse.org/schemas/catalog#
+  behaverse: https://behaverse.org/schemas/catalog#
+  sdo: https://schema.org/
+  dc: http://purl.org/dc/terms/
+  dcat: http://www.w3.org/ns/dcat#
+  linkml: https://w3id.org/linkml/
+default_prefix: catalog
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  Catalog:
+    description: A thematic catalog of datasets.
+    class_uri: sdo:DataCatalog
+    tree_root: true
+    attributes:
+      name:
+        required: true
+        slot_uri: sdo:name
+        pattern: "^[a-z0-9-_]+$"
+        description: Short URL-friendly identifier
+        examples: [{value: multi-task}, {value: longitudinal}, {value: multimodal}]
+      pretty_name:
+        required: true
+        slot_uri: dc:title
+        description: Human-readable display title
+        examples: [{value: Multi-Task Cognitive Assessments}]
+      description:
+        required: true
+        slot_uri: sdo:description
+        exact_mappings: [dc:description]
+        description: Comprehensive description of the catalog's purpose and scope
+      keywords:
+        recommended: true
+        multivalued: true
+        range: string
+        slot_uri: sdo:keywords
+        description: Keywords describing the catalog's focus areas
+      inclusion_criteria:
+        required: true
+        multivalued: true
+        range: string
+        slot_uri: behaverse:inclusionCriteria
+        description: Specific rules a dataset must meet to be included in this catalog
+      exclusion_criteria:
+        multivalued: true
+        range: string
+        slot_uri: behaverse:exclusionCriteria
+        description: Criteria that would exclude a dataset from this catalog
+      datasets:
+        multivalued: true
+        range: uri
+        slot_uri: sdo:dataset
+        description: Dataset URLs or DOIs that belong to this catalog
+      catalogs:
+        multivalued: true
+        range: uri
+        slot_uri: sdo:hasPart
+        exact_mappings: [dcat:catalog]
+        description: Child catalog URLs (hierarchical organization)
+      dataset_count:
+        range: integer
+        slot_uri: behaverse:datasetCount
+        description: Number of datasets currently in this catalog
+      related_catalogs:
+        multivalued: true
+        range: string
+        slot_uri: behaverse:relatedCatalogs
+        description: Names of other catalogs that frequently overlap with this one
+      date_created:
+        recommended: true
+        range: date
+        slot_uri: sdo:dateCreated
+        description: Date this catalog was created (ISO 8601)
+      date_modified:
+        range: date
+        slot_uri: sdo:dateModified
+        description: Date this catalog definition was last modified (ISO 8601)
+      curator:
+        recommended: true
+        multivalued: true
+        range: Curator
+        slot_uri: sdo:curator
+        description: People or organizations that curate this catalog
+
+  Curator:
+    description: A person or organization that curates a catalog.
+    attributes:
+      name:
+        required: true
+        description: Curator full name
+      email:
+        slot_uri: sdo:email
+        description: Curator email address
+      orcid:
+        slot_uri: sdo:identifier
+        pattern: "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
+        description: ORCID identifier
+      affiliation:
+        slot_uri: sdo:affiliation
+        description: Institutional affiliation
