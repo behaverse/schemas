@@ -2,6 +2,18 @@
 
 All notable changes to the event schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0615] - 2026-06-15
+
+### Changed
+
+- **Source of truth switched to LinkML** (`schema.linkml.yaml`). `schema.json`, `context.jsonld`, and `field-definitions.json` are now generated from this single source via `scripts/generate.py`, matching the catalog/dataset/trial pipeline.
+- **`schema.json` redesigned** as an abstract root `EventDocument = Event | EventBatch` (a root `oneOf` over the two concrete subclasses), replacing the hand-crafted `oneOf`. `Event` is a single event/statement; `EventBatch` is `{batch_id?, events: [Event]}` — mirroring an API (GET /id → one Event, GET collection → a batch).
+- The canonical `bdm:` vocabulary and the JSON-LD `@context` are now LinkML-sourced (carried as schema-level `vocabularies` and `context_overrides` annotations) rather than hand-maintained.
+
+### Added
+
+- **Enum validation** for `verb` (`VerbEnum`), `actor.objectType` (`ActorTypeEnum`), and `object.objectType` (`ObjectTypeEnum`), drawn from the canonical vocabulary.
+
 ## [26.0608] - 2026-06-08
 
 ### Added
