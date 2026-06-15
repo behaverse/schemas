@@ -18,6 +18,29 @@ default_range: string
 imports:
   - linkml:types
 
+# Docs-only metadata: the catalog Overview groups fields into these categories (in this
+# order). Consumed by gh-pages:scripts/generate_docs.py; ignored by the JSON Schema /
+# JSON-LD generators. `@type` is the JSON-LD node-type row (synthesized from class_uri).
+annotations:
+  field_groups:
+    value:
+      - id: core_metadata
+        name: Core Metadata
+        description: Essential fields for catalog identification
+        fields: ['@type', name, pretty_name, description, keywords, date_created, date_modified, curator]
+      - id: definition
+        name: Catalog Definition
+        description: Criteria and scope of the catalog
+        fields: [inclusion_criteria, exclusion_criteria]
+      - id: membership
+        name: Catalog Membership
+        description: Datasets and child catalogs that belong to this catalog
+        fields: [datasets, catalogs, dataset_count]
+      - id: relationships
+        name: Relationships
+        description: Related catalogs and cross-references
+        fields: [related_catalogs]
+
 classes:
   Catalog:
     description: A thematic catalog of datasets.

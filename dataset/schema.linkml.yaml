@@ -24,6 +24,57 @@ default_range: string
 imports:
   - linkml:types
 
+# Docs-only metadata: the dataset Overview groups fields into these categories (in this
+# order). Consumed by gh-pages:scripts/generate_docs.py; ignored by the JSON Schema /
+# JSON-LD generators. `@type` is the JSON-LD node-type row (synthesized from class_uri).
+annotations:
+  field_groups:
+    value:
+      - id: core_metadata
+        name: Core Metadata
+        description: Essential fields for dataset identification
+        fields: ['@type', name, pretty_name, description, version, license, url, doi, keywords, language]
+      - id: dates
+        name: Dates
+        description: Temporal metadata
+        fields: [date_created, date_published, date_modified, date_added, last_verified]
+      - id: people
+        name: People & Organizations
+        description: Creator and contributor information
+        fields: [creator, curator]
+      - id: citations
+        name: Citations & References
+        description: Published papers and references
+        fields: [citation]
+      - id: population
+        name: Population & Sample
+        description: Aggregate-level population demographics and coverage
+        fields: [sample_size, age_range, age_mean, age_std, sex_distribution, age_category, population_category, inclusion_criteria, exclusion_criteria, spatial_coverage, temporal_coverage]
+      - id: measurements
+        name: Data Modalities & Measurement
+        description: Types of data collected and measurement techniques
+        fields: [measurement_technique, constructs_measured]
+      - id: activities
+        name: Activities & Paradigms
+        description: Cognitive tasks and experimental paradigms
+        fields: [activity]
+      - id: study_design
+        name: Study Design
+        description: Study design and methodology
+        fields: [study_design_type, intervention_type, session_count, session_description]
+      - id: data_files
+        name: Data Files & Distribution
+        description: File formats and access information
+        fields: [data_formats, data_size_gb, data_structure, download_url, access_url, access_conditions]
+      - id: ethics
+        name: Ethics
+        description: Ethical approval and data quality
+        fields: [ethical_approval]
+      - id: huggingface
+        name: HuggingFace-Specific
+        description: ML dataset metadata
+        fields: [size_category, task_categories]
+
 enums:
   License:
     description: License identifier in SPDX format
