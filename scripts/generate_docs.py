@@ -2,8 +2,17 @@
 """
 Generate Docusaurus MDX documentation from schema definitions
 
-This script reads field-definitions.yaml and schema.json files from each schema
-directory and generates comprehensive MDX documentation pages for Docusaurus.
+This script reads the LinkML source of truth (schema.linkml.yaml) and generated
+artifacts (field-definitions.json, schema.json) from each schema directory and
+generates comprehensive MDX documentation pages for Docusaurus.
+
+Source of truth per schema:
+- catalog, dataset: schema.linkml.yaml (the tree_root class attributes; the
+  `field_groups` schema-level annotation drives Overview grouping + field order)
+- trial, event: field-definitions.json (generated render artifact)
+- studyflow: schema.linkml.yaml
+- bcsv: schema.json
+The deprecated field-definitions.yaml files are NOT read by any code path.
 
 AUTOMATICALLY GENERATED FILES (DO NOT EDIT MANUALLY):
 - docs/docs/{schema}/index.md - Overview page with all properties
@@ -30,69 +39,350 @@ from datetime import datetime
 import sys
 import re
 
-# Schema directories to process
+# Schema directories to process.
+# `source` selects the loader branch in load_schema_data():
+#   'linkml'   -> read schema.linkml.yaml tree_root class + field_groups annotation
+#   'json'     -> read schema.json (bcsv)
+#   'studyflow'-> read schema.linkml.yaml via linkml_to_json (classes/enums listing)
+# `multi_table` / `vocabulary` -> read the generated field-definitions.json artifact.
 SCHEMAS = {
     'bcsv': {
-        'has_field_definitions': False,  # Uses schema.json directly
+        'source': 'json',  # Uses schema.json directly
         'name': 'bcsv (Better CSV)',
         'icon': 'schema_B.png',
     },
     'catalog': {
-        'has_field_definitions': True,
+        'source': 'linkml',  # tree_root class attributes + field_groups annotation
         'name': 'Catalog Schema',
         'icon': 'schema_C.png',
     },
     'dataset': {
-        'has_field_definitions': True,
+        'source': 'linkml',  # tree_root class attributes + field_groups annotation
         'name': 'Dataset Schema',
         'icon': 'schema_D.png',
     },
     'studyflow': {
-        'has_field_definitions': False,  # Uses moddle/linkml format
+        'source': 'studyflow',  # LinkML classes/enums listing
         'name': 'Studyflow Schema',
         'icon': 'schema_S.png',
     },
     'trial': {
-        'has_field_definitions': True,
-        'multi_table': True,  # field-definitions.yaml has `tables`, not flat `fields`
+        'source': 'json',
+        'multi_table': True,  # field-definitions.json has `tables`, not flat `fields`
         'name': 'Trial Schema',
         'icon': '',
     },
     'event': {
-        'has_field_definitions': True,
+        'source': 'json',
         'vocabulary': True,  # envelope `fields` + a bdm: `vocabularies` block
         'name': 'Event Schema',
         'icon': '',
     },
 }
 
+# Map a slot's `class_uri` / `slot_uri` CURIE (e.g. `sdo:Dataset`) to the `schema:`
+# form the deprecated YAML used for the synthesized `@type` row.
+_TYPE_PREFIX_TO_SCHEMA = {'sdo': 'schema'}
+
+# How the deprecated field-definitions.yaml rendered a scalar LinkML range as a docs
+# `type` (plus any implied JSON-Schema-style `constraints`).
+_SCALAR_RANGE = {
+    'string': ('string', None),
+    'integer': ('integer', None),
+    'float': ('number', None),
+    'double': ('number', None),
+    'decimal': ('number', None),
+    'boolean': ('boolean', None),
+    'date': ('string', ('format', 'date')),
+    'datetime': ('string', ('format', 'date-time')),
+    'time': ('string', ('format', 'time')),
+    'uri': ('string', ('format', 'uri')),
+    'uriorcurie': ('string', ('format', 'uri')),
+}
+
+
+def _curie_to_url(prefixes: Dict[str, str], curie: str) -> Optional[str]:
+    """Expand a `prefix:local` CURIE to a full URL using the LinkML `prefixes` map."""
+    if not curie or ':' not in curie:
+        return None
+    prefix, local = curie.split(':', 1)
+    base = prefixes.get(prefix)
+    return f"{base}{local}" if base else None
+
+
+def _curie_to_schema_form(curie: str) -> str:
+    """Render a class/slot CURIE the way the YAML did (e.g. `sdo:Dataset` -> `schema:Dataset`)."""
+    if ':' not in curie:
+        return curie
+    prefix, local = curie.split(':', 1)
+    return f"{_TYPE_PREFIX_TO_SCHEMA.get(prefix, prefix)}:{local}"
+
+
+def _slot_requirement(slot: Dict[str, Any]) -> str:
+    if slot.get('required'):
+        return 'required'
+    if slot.get('recommended'):
+        return 'recommended'
+    return 'optional'
+
+
+def _slot_examples(slot: Dict[str, Any]) -> List[Any]:
+    """LinkML examples are `[{value: x}, ...]`; the YAML path used a flat value list."""
+    out = []
+    for ex in slot.get('examples', []) or []:
+        if isinstance(ex, dict) and 'value' in ex:
+            out.append(ex['value'])
+        else:
+            out.append(ex)
+    return out
+
+
+def _slot_mappings(prefixes: Dict[str, str], slot: Dict[str, Any]) -> List[Dict[str, str]]:
+    """Build the YAML-shaped `[{standard, property, url}]` list from slot_uri + exact_mappings."""
+    mappings = []
+    seen = set()
+    for curie in ([slot['slot_uri']] if slot.get('slot_uri') else []) + list(slot.get('exact_mappings', []) or []):
+        if curie in seen:
+            continue
+        seen.add(curie)
+        prefix = curie.split(':', 1)[0] if ':' in curie else 'external'
+        prop = curie.split(':', 1)[1] if ':' in curie else curie
+        m = {'standard': prefix, 'property': prop}
+        url = _curie_to_url(prefixes, curie)
+        if url:
+            m['url'] = url
+        mappings.append(m)
+    return mappings
+
+
+def _slot_constraints(slot: Dict[str, Any], scalar_constraint=None,
+                      enum_values=None) -> Dict[str, Any]:
+    """Collect JSON-Schema-style constraints the YAML path surfaced for a slot."""
+    c = {}
+    if scalar_constraint:
+        c[scalar_constraint[0]] = scalar_constraint[1]
+    if slot.get('pattern'):
+        c['pattern'] = slot['pattern']
+    if 'minimum_value' in slot:
+        c['minimum'] = slot['minimum_value']
+    if 'maximum_value' in slot:
+        c['maximum'] = slot['maximum_value']
+    if 'minimum_cardinality' in slot:
+        c['min_items'] = slot['minimum_cardinality']
+    if 'maximum_cardinality' in slot:
+        c['max_items'] = slot['maximum_cardinality']
+    if enum_values:
+        c['enum'] = enum_values
+    return c
+
+
+def _linkml_field_from_slot(name: str, slot: Dict[str, Any], group_id: str,
+                            classes: Dict[str, Any], enums: Dict[str, Any],
+                            prefixes: Dict[str, str],
+                            include_object_props: bool = True) -> Dict[str, Any]:
+    """Produce a docs field-dict (same shape the deprecated YAML emitted) from a LinkML slot."""
+    slot = slot or {}
+    rng = slot.get('range', 'string')
+    multivalued = bool(slot.get('multivalued'))
+
+    field: Dict[str, Any] = {
+        'name': name,
+        'description': slot.get('description', ''),
+        'requirement': _slot_requirement(slot),
+    }
+    if group_id is not None:
+        field['group'] = group_id
+
+    scalar_constraint = None
+    enum_values = None
+
+    if rng in classes:  # range is an object (a referenced class)
+        if multivalued:
+            field['type'] = 'array'
+            field['item_type'] = 'object'
+        else:
+            field['type'] = 'object'
+        if include_object_props:
+            obj_props = []
+            for attr_name, attr_slot in (classes[rng].get('attributes') or {}).items():
+                obj_props.append(_linkml_object_property(attr_name, attr_slot or {},
+                                                         enums, prefixes))
+            if obj_props:
+                field['object_properties'] = obj_props
+    elif rng in enums:  # range is an enumeration
+        enum_values = list((enums[rng].get('permissible_values') or {}).keys())
+        if multivalued:
+            field['type'] = 'array'
+            field['item_type'] = 'string'
+        else:
+            field['type'] = 'enum'
+    else:  # scalar range
+        scalar_type, scalar_constraint = _SCALAR_RANGE.get(rng, ('string', None))
+        if multivalued:
+            field['type'] = 'array'
+            field['item_type'] = scalar_type
+        else:
+            field['type'] = scalar_type
+
+    constraints = _slot_constraints(slot, scalar_constraint, enum_values)
+    if constraints:
+        field['constraints'] = constraints
+
+    mappings = _slot_mappings(prefixes, slot)
+    if mappings:
+        field['mappings'] = mappings
+
+    examples = _slot_examples(slot)
+    if examples:
+        field['examples'] = examples
+
+    return field
+
+
+def _linkml_object_property(name: str, slot: Dict[str, Any], enums: Dict[str, Any],
+                            prefixes: Dict[str, str]) -> Dict[str, Any]:
+    """A nested object-property dict (creator/curator/... sub-fields), YAML-shaped."""
+    rng = slot.get('range', 'string')
+    base_type = 'enum' if rng in enums else _SCALAR_RANGE.get(rng, ('string', None))[0]
+    # Multivalued sub-fields rendered as `array` in the deprecated YAML path.
+    ptype = 'array' if slot.get('multivalued') else base_type
+    prop: Dict[str, Any] = {
+        'name': name,
+        'type': ptype,
+        'required': bool(slot.get('required')),
+        'description': slot.get('description', ''),
+    }
+    constraints = {}
+    scalar_constraint = _SCALAR_RANGE.get(rng, ('string', None))[1]
+    if scalar_constraint:
+        constraints[scalar_constraint[0]] = scalar_constraint[1]
+    if slot.get('pattern'):
+        constraints['pattern'] = slot['pattern']
+    if rng in enums:
+        vals = list((enums[rng].get('permissible_values') or {}).keys())
+        if vals:
+            constraints['enum'] = vals
+    if constraints:
+        prop['constraints'] = constraints
+    mappings = _slot_mappings(prefixes, slot)
+    if mappings:
+        prop['mappings'] = mappings
+    return prop
+
+
+def load_linkml_tree_root(schema_name: str, schema_dir: Path) -> Dict[str, Any]:
+    """Load catalog/dataset Overview data from schema.linkml.yaml.
+
+    Builds the same field-dict shape the deprecated field-definitions.yaml produced:
+    fields from the tree_root class attributes (ordered by the `field_groups`
+    annotation), a synthesized `@type` row, the field_groups list, and metadata.
+    """
+    linkml = yaml.safe_load((schema_dir / 'schema.linkml.yaml').read_text())
+    classes = linkml.get('classes', {}) or {}
+    enums = linkml.get('enums', {}) or {}
+    prefixes = linkml.get('prefixes', {}) or {}
+
+    # Locate the tree_root class (the single data class: Catalog / Dataset).
+    root_name, root_cls = None, None
+    for cname, cmeta in classes.items():
+        if (cmeta or {}).get('tree_root'):
+            root_name, root_cls = cname, (cmeta or {})
+            break
+    if root_cls is None:
+        raise ValueError(f"{schema_name}: no tree_root class in schema.linkml.yaml")
+
+    attributes = root_cls.get('attributes', {}) or {}
+
+    # field_groups annotation: list of {id, name, description, fields:[...]}.
+    fg_annotation = (((linkml.get('annotations') or {}).get('field_groups') or {})
+                     .get('value') or [])
+    # Map each field name -> its group id, and remember the annotation's field order.
+    field_to_group: Dict[str, str] = {}
+    ordered_names: List[str] = []
+    for grp in fg_annotation:
+        for fname in grp.get('fields', []) or []:
+            field_to_group[fname] = grp['id']
+            ordered_names.append(fname)
+
+    # Group list for the Overview/sidebar (id, name, description only).
+    field_groups = [{'id': g['id'], 'name': g.get('name', g['id']),
+                     'description': g.get('description', '')} for g in fg_annotation]
+
+    class_uri = root_cls.get('class_uri', '')
+    type_value = _curie_to_schema_form(class_uri) if class_uri else schema_name
+
+    fields: List[Dict[str, Any]] = []
+    for fname in ordered_names:
+        if fname == '@type':
+            fields.append({
+                'name': '@type',
+                'group': field_to_group.get('@type', 'core_metadata'),
+                'type': type_value,
+                'requirement': 'optional',
+                'description': ('JSON-LD node type (rdf:type) for schema.org / '
+                                'Google Dataset Search discoverability.'),
+            })
+            continue
+        if fname not in attributes:
+            continue  # listed in annotation but not (yet) a slot; skip defensively
+        fields.append(_linkml_field_from_slot(
+            fname, attributes[fname], field_to_group.get(fname),
+            classes, enums, prefixes))
+
+    # Append any attributes not covered by the annotation, in declaration order.
+    for fname, slot in attributes.items():
+        if fname not in field_to_group:
+            fields.append(_linkml_field_from_slot(
+                fname, slot, None, classes, enums, prefixes))
+
+    return {
+        'metadata': {
+            'name': linkml.get('title', schema_name),
+            'version': str(linkml.get('version', '')).lstrip('v'),
+            'namespace': linkml.get('id', f'https://behaverse.org/schemas/{schema_name}'),
+            'description': linkml.get('description', ''),
+        },
+        'fields': fields,
+        'field_groups': field_groups,
+    }
+
+def _json_metadata(data: Dict[str, Any], schema_name: str) -> Dict[str, Any]:
+    """Map a field-definitions.json top level to the docs `metadata` dict."""
+    return {
+        'name': data.get('schema', schema_name),
+        'version': str(data.get('version', '')).lstrip('v'),
+        'namespace': data.get('namespace', f'https://behaverse.org/schemas/{schema_name}'),
+        'description': data.get('description', ''),
+    }
+
+
 def load_schema_data(schema_name: str) -> Dict[str, Any]:
-    """Load schema data from field-definitions.yaml or schema.json"""
+    """Load schema data from the LinkML source / generated artifacts.
+
+    NOTE: no branch reads the deprecated field-definitions.yaml.
+    """
     schema_dir = Path(__file__).parent.parent / schema_name
-    
+
     schema_info = SCHEMAS[schema_name]
 
+    # trial: generated field-definitions.json with `tables` (multi-table layout).
     if schema_info.get('multi_table'):
-        data = yaml.safe_load((schema_dir / 'field-definitions.yaml').read_text())
-        return {'metadata': data['schema_metadata'], 'tables': data['tables']}
+        data = json.loads((schema_dir / 'field-definitions.json').read_text())
+        return {'metadata': _json_metadata(data, schema_name), 'tables': data['tables']}
 
+    # event: generated field-definitions.json with envelope `fields` + `vocabularies`.
     if schema_info.get('vocabulary'):
-        data = yaml.safe_load((schema_dir / 'field-definitions.yaml').read_text())
-        return {'metadata': data['schema_metadata'], 'fields': data['fields'],
+        data = json.loads((schema_dir / 'field-definitions.json').read_text())
+        return {'metadata': _json_metadata(data, schema_name),
+                'fields': data['fields'],
                 'vocabularies': data.get('vocabularies', {})}
 
-    if schema_info['has_field_definitions']:
-        # Load from field-definitions.yaml
-        definitions_path = schema_dir / 'field-definitions.yaml'
-        with open(definitions_path, 'r') as f:
-            data = yaml.safe_load(f)
-        return {
-            'metadata': data['schema_metadata'],
-            'fields': data['fields'],
-            'field_groups': data.get('field_groups', []),
-        }
-    elif schema_name == 'studyflow':
-        # Load from LinkML format
+    # catalog, dataset: LinkML source of truth (tree_root class + field_groups).
+    if schema_info.get('source') == 'linkml':
+        return load_linkml_tree_root(schema_name, schema_dir)
+
+    if schema_info.get('source') == 'studyflow':
+        # Load from LinkML format (classes/enums listing)
         linkml_path = schema_dir / 'schema.linkml.yaml'
         if not linkml_path.exists():
             # Skip studyflow if schema.linkml.yaml doesn't exist
