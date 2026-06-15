@@ -1,9 +1,8 @@
 name: Deploy docs (main)
 
-# Pushing to `main` deploys the docs site. The Docusaurus site itself lives on the
-# `gh-pages` branch; this workflow checks that out and fetches the schema content from
-# `main`, so it can run from `main`. (The gh-pages copy, `deploy-docs.yml`, still handles
-# pushes to gh-pages and manual dispatch — keep the two build jobs in sync.)
+# Pushing to `main` redeploys the docs site. The actual build+deploy lives in the
+# reusable workflow build-deploy-pages.yml (single source of truth); gh-pages's
+# deploy-docs.yml calls the same reusable workflow, so there is no duplicated build job.
 
 on:
   push:
@@ -15,63 +14,6 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout gh-pages branch (the Docusaurus site)
-        uses: actions/checkout@v6
-        with:
-          ref: gh-pages
-
-      - name: Checkout schemas from main
-        run: |
-          git fetch origin main
-          git checkout origin/main -- bcsv/ catalog/ dataset/ studyflow/ trial/ event/ vocabulary/
-
-      - name: Setup Python with uv
-        uses: astral-sh/setup-uv@v8.2.0  # no moving `v8` major tag is published; pin the full version
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-
-      - name: Generate documentation from schemas
-        run: uv run scripts/generate_docs.py
-
-      - name: Install Node dependencies
-        working-directory: ./docs
-        run: npm install
-
-      - name: Copy raw schemas to static directory
-        run: |
-          for schema in bcsv catalog dataset studyflow trial event vocabulary; do
-            cp -r $schema docs/static/
-          done
-
-      - name: Build Docusaurus site
-        working-directory: ./docs
-        run: npm run build
-        env:
-          NODE_ENV: production
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: docs/build
-
   deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+    uses: ./.github/workflows/build-deploy-pages.yml

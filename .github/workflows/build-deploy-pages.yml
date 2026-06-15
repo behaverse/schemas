@@ -1,0 +1,72 @@
+name: Build & deploy Pages (reusable)
+
+# Single source of truth for the docs build+deploy. Called by:
+#   - main:deploy-on-main.yml      (on push to main)
+#   - gh-pages:deploy-docs.yml     (on push to gh-pages, via uses: ...@main)
+# The Docusaurus site lives on gh-pages; the schema content lives on main. This always
+# checks out the gh-pages site and fetches main's schema dirs, so it builds the same
+# thing regardless of which branch triggered it.
+
+on:
+  workflow_call:
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages branch (the Docusaurus site)
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+
+      - name: Checkout schemas from main
+        run: |
+          git fetch origin main
+          git checkout origin/main -- bcsv/ catalog/ dataset/ studyflow/ trial/ event/ vocabulary/
+
+      - name: Setup Python with uv
+        uses: astral-sh/setup-uv@v8.2.0  # no moving `v8` major tag is published; pin the full version
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Generate documentation from schemas
+        run: uv run scripts/generate_docs.py
+
+      - name: Install Node dependencies
+        working-directory: ./docs
+        run: npm install
+
+      - name: Copy raw schemas to static directory
+        run: |
+          for schema in bcsv catalog dataset studyflow trial event vocabulary; do
+            cp -r $schema docs/static/
+          done
+
+      - name: Build Docusaurus site
+        working-directory: ./docs
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs/build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
