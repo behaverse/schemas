@@ -487,10 +487,11 @@ classes:
     attributes:
       name:
         required: true
-        description: Creator full name
+        description: Full name of the person
       email:
         slot_uri: sdo:email
-        description: Creator email address
+        pattern: "^\\S+@\\S+\\.\\S+$"
+        description: Email address
       orcid:
         slot_uri: sdo:identifier
         pattern: "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"

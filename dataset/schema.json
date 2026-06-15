@@ -849,7 +849,8 @@
           "title": "Affiliation"
         },
         "email": {
-          "description": "Creator email address",
+          "description": "Email address",
+          "pattern": "^\\S+@\\S+\\.\\S+$",
           "type": [
             "string",
             "null"
@@ -857,7 +858,7 @@
           "title": "Email"
         },
         "name": {
-          "description": "Creator full name",
+          "description": "Full name of the person",
           "type": "string",
           "title": "Name"
         },

@@ -144,6 +144,7 @@
         },
         "email": {
           "description": "Curator email address",
+          "pattern": "^\\S+@\\S+\\.\\S+$",
           "type": [
             "string",
             "null"

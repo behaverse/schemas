@@ -135,6 +135,7 @@ classes:
         description: Curator full name
       email:
         slot_uri: sdo:email
+        pattern: "^\\S+@\\S+\\.\\S+$"
         description: Curator email address
       orcid:
         slot_uri: sdo:identifier
