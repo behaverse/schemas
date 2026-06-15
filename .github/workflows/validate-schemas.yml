@@ -1,9 +1,11 @@
 name: Validate schemas
 
 # Guards the source-of-truth contract on `main` (deploy lives in deploy-on-main.yml):
-#   1. generated artifacts (schema.json / context.jsonld / field-definitions.json) must
-#      be in sync with their field-definitions.yaml — i.e. regeneration produces no diff;
-#   2. every schema.json is well-formed and its examples validate.
+#   1. every LinkML source (catalog/dataset/trial/event/studyflow) is metamodel-valid;
+#   2. generated artifacts (schema.json / context.jsonld / field-definitions.json) are in
+#      sync with their LinkML source — i.e. `scripts/generate.py` regeneration is a no-op;
+#   3. the vocabulary SKOS artifact (terms.jsonld) is in sync with terms.yaml;
+#   4. every schema.json is well-formed and its bundled examples validate.
 
 on:
   pull_request:
@@ -21,16 +23,24 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
-        run: pip install --quiet pyyaml jsonschema
+      - name: Install toolchain
+        run: pip install --quiet -r requirements-dev.txt
 
-      - name: Generated files are in sync with field-definitions.yaml
+      - name: LinkML sources are metamodel-valid
+        # --validate checks against the LinkML metamodel (catches real errors like a
+        # boolean ifabsent); --ignore-warnings keeps style/naming conventions advisory.
         run: |
-          python catalog/scripts/generate_schema_files.py --check
-          python dataset/scripts/generate_schema_files.py --check
-          python trial/scripts/generate.py --check
-          python event/scripts/generate.py --check
-          python vocabulary/scripts/generate.py --check
+          for f in */schema.linkml.yaml; do
+            echo "::group::$f"
+            linkml-lint --validate --ignore-warnings "$f"
+            echo "::endgroup::"
+          done
+
+      - name: Generated artifacts are in sync with the LinkML sources
+        run: python scripts/generate.py --check
+
+      - name: Vocabulary terms.jsonld is in sync with terms.yaml
+        run: python vocabulary/scripts/generate.py --check
 
       - name: Schemas are well-formed and examples validate
         run: python scripts/validate_schemas.py

@@ -248,7 +248,7 @@ classes:
     attributes:
       requiresConsent:
         range: boolean
-        ifabsent: false
+        ifabsent: 'false'
         description: User requires to give consent before participating.
       consentFormUrl:
         range: string
