@@ -9,8 +9,8 @@ consumers can pin to an immutable snapshot.
 - **Version archiving** — each release is copied to a per-version directory under
   `<schema_name>/versions/`.
 - **Changelog** — every release is recorded in `<schema_name>/CHANGELOG.md`.
-- **CI/CD** — the docs site redeploys when the `gh-pages` branch is pushed or the
-  workflow is dispatched manually; the build fetches schema content from `main`.
+- **CI/CD** — the docs site redeploys on every push to `main` (and on pushes to
+  `gh-pages`, or manual dispatch); the build fetches schema content from `main`.
 
 > **Immutability commitment.** Snapshots under each schema's `versions/vYY.MMDD/`
 > directory are never modified after publication. Once a snapshot is online,
@@ -19,16 +19,26 @@ consumers can pin to an immutable snapshot.
 ## How to Version a Schema
 
 Versioning is a deliberate manual process — there is no automation script. Doing
-each step by hand keeps the author aware of whether a change is breaking. After
-editing a schema:
+each step by hand keeps the author aware of whether a change is breaking. For the
+generated schemas (catalog, dataset, trial, event), you edit the LinkML **source** and
+regenerate; never hand-edit the generated `schema.json`/`context.jsonld`.
 
-1. **Bump the version.** Set the new CalVer (today, `YY.MMDD`) in two places in
-   `<schema_name>/schema.json`:
-   - the `version` field, and
-   - the `$id` field →
-     `https://behaverse.org/schemas/<schema_name>/v<new_version>/schema.json`.
+1. **Bump the version in the source.** Set the new CalVer (today, `YY.MMDD`) in the
+   `version:` field of `<schema_name>/schema.linkml.yaml`. (Other sources: **studyflow** —
+   also `schema.linkml.yaml` (consumed directly, nothing to regenerate); **bcsv** is
+   hand-maintained — set `version` *and* `$id` directly in `bcsv/schema.json`;
+   **vocabulary** — set `version` in `vocabulary/terms.yaml`.)
 
-2. **Update the changelog.** Prepend a section to `<schema_name>/CHANGELOG.md`:
+2. **Regenerate the artifacts.** This also writes the versioned, self-identifying
+   `$id` (`…/v<new_version>/schema.json`) automatically. (studyflow has no generated
+   artifact — skip; bcsv is hand-maintained — skip.)
+
+   ```bash
+   python scripts/generate.py                  # catalog / dataset / trial / event
+   python vocabulary/scripts/generate.py       # vocabulary (terms.jsonld)
+   ```
+
+3. **Update the changelog.** Prepend a section to `<schema_name>/CHANGELOG.md`:
 
    ```markdown
    ## [<new_version>] - <YYYY-MM-DD>
@@ -40,21 +50,24 @@ editing a schema:
    Use a `### Breaking` heading for backward-incompatible changes so consumers
    pinning to an older snapshot know why.
 
-3. **Snapshot the new release.** Copy the current files into a per-version
-   directory named for the *new* version:
+4. **Snapshot the new release.** Copy the *generated* artifacts into a per-version
+   directory named for the new version (which artifacts exist varies by schema —
+   catalog/dataset: `schema.json` + `context.jsonld`; trial: `schema.json` +
+   `field-definitions.json`; event: both plus `context.jsonld`; bcsv: `schema.json` +
+   `context.jsonld`):
 
    ```bash
    mkdir -p <schema_name>/versions/v<new_version>
-   cp <schema_name>/{schema.json,context.jsonld,README.md} \
+   cp <schema_name>/{schema.json,context.jsonld} \
       <schema_name>/versions/v<new_version>/
    ```
 
-   The snapshot's `schema.json` keeps the version and `$id` you just set, so it is
-   a faithful, immutable copy of that release. (The previous release already has
-   its own snapshot from when it shipped; if one is missing, create it the same
-   way.)
+   The snapshot keeps the `version`/`$id` just generated, so it is a faithful,
+   immutable copy of that release. (The previous release already has its own
+   snapshot; if one is missing, create it the same way.)
 
-4. **Commit and push.**
+5. **Commit and push.** Pushing to `main` regenerates+redeploys the docs site (CI
+   also fails if the committed artifacts drift from the regenerated source).
 
    ```bash
    git add <schema_name>/
@@ -62,7 +75,8 @@ editing a schema:
    git push origin main
    ```
 
-**Available schemas:** `bcsv`, `catalog`, `dataset`, `studyflow`.
+**Available schemas:** `bcsv`, `catalog`, `dataset`, `trial`, `event`, `studyflow`,
+`vocabulary`.
 
 ## Version Format
 
@@ -86,47 +100,55 @@ callouts are the authoritative signal that a new version is incompatible.
 
 ## Directory Structure
 
-Each JSON-Schema-based schema (`bcsv`, `catalog`, `dataset`) has:
+A generated LinkML-sourced schema (`catalog`, `dataset`, `trial`, `event`) has:
 
 ```
 <schema_name>/
-├── schema.json          # Current release
-├── context.jsonld       # JSON-LD context
+├── schema.linkml.yaml   # Source of truth (hand-edited)
+├── schema.json          # Generated — current release
+├── context.jsonld       # Generated JSON-LD context (not for trial)
+├── field-definitions.json  # Generated render artifact (trial, event only)
 ├── CHANGELOG.md         # Version history
 ├── README.md
 └── versions/            # Immutable archived releases (one directory per version)
-    ├── v25.1201/
+    ├── v26.0610/
     │   ├── schema.json
-    │   ├── context.jsonld
-    │   └── README.md
-    └── v26.0605/
+    │   └── context.jsonld
+    └── v26.0615/
         └── ...
 ```
 
-`studyflow` is LinkML-based (`schema.linkml.yaml`) and follows the same CalVer +
-changelog conventions; its archive layout may differ.
+`studyflow` is LinkML (`schema.linkml.yaml`) but is consumed directly (no generated
+`schema.json`); it archives its LinkML source under `versions/`. `bcsv` has the same layout
+as the generated schemas but is **hand-maintained** (no `schema.linkml.yaml`; edit
+`schema.json`/`context.jsonld` directly). `vocabulary` is a SKOS resource: source
+`terms.yaml` → generated `terms.jsonld` (no `schema.json`). All follow the same CalVer +
+changelog conventions.
 
 ## Documentation Deployment
 
-The `deploy-docs.yml` workflow lives on the **`gh-pages`** branch (the repo's CI was
-consolidated there). It runs on a push to `gh-pages` or via manual dispatch
-(GitHub Actions → "Deploy Documentation" → Run workflow, or
-`gh workflow run deploy-docs.yml --ref gh-pages`). At build time it fetches the
-`bcsv/`, `catalog/`, `dataset/`, and `studyflow/` directories from `main`,
-regenerates the Docusaurus site, and deploys to GitHub Pages.
+The build+deploy is defined once, in the reusable workflow
+`main:.github/workflows/build-deploy-pages.yml` (`on: workflow_call`). It checks out the
+Docusaurus site from **`gh-pages`**, fetches the schema directories from `main`, regenerates
+the site, and deploys to GitHub Pages. Two thin triggers call it:
 
-**Important:** the workflow file is not present on `main`, so **pushing to `main`
-does not by itself trigger a deploy.** After pushing schema changes to `main`,
-trigger the workflow (push `gh-pages`, or dispatch it) to publish them.
+- `main:deploy-on-main.yml` — on every push to `main`, **so pushing schema changes to
+  `main` publishes them automatically** (no separate deploy step needed).
+- `gh-pages:deploy-docs.yml` — on pushes to `gh-pages` (manual site edits), via
+  `uses: behaverse/schemas/.github/workflows/build-deploy-pages.yml@main`.
+
+Manual dispatch: GitHub Actions → "Deploy docs (main)" → Run workflow, or
+`gh workflow run deploy-on-main.yml --ref main`. Verify against
+`https://behaverse.github.io/schemas/...` first — `behaverse.org` is Cloudflare/Varnish-cached
+(~10 min) and lags.
 
 ## Workflow Summary
 
 ```
-1. Edit schema.json (and context.jsonld / README.md as needed)
-2. Bump version + $id in schema.json
-3. Prepend a CHANGELOG entry (mark breaking changes)
-4. Snapshot the new version under versions/v<new>/
-5. Commit and push to main
-6. Trigger the gh-pages deploy (push gh-pages, or dispatch deploy-docs.yml);
-   it fetches main and redeploys the docs site
+1. Edit the source of truth (schema.linkml.yaml; or schema.json for bcsv, terms.yaml for vocabulary)
+2. Bump the version in the source
+3. Regenerate: python scripts/generate.py  (writes schema.json/context.jsonld + the versioned $id)
+4. Prepend a CHANGELOG entry (mark breaking changes)
+5. Snapshot the new version under versions/v<new>/
+6. Commit and push to main — CI validates + the docs site redeploys automatically
 ```
