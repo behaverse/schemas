@@ -7,9 +7,9 @@ All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 ### Added
 
 - Initial relocation of the trial tables from `behaverse/data-model` into `behaverse/schemas`.
-- `field-definitions.yaml` (source of truth) and generated `field-definitions.json` for the 7 published tables — Response, Stimulus, Option, Input, StimulusComponent, OptionComponent, Instrument (161 fields total).
+- `schema.linkml.yaml` (LinkML source of truth) and generated `field-definitions.json` for the 7 published tables — Response, Stimulus, Option, Input, StimulusComponent, OptionComponent, Instrument (161 fields total).
 - `schema.json` — a generated JSON Schema (Draft-07) validation contract: one definition per table (columns → JSON types, `required` from each field's requirement) and a top-level object mapping each table to an array of its rows. Validates **types + required fields only** — enum values, numeric ranges, and cross-table foreign keys are not enforced (the source `type`/`range` are coarse / free-text prose).
-- `scripts/generate.py` to regenerate `field-definitions.json` **and `schema.json`** from the source.
+- Both `field-definitions.json` and `schema.json` are regenerated from the LinkML source via the repo-wide `python scripts/generate.py`.
 
 ### Changed
 
@@ -19,4 +19,4 @@ All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 ### Notes
 
 - Published as-is; known data issues (D1 `stimulus_id` typing, D3 `session_id`/`session_index`, D5 `agent` → `actor`) are tracked as follow-ups, not applied in this relocation.
-- `context.jsonld` is not yet generated — the trial fields carry no semantic `mappings` yet.
+- No `context.jsonld` is emitted — the trial fields carry no semantic `mappings`.

@@ -23,8 +23,14 @@ and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 - `dataset/examples/demo-dataset.json`: `sex_distribution.non_binary` changed to the modeled `other` key (nested objects are now closed; `other` is the schema's field for non-binary/other gender).
 
 ### Added
+- A validation `pattern` (`^\S+@\S+\.\S+$`) on the shared `Person.email` (used by both `creator` and `curator`).
+- Per-field `examples` restored on ~12 fields (`creator`, `sex_distribution`, `inclusion_criteria`/`exclusion_criteria`, `measurement_technique`, etc.) so the docs Overview renders them.
 - `dataset/schema.linkml.yaml` as the LinkML source of truth.
 - `dataset/versions/v26.0615/` snapshot for consumer pinning.
+
+### Fixed
+- `Person` is shared by `creator` and `curator`; its sub-field descriptions are now generic ("Full name of the person", "Email address") so they read correctly under both roles.
+- `sex_distribution` requirement restored to `recommended`.
 
 ## [26.0610] - 2026-06-10
 

@@ -31,11 +31,10 @@ A trial is a single instance of a participant interacting with a task. Trial inf
 
 | File | Status | Purpose |
 |------|--------|---------|
-| [`schema.linkml.yaml`](schema.linkml.yaml) | ✅ | Source of truth (LinkML). |
-| [`field-definitions.yaml`](field-definitions.yaml) | ⚠️ deprecated | Non-authoritative; retained only for the docs site. |
+| [`schema.linkml.yaml`](schema.linkml.yaml) | ✅ | Source of truth (LinkML). Edit it, then run `python scripts/generate.py`. |
 | [`field-definitions.json`](field-definitions.json) | ✅ generated | Render contract consumed by `behaverse/data-model` and the docs site. |
 | [`schema.json`](schema.json) | ✅ generated | JSON Schema (Draft-07): per-table definitions + a top-level table→rows object. Validates types + required fields (not enums/ranges/foreign keys — the source is coarse). |
-| `context.jsonld` | ⏳ planned | JSON-LD context (needs semantic `mappings` on the fields first). |
+| `context.jsonld` | — | Not emitted (the trial fields carry no semantic `mappings`). |
 
 ## Status & follow-ups
 
@@ -43,7 +42,7 @@ Relocated from `behaverse/data-model` (where it was generated from a Google Shee
 
 - **D1** — `Response.stimulus_id` typing (`integer` → `string | integer`) for compositional questionnaire stimuli.
 - **D3** — `Response.session_id` is typed integer but its description calls it `session_index`; rename and add a UUID `session_id`.
-- **D5** — events `agent` → `actor` (in the forthcoming `event` schema).
+- **D5** — events `agent` → `actor` (applied in the `event` schema).
 - Several `description`/`range` fields still mix prose with enum listings that could become structured `enum` constraints.
 
 ## Versioning

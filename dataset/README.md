@@ -1,6 +1,6 @@
 # Behaverse Dataset Schema (WIP)
 
-**Version:** v26.0605  
+**Version:** v26.0615  
 **Namespace:** `https://behaverse.org/schemas/dataset#`  
 **JSON-LD type:** `schema:Dataset` (set `@type` in the document for schema.org / Google Dataset Search discoverability)
 
@@ -110,13 +110,13 @@ The schema organizes fields into logical groups:
 | Property | Type | Status | Description | Maps To |
 |----------|------|--------|-------------|---------|
 | `creator` | array[object] | recommended | Dataset creators/authors | schema:creator, datacite:Creator |
-| `creator[].name` | string | required | Person's full name | schema:name |
-| `creator[].email` | string | optional | Contact email | schema:email |
+| `creator[].name` | string | required | Full name of the person | schema:name |
+| `creator[].email` | string | optional | Email address (validated against `^\S+@\S+\.\S+$`) | schema:email |
 | `creator[].orcid` | string | optional | ORCID identifier | schema:identifier |
 | `creator[].affiliation` | string | optional | Institutional affiliation | schema:affiliation |
 | `curator` | array[object] | optional | Dataset curators/maintainers | schema:contributor |
-| `curator[].name` | string | required | Curator's name | schema:name |
-| `curator[].email` | string | optional | Contact email | schema:email |
+| `curator[].name` | string | required | Full name of the person | schema:name |
+| `curator[].email` | string | optional | Email address (validated against `^\S+@\S+\.\S+$`) | schema:email |
 | `curator[].orcid` | string | optional | ORCID identifier | schema:identifier |
 | `curator[].affiliation` | string | optional | Institution | schema:affiliation |
 | `citation` | array[object] | recommended | Related publications | schema:citation |
@@ -286,7 +286,6 @@ This ensures consistency between the LinkML source, JSON Schema validation, and 
 - **context.jsonld**: JSON-LD context for semantic web (generated)
 - **README.md**: This documentation
 - **examples/**: Example dataset metadata files
-- **field-definitions.yaml**: Deprecated / non-authoritative (retained only for the docs site)
 
 ## Related Resources
 
@@ -302,7 +301,7 @@ This schema and documentation were developed with the assistance of AI tools (Gi
 
 ---
 
-**Version**: v26.0605  
+**Version**: v26.0615  
 **License**: CC-BY-4.0  
 **Maintainer**: Behaverse Project  
 **Repository**: https://github.com/behaverse/schemas

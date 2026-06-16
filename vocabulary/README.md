@@ -6,8 +6,8 @@ Cross-cutting controlled terminology for behaverse data: general terms (e.g. `ac
 
 This is a **terminology resource** (SKOS concept schemes + concepts), not a JSON Schema.
 Terms that one schema owns — e.g. the trial table fields or the event envelope — live in
-that schema's `field-definitions.yaml`; this resource holds only the terms no single
-schema owns.
+that schema's LinkML source (`schema.linkml.yaml`) and are surfaced in its generated
+`field-definitions.json`; this resource holds only the terms no single schema owns.
 
 ## Files
 
@@ -36,8 +36,8 @@ from each schema's `field-definitions.json`.
 ## Editing
 
 ```bash
-# edit terms.yaml, then:
-uv run scripts/generate.py
+# edit terms.yaml, then regenerate terms.jsonld:
+python vocabulary/scripts/generate.py
 ```
 
 Seeded from behaverse/data-model's pre-redesign `glossary.yml` (the old Google-Sheet

@@ -1,6 +1,6 @@
 # Behaverse Event Schema (WIP)
 
-**Version:** v26.0608
+**Version:** v26.0615
 **Namespace:** `https://behaverse.org/schemas/event#`
 **Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) (envelope + vocabulary) — run `python scripts/generate.py`. [`schema.json`](schema.json) is the validation contract.
 
@@ -24,11 +24,10 @@ Events are positioned in a five-level hierarchy carried in `context.extensions`:
 
 | File | Status | Purpose |
 |------|--------|---------|
-| [`schema.linkml.yaml`](schema.linkml.yaml) | ✅ | Source of truth (LinkML; envelope + vocabulary). |
-| [`field-definitions.yaml`](field-definitions.yaml) | ⚠️ deprecated | Non-authoritative; retained only for the docs site. |
+| [`schema.linkml.yaml`](schema.linkml.yaml) | ✅ | Source of truth (LinkML; envelope + vocabulary). Edit it, then run `python scripts/generate.py`. |
 | [`field-definitions.json`](field-definitions.json) | ✅ generated | Render contract consumed by `behaverse/data-model` and the docs site. |
-| [`schema.json`](schema.json) | ✅ | JSON Schema (Draft 2020-12) for validation. |
-| [`context.jsonld`](context.jsonld) | ✅ | JSON-LD context (`bdm:`, `xapi:`, `schema:`, `as2:`). |
+| [`schema.json`](schema.json) | ✅ generated | JSON Schema (Draft 2020-12) for validation: `EventDocument = Event \| EventBatch`, with `verb`/`actor.objectType`/`object.objectType` enum-validated against the canonical vocabulary. |
+| [`context.jsonld`](context.jsonld) | ✅ generated | JSON-LD context (`bdm:`, `xapi:`, `schema:`, `as2:`). |
 | [`examples/`](examples/) | ✅ | Minimal event + PHQ-9 / N-back / kitchensink event batches. |
 
 ## Provenance & follow-ups

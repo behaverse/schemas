@@ -1,6 +1,6 @@
 # WIP: Behaverse Studyflow Schema
 
-**Version:** v25.0414
+**Version:** v25.1217.dev2
 **Namespace:** `https://behaverse.org/schemas/studyflow#`
 
 ## Overview

@@ -10,7 +10,7 @@ The Behaverse `catalog` schema extends `https://schema.org/DataCatalog`. Further
 
 Catalogs can be nested hierarchically—a catalog can contain child catalogs using the `catalogs` property, enabling multi-level organization (e.g., a "Mental Health" catalog containing "Pediatric Mental Health" and "Adult Mental Health" sub-catalogs).
 
-- **Version**: v26.0605
+- **Version**: v26.0615
 - **Namespace**: `https://behaverse.org/schemas/catalog#`
 - **Format**: JSON or JSON-LD
 - **JSON-LD type**: `schema:DataCatalog` (set `@type` in the document for schema.org / Dataset Search discoverability)
@@ -349,7 +349,7 @@ Catalogs can be nested hierarchically—a catalog can contain child catalogs usi
 
 **Object Properties**:
 - `name` (string, required): Curator's full name or organization name
-- `email` (string, optional): Contact email address
+- `email` (string, optional): Contact email address (validated against the pattern `^\S+@\S+\.\S+$`)
 - `orcid` (string, optional): ORCID identifier (format: `0000-0000-0000-0000`)
 - `affiliation` (string, optional): Institutional affiliation
 
@@ -516,7 +516,6 @@ Expands to:
 - **context.jsonld**: JSON-LD context for semantic web (generated)
 - **README.md**: This documentation
 - **examples/**: Example catalog files
-- **field-definitions.yaml**: Deprecated / non-authoritative (retained only for the docs site)
 
 ## Related Schemas
 
@@ -525,6 +524,8 @@ Expands to:
 
 ## Version History
 
+- **v26.0615** (2026-06-15): Source of truth switched to LinkML (`schema.linkml.yaml`); `schema.json` + `context.jsonld` now generated via `python scripts/generate.py`; `curator.email` gained a validation `pattern`
+- **v26.0610** (2026-06-10): `catalogs` also maps to `dcat:catalog`; URL-valued array terms expand as node references
 - **v26.0605** (2026-06-05): `pretty_name` → `dc:title` (fixes collision with `name`); added structured-`curator` term mappings (`email`, `orcid`, `affiliation`)
 - **v26.0107** (2026-01-07): Renamed to Catalog, aligned with Schema.org DataCatalog
   - Renamed from "collection" to "catalog"

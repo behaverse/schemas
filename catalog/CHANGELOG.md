@@ -16,6 +16,7 @@ All notable changes to the Catalog schema will be documented in this file.
 - The redundant `equivalentProperty` annotation is intentionally dropped from `schema.json`; the same property→IRI mappings live in `context.jsonld`, the canonical location.
 
 ### Added
+- `curator.email` now carries a validation `pattern` (`^\S+@\S+\.\S+$`).
 - `catalog/versions/v26.0615/` snapshot for consumer pinning.
 
 ## [26.0610] - 2026-06-10
