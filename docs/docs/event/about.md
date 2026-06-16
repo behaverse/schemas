@@ -44,7 +44,7 @@ The envelope follows the **xAPI** (Experience API) actor/verb/object shape; the 
 ## Namespace & source
 
 - **Namespace:** `https://behaverse.org/schemas/event#`
-- **Source of truth:** `field-definitions.yaml` (envelope + vocabulary) drives the docs and the `field-definitions.json` render contract. **Note:** `schema.json` and `context.jsonld` are currently *hand-maintained alongside* the YAML, not generated from it.
+- **Source of truth:** `schema.linkml.yaml` (LinkML; the envelope + the `bdm:` vocabulary). The docs, the `field-definitions.json` render contract, `schema.json` (`EventDocument = Event | EventBatch`), and `context.jsonld` are all generated from it via `scripts/generate.py`.
 
 ## Status
 

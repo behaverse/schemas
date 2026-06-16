@@ -40,7 +40,7 @@ Trial-level data is *derived from* the raw event stream (the **Events** layer of
 ## Namespace & source
 
 - **Namespace:** `https://behaverse.org/schemas/trial#`
-- **Source of truth:** `field-definitions.yaml` (hand-maintained). The docs and the `field-definitions.json` render contract are generated from it; a per-table `schema.json` is planned.
+- **Source of truth:** `schema.linkml.yaml` (LinkML). The docs, the `field-definitions.json` render contract, and a per-table `schema.json` are all generated from it via `scripts/generate.py`.
 
 ## Status
 
