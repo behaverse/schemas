@@ -26,7 +26,7 @@ Events are positioned in a five-level hierarchy carried in `context.extensions`:
 |------|--------|---------|
 | [`schema.linkml.yaml`](schema.linkml.yaml) | ✅ | Source of truth (LinkML; envelope + vocabulary). Edit it, then run `python scripts/generate.py`. |
 | [`field-definitions.json`](field-definitions.json) | ✅ generated | Render contract consumed by `behaverse/data-model` and the docs site. |
-| [`schema.json`](schema.json) | ✅ generated | JSON Schema (Draft 2020-12) for validation: `EventDocument = Event \| EventBatch`, with `verb`/`actor.objectType`/`object.objectType` enum-validated against the canonical vocabulary. |
+| [`schema.json`](schema.json) | ✅ generated | JSON Schema (Draft 2019-09) for validation: `EventDocument = Event \| EventBatch`, with `verb`/`actor.objectType`/`object.objectType` enum-validated against the canonical vocabulary. |
 | [`context.jsonld`](context.jsonld) | ✅ generated | JSON-LD context (`bdm:`, `xapi:`, `schema:`, `as2:`). |
 | [`examples/`](examples/) | ✅ | Minimal event + PHQ-9 / N-back / kitchensink event batches. |
 

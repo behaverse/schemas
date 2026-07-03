@@ -273,7 +273,7 @@ These examples demonstrate all key bcsv features including categorical and order
 
 ## Versioning
 
-**Current version**: v26.0610  
+**Current version**: v26.0703  
 **Format**: Calendar versioning (vYY.MMDD)
 
 Older versions are available in the [`versions/`](versions/) directory.

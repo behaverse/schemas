@@ -1,0 +1,403 @@
+{
+  "@context": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "behaverse": "https://behaverse.org/schemas/dataset#",
+    "bidsparticipants": "https://bids-specification.readthedocs.io/en/stable/modality-agnostic-files.html#",
+    "bidssession": "https://bids-specification.readthedocs.io/en/stable/common-principles.html#",
+    "cdisc": "https://www.cdisc.org/standards/foundational/sdtm#",
+    "cogatlas": "http://www.cognitiveatlas.org/",
+    "ct": "https://clinicaltrials.gov/data-api/about-api/schema#",
+    "dataset": "https://behaverse.org/schemas/dataset#",
+    "dc": "http://purl.org/dc/terms/",
+    "ddiuniverse": "https://ddialliance.org/Specification/DDI-Lifecycle/3.3/XMLSchema/FieldLevelDocumentation/schemas/datacollection_xsd/elements/",
+    "hf": "https://huggingface.co/docs/hub/datasets-cards#",
+    "linkml": "https://w3id.org/linkml/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "@vocab": "https://behaverse.org/schemas/dataset#",
+    "is_free": {
+      "@type": "xsd:boolean",
+      "@id": "is_free"
+    },
+    "requirements": {
+      "@id": "requirements"
+    },
+    "conditions": {
+      "@id": "conditions",
+      "@container": "@set"
+    },
+    "constructs": {
+      "@id": "constructs",
+      "@container": "@set"
+    },
+    "duration": {
+      "@type": "xsd:float",
+      "@id": "duration"
+    },
+    "measurements": {
+      "@id": "measurements",
+      "@container": "@set"
+    },
+    "measures": {
+      "@id": "measures",
+      "@container": "@set"
+    },
+    "name": {
+      "@id": "schema:name"
+    },
+    "trials": {
+      "@type": "xsd:integer",
+      "@id": "trials"
+    },
+    "type": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "type"
+    },
+    "arxiv_id": {
+      "@id": "arxiv_id"
+    },
+    "doi": {
+      "@id": "schema:identifier"
+    },
+    "text": {
+      "@id": "text"
+    },
+    "url": {
+      "@type": "xsd:anyURI",
+      "@id": "schema:url"
+    },
+    "access_conditions": {
+      "@type": "@id",
+      "@id": "schema:conditionsOfAccess"
+    },
+    "access_url": {
+      "@type": "xsd:anyURI",
+      "@id": "schema:url"
+    },
+    "activity": {
+      "@type": "@id",
+      "@id": "cogatlas:task/",
+      "@container": "@set"
+    },
+    "age_category": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "behaverse:ageCategory",
+      "@container": "@set"
+    },
+    "age_mean": {
+      "@type": "xsd:float",
+      "@id": "cdisc:AGE"
+    },
+    "age_range": {
+      "@type": "xsd:float",
+      "@id": "cdisc:AGE",
+      "@container": "@list"
+    },
+    "age_std": {
+      "@type": "xsd:float",
+      "@id": "age_std"
+    },
+    "citation": {
+      "@type": "@id",
+      "@id": "schema:citation",
+      "@container": "@set"
+    },
+    "constructs_measured": {
+      "@id": "schema:variableMeasured",
+      "@container": "@set"
+    },
+    "creator": {
+      "@type": "@id",
+      "@id": "schema:creator",
+      "@container": "@set"
+    },
+    "curator": {
+      "@type": "@id",
+      "@id": "schema:maintainer",
+      "@container": "@set"
+    },
+    "data_formats": {
+      "@id": "schema:encodingFormat",
+      "@container": "@set"
+    },
+    "data_size_gb": {
+      "@type": "xsd:float",
+      "@id": "schema:contentSize"
+    },
+    "data_structure": {
+      "@id": "behaverse:dataStructure"
+    },
+    "date_added": {
+      "@type": "xsd:date",
+      "@id": "behaverse:dateAdded"
+    },
+    "date_created": {
+      "@type": "xsd:date",
+      "@id": "schema:dateCreated"
+    },
+    "date_modified": {
+      "@type": "xsd:date",
+      "@id": "schema:dateModified"
+    },
+    "date_published": {
+      "@type": "xsd:date",
+      "@id": "schema:datePublished"
+    },
+    "description": {
+      "@id": "schema:description"
+    },
+    "download_url": {
+      "@type": "xsd:anyURI",
+      "@id": "schema:contentUrl"
+    },
+    "ethical_approval": {
+      "@type": "@id",
+      "@id": "behaverse:ethical_approval"
+    },
+    "exclusion_criteria": {
+      "@id": "ct:eligibility",
+      "@container": "@set"
+    },
+    "inclusion_criteria": {
+      "@id": "ct:eligibility",
+      "@container": "@set"
+    },
+    "intervention_type": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "ct:interventionType",
+      "@container": "@set"
+    },
+    "keywords": {
+      "@id": "schema:keywords",
+      "@container": "@set"
+    },
+    "language": {
+      "@id": "schema:inLanguage",
+      "@container": "@set"
+    },
+    "last_verified": {
+      "@type": "xsd:date",
+      "@id": "behaverse:lastVerified"
+    },
+    "license": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "schema:license"
+    },
+    "measurement_technique": {
+      "@type": "@id",
+      "@id": "schema:measurementTechnique",
+      "@container": "@set"
+    },
+    "population_category": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "schema:healthCondition"
+    },
+    "pretty_name": {
+      "@id": "hf:pretty_name"
+    },
+    "sample_size": {
+      "@type": "xsd:integer",
+      "@id": "ddiuniverse:Universe.html"
+    },
+    "session_count": {
+      "@type": "xsd:integer",
+      "@id": "bidssession:sessions"
+    },
+    "session_description": {
+      "@id": "behaverse:session_description"
+    },
+    "sex_distribution": {
+      "@type": "@id",
+      "@id": "cdisc:SEX"
+    },
+    "size_category": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "hf:size_categories"
+    },
+    "spatial_coverage": {
+      "@id": "schema:spatialCoverage"
+    },
+    "study_design_type": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "schema:MedicalStudy"
+    },
+    "task_categories": {
+      "@id": "hf:task_categories",
+      "@container": "@set"
+    },
+    "temporal_coverage": {
+      "@id": "schema:temporalCoverage"
+    },
+    "version": {
+      "@id": "schema:version"
+    },
+    "institution": {
+      "@id": "institution"
+    },
+    "obtained": {
+      "@type": "xsd:boolean",
+      "@id": "obtained"
+    },
+    "protocol": {
+      "@id": "protocol"
+    },
+    "channels": {
+      "@type": "xsd:integer",
+      "@id": "channels"
+    },
+    "details": {
+      "@id": "details"
+    },
+    "field_strength": {
+      "@type": "xsd:float",
+      "@id": "field_strength"
+    },
+    "format": {
+      "@id": "format"
+    },
+    "granularity": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "granularity"
+    },
+    "manufacturer": {
+      "@id": "manufacturer"
+    },
+    "reference": {
+      "@id": "reference"
+    },
+    "response_type": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "response_type",
+      "@container": "@set"
+    },
+    "sampling_rate": {
+      "@type": "xsd:float",
+      "@id": "sampling_rate"
+    },
+    "te": {
+      "@type": "xsd:float",
+      "@id": "te"
+    },
+    "technique": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "technique"
+    },
+    "tr": {
+      "@type": "xsd:float",
+      "@id": "tr"
+    },
+    "affiliation": {
+      "@id": "schema:affiliation"
+    },
+    "email": {
+      "@id": "schema:email"
+    },
+    "orcid": {
+      "@id": "schema:identifier"
+    },
+    "female": {
+      "@type": "xsd:integer",
+      "@id": "female"
+    },
+    "male": {
+      "@type": "xsd:integer",
+      "@id": "male"
+    },
+    "not_reported": {
+      "@type": "xsd:integer",
+      "@id": "not_reported"
+    },
+    "other": {
+      "@type": "xsd:integer",
+      "@id": "other"
+    },
+    "AccessConditions": {
+      "@id": "AccessConditions"
+    },
+    "Activity": {
+      "@id": "Activity"
+    },
+    "Citation": {
+      "@id": "Citation"
+    },
+    "Dataset": {
+      "@id": "schema:Dataset"
+    },
+    "EthicalApproval": {
+      "@id": "EthicalApproval"
+    },
+    "MeasurementTechnique": {
+      "@id": "MeasurementTechnique"
+    },
+    "Person": {
+      "@id": "Person"
+    },
+    "SexDistribution": {
+      "@id": "SexDistribution"
+    },
+    "schema": "https://schema.org/",
+    "identifier": {
+      "@id": "dc:identifier"
+    },
+    "dc:description": {
+      "@id": "dc:description"
+    },
+    "rights": {
+      "@id": "dc:rights"
+    },
+    "dc:identifier": {
+      "@id": "dc:identifier"
+    },
+    "subject": {
+      "@id": "dc:subject"
+    },
+    "editor": {
+      "@id": "schema:editor"
+    },
+    "participants-file": {
+      "@id": "bidsparticipants:participants-file"
+    },
+    "enrollment": {
+      "@id": "ct:enrollment"
+    }
+  }
+}

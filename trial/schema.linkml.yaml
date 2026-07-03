@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events."
-version: "26.0608"
+version: "26.0703"
 license: MIT
 
 prefixes:
@@ -110,10 +110,10 @@ classes:
             - "Context"
           bdm_type:
             value: "string"
-      session_id:
+      session_index:
         range: integer
         required: true
-        description: "When there are multiple sessions, this variable indicates the order of each session (i.e., the first session completed by the subject has `session_index` = 1, the second session has `session_index` = 2; even if the second session is an exact repetition of the first one."
+        description: "When there are multiple sessions, this variable indicates the order of each session (i.e., the first session completed by the subject has `session_index` = 1, the second session has `session_index` = 2; even if the second session is an exact repetition of the first one)."
         annotations:
           categories:
             value:
@@ -127,7 +127,7 @@ classes:
             - "We currently don’t use session_name, session_id and session_repetition in this table."
       activity_index:
         range: integer
-        description: "When subjects complete multiple activities (e.g., a cognitive test followed by a questionnaire), this variable indicates the order of each activity (i.e., the first activity completed by the subject has `activity_index` = 1, the second session has `activity_index` = 2; even if the second activity is an exact repetition of the first one."
+        description: "When subjects complete multiple activities (e.g., a cognitive test followed by a questionnaire), this variable indicates the order of each activity (i.e., the first activity completed by the subject has `activity_index` = 1, the second activity has `activity_index` = 2; even if the second activity is an exact repetition of the first one)."
         annotations:
           categories:
             value:
@@ -206,10 +206,10 @@ classes:
           notes:
             value:
             - "If no multitasking was involved, leave this field blank."
-            - "This characterization of `multitasking_type` is rudimentary and will likely evolve in the future."
+            - "This characterization of `multitask_type` is rudimentary and will likely evolve in the future."
       task_index:
         range: integer
-        description: "when `multitask_type` is not empty, `task_index` refers to each of the individual tasks. For example, for auditoy-visual dual N-back, `task_index=1` is the auditory task and `task_index=2` is the visual task."
+        description: "when `multitask_type` is not empty, `task_index` refers to each of the individual tasks. For example, for auditory-visual dual N-back, `task_index=1` is the auditory task and `task_index=2` is the visual task."
         annotations:
           categories:
             value:
@@ -309,7 +309,7 @@ classes:
             value: "Preferably 1-based integer index."
           notes:
             value:
-            - "This field emphasizes order of trials and alignment with projection-based definition of trials. A more complete name would be `projection_index` or `pojected_trial_index`. For brevity, BDM uses `trial_id` instead."
+            - "This field emphasizes order of trials and alignment with projection-based definition of trials. A more complete name would be `projection_index` or `projected_trial_index`. For brevity, BDM uses `trial_index` instead."
       episode_index:
         range: integer
         description: "Episodes are temporally distinct bins of time (no overlap and discrete). The binning of the time into successive episodes depends on the task; it is mostly used and necessary to group data in cases where two distinct trials occurred at the same time (e.g., dual N-back)."
@@ -320,11 +320,11 @@ classes:
           bdm_type:
             value: "index"
           range_description:
-            value: "1-based interger index."
+            value: "1-based integer index."
       trial_start_datetime:
         range: datetime
         required: true
-        description: "The the first event of the trial occured."
+        description: "The datetime at which the first event of the trial occurred."
         annotations:
           categories:
             value:
@@ -351,7 +351,7 @@ classes:
             value: "list[index]"
           notes:
             value:
-            - "Use semicolon-separated indices if more then one stimulus were presented, e.g., `1;2;3`."
+            - "Use semicolon-separated indices if more than one stimulus was presented, e.g., `1;2;3`."
       stimulus_id:
         range: integer
         required: true
@@ -532,7 +532,7 @@ classes:
             value: "string"
           notes:
             value:
-            - "While there is a stimulus_index_in_source to refer to the particular stimulus that was used, we don’t have an equivalent opiton_index_in_source since all options are displayed. Instead, we use response_index and expected_response_index to refer to a particular option within the set of options."
+            - "While there is a stimulus_index_in_source to refer to the particular stimulus that was used, we don’t have an equivalent option_index_in_source since all options are displayed. Instead, we use response_index and expected_response_index to refer to a particular option within the set of options."
       option_count:
         range: integer
         description: "The number of options the participant can choose from on a given trial."
@@ -785,7 +785,7 @@ classes:
           bdm_type:
             value: "enum"
           range_description:
-            value: "- `correct`: The response is correct. - `error`: The response is incorrect. - `hit`: The stimulus was *present* and the subject correctly responded *present*. - `miss`: The stimulus was *present* and the subject correctly responded *absent*. - `fa`: The stimulus was *absent* and the subject correctly responded *present*. - `cr`: The stimulus was *absent* and the subject correctly responded *absent*."
+            value: "- `correct`: The response is correct. - `error`: The response is incorrect. - `hit`: The stimulus was *present* and the subject correctly responded *present*. - `miss`: The stimulus was *present* and the subject incorrectly responded *absent*. - `fa`: The stimulus was *absent* and the subject incorrectly responded *present*. - `cr`: The stimulus was *absent* and the subject correctly responded *absent*."
       feedback_description:
         range: string
         description: "Lists the different kinds of feedback that were shown on a given trial. When multiple types of feedback were used, feedback will list them using `;` as a separator. If a given type of feedback was shown multiple times during a trial, that feedback type is listed only once (i.e., feedback_description does NOT represent the sequence of feedbacks). The possible values for feedback are:"
@@ -884,7 +884,7 @@ classes:
           range_description:
             value: "Data type depends on the type of the adaptive parameter, as defined in `adaptive_parameter_name`)"
   Stimulus:
-    description: "Describes each of the stimuli that were shown during an trial."
+    description: "Describes each of the stimuli that were shown during a trial."
     title: "Stimulus"
     annotations:
       notes:
@@ -893,7 +893,7 @@ classes:
     attributes:
       stimulus_id:
         required: true
-        description: "Primary key of the `Stimulus` table. Reference to this identifier in other tables are thus named `stimulus_id`."
+        description: "Primary key of the `Stimulus` table. References to this identifier in other tables are thus named `stimulus_id`."
         annotations:
           categories:
             value:
@@ -906,7 +906,7 @@ classes:
             value:
             - "If the same stimulus is shown at two different times in a trial, those two instances will have their own row in the `Stimulus` table, each with its own `id`."
             - "Make sure to refer to this field as `stimulus_id` rather than `id` When joining tables. This also applies to all the `id` fields; they are named `id` within their own context/table, but `<context/table>_id` when addressed from other tables. For example, `X_id` in a table refers (hence a foreign key) to the `id` column in the X table."
-      trial_id:
+      trial_index:
         description: "Refers to the `trial_index` in the `Response` table and indicates in which trial this stimulus was shown."
         annotations:
           categories:
@@ -915,7 +915,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`trial_id` in the `Response` table of the same agent/session/activity/attempt"
+            value: "`trial_index` in the `Response` table of the same agent/session/activity/attempt"
       response_id:
         required: true
         description: "Refers to the `response_id` in the `Response` table and indicates for which response this stimulus was shown."
@@ -941,7 +941,7 @@ classes:
             - "For example, if the same white digit \"3\" is shown in a digit span sequence, all those instances would have the same `object_id` although they would have different `id`s (as they appeared at different times)."
       presentation_id:
         range: string
-        description: "In a multitasking setting, a particular instance of a stimulus (e.g., the current letter \"A\") may be used by multiple tasks at the same time (e.g, in the dual N-back task). Because these are different trials, they will have different `trial_id` values and hence will have different rows in the `Stimulus` table. We use `presentation_id` to indicate that a given stimulus is in fact the same instance across those trials."
+        description: "In a multitasking setting, a particular instance of a stimulus (e.g., the current letter \"A\") may be used by multiple tasks at the same time (e.g, in the dual N-back task). Because these are different trials, they will have different `trial_index` values and hence will have different rows in the `Stimulus` table. We use `presentation_id` to indicate that a given stimulus is in fact the same instance across those trials."
         annotations:
           categories:
             value:
@@ -1117,7 +1117,7 @@ classes:
     attributes:
       option_id:
         required: true
-        description: "Primary key of the `Option` table. Reference to this identifier in other tables are thus named `option_id`."
+        description: "Primary key of the `Option` table. References to this identifier in other tables are thus named `option_id`."
         annotations:
           categories:
             value:
@@ -1128,7 +1128,7 @@ classes:
             value: "Each row in this table has a unique `id`"
           notes:
             value:
-            - "If the same option is shown at two different times in a trial, those two instances will have their own row in the * Option* table, each with its own `id`."
+            - "If the same option is shown at two different times in a trial, those two instances will have their own row in the `Option` table, each with its own `id`."
       trial_index:
         required: true
         description: "Refers to the `trial_index` in the `Response` table and indicates in which trial this option was shown."
@@ -1328,7 +1328,7 @@ classes:
             value: "PRIMARY KEY"
       response_id:
         required: true
-        description: "Indexing all the clicks that occurred within a given trial; ranging from 1 to `input_count` in the corresponding `Response` table."
+        description: "Refers to the `response_id` in the `Response` table and indicates for which response this input was recorded."
         annotations:
           categories:
             value:
@@ -1821,7 +1821,7 @@ classes:
       block_id:
         range: string
         required: true
-        description: "Specific parameterization of the instrument for a single block of trials (e.g., \"DS_FORWARD_PRACTICE\" and \"DS_FOWARD_TEST\"). Block-level parameters override timeline-level parameters."
+        description: "Specific parameterization of the instrument for a single block of trials (e.g., \"DS_FORWARD_PRACTICE\" and \"DS_FORWARD_TEST\"). Block-level parameters override timeline-level parameters."
         annotations:
           categories:
             value:

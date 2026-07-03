@@ -2,6 +2,11 @@
 
 All notable changes to the Catalog schema will be documented in this file.
 
+## [26.0703] - 2026-07-03
+
+### Fixed
+- `name` pattern rewritten from `^[a-z0-9-_]+$` to `^[a-z0-9_-]+$`: the hyphen now sits at the end of the character class instead of between `9` and `_`, where stricter regex engines can read it as an (unintended) range. The accepted value set is unchanged.
+
 ## [26.0615] - 2026-06-15
 
 ### Changed

@@ -324,7 +324,7 @@ classes:
         ifabsent: string(probabilistic)
         description: Algorithm used for the assignment.
       probabilityFunction:
-        range: string
+        range: ProbabilityDistributionEnum
         ifabsent: string(uniform)
         description: Probability mass function that defines the discrete distribution of the random assignment. Defaults to `uniform`.
         extensions:
@@ -347,7 +347,7 @@ classes:
       bdmDataLevel:
         range: BDMDataLevelEnum
         ifabsent: string(events)
-        description: Level of the data (events, trials, summary, models).
+        description: Level of the data (events, trials, models).
         extensions:
           condition_language: json
           condition_body: '{"studyflow:datasetFormat": "bdm"}'
@@ -355,7 +355,7 @@ classes:
           - Conditional on datasetFormat being "bdm"
       bidsDataType:
         range: BIDSDataTypeEnum
-        ifabsent: string(trials)
+        ifabsent: string(beh)
         description: BIDS data type.
         extensions:
           condition_language: json
