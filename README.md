@@ -76,7 +76,7 @@ Raw experimental events — an xAPI-style envelope (actor / verb / object) carry
 ### vocabulary
 Cross-cutting controlled terminology (SKOS concept schemes + concepts): general terms, demographics, and the suffix conventions used in variable names — the terms no single schema owns.
 
-- **Version**: v26.0611  ·  **Source**: `vocabulary/terms.yaml` (SKOS; not LinkML)
+- **Version**: v26.0703  ·  **Source**: `vocabulary/terms.yaml` (SKOS; not LinkML)
 - **Namespace**: `https://behaverse.org/schemas/vocabulary`
 - **SKOS JSON-LD**: [`vocabulary/terms.jsonld`](vocabulary/terms.jsonld) · **Docs**: [`vocabulary/README.md`](vocabulary/README.md)
 

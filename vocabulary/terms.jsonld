@@ -13,13 +13,19 @@
     "data_type": "bdm:dataType",
     "range": "bdm:range",
     "status": "bdm:status",
-    "schemes": "@graph",
-    "concepts": "@graph"
+    "schemes": {
+      "@id": "bdm:schemes",
+      "@container": "@set"
+    },
+    "concepts": {
+      "@id": "bdm:concepts",
+      "@container": "@set"
+    }
   },
   "@id": "https://behaverse.org/schemas/vocabulary",
   "@type": "skos:ConceptScheme",
   "name": "Behaverse Vocabulary",
-  "version": "26.0611",
+  "version": "26.0703",
   "description": "Cross-cutting controlled terminology for behaverse data: general terms, demographics, and the suffix conventions used in variable names. Terms that one schema owns (e.g. trial table fields) live in that schema; this resource holds the terms no single schema owns.",
   "schemes": [
     {
