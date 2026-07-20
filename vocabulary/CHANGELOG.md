@@ -6,6 +6,24 @@ documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0721] - 2026-07-21
+
+### Added
+- **`time` scheme** — clock and timing terms for raw data acquisition:
+  `engine_seconds` (monotonic per-session clock, seconds since engine start),
+  `anchor_datetime` (the RFC 9557 datetime at `engine_seconds` = 0; the single
+  per-session bridge to wall-clock time), and `t` (per-sample time in seconds on
+  the declared clock; events may carry it as the optional `bdm:t` extension).
+
+### Changed
+- **`bdm:` prefix unified** to `https://behaverse.org/schemas/vocabulary/`
+  (was `…/schemas/vocabulary#` here, while the event schema bound the same
+  prefix to `…/data-model/vocab/` — two namespaces under one prefix). One
+  resolvable namespace, full word "vocabulary", now serves the whole ecosystem;
+  the event schema adopts the same binding in its v26.0721. Compact JSON forms
+  (`data_type`, `status`, `bdm:*` strings) are unchanged; only expanded RDF IRIs
+  move (`…vocabulary#dataType` → `…vocabulary/dataType`).
+
 ## [26.0703] - 2026-07-03
 
 ### Fixed

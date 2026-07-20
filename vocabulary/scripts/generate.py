@@ -30,7 +30,7 @@ VOCAB_DIR = Path(__file__).parent.parent
 
 CONTEXT = {
     "skos": "http://www.w3.org/2004/02/skos/core#",
-    "bdm": "https://behaverse.org/schemas/vocabulary#",
+    "bdm": "https://behaverse.org/schemas/vocabulary/",
     "label": "skos:prefLabel",
     "definition": "skos:definition",
     "description": "skos:definition",
