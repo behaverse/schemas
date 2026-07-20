@@ -1,0 +1,29 @@
+{
+  "type": "bdm:Timeseries",
+  "name": "eeg",
+  "description": "Resting-state EEG recorded at a nominal 500 Hz. The EDF header remains authoritative for per-channel calibration; the channel list here mirrors the labels/units consumers need without parsing EDF. No `t` channel: sample times derive from the index and nominal rate.",
+  "content_url": "eeg_1.edf",
+  "content_type": "application/x-edf",
+  "sha256": "e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6",
+  "byte_length": 812345678,
+  "clock": "https://behaverse.org/schemas/vocabulary/time/engine-seconds",
+  "anchor_datetime": "2026-07-21T10:02:41.000+02:00",
+  "sampling_nature": "sampled",
+  "nominal_rate_hz": 500.0,
+  "session_uuid": "018f3a2b-5c6d-7e8f-9a0b-1c2d3e4f5a6b",
+  "attempt": 1,
+  "channels": [
+    {
+      "name": "Fp1",
+      "datatype": "float",
+      "unit": "uV",
+      "description": "Frontopolar left."
+    },
+    {
+      "name": "Fp2",
+      "datatype": "float",
+      "unit": "uV",
+      "description": "Frontopolar right."
+    }
+  ]
+}

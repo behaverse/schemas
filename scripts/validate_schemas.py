@@ -36,7 +36,7 @@ from pathlib import Path
 import jsonschema
 
 ROOT = Path(__file__).resolve().parent.parent
-SCHEMAS = ["bcsv", "catalog", "dataset", "trial", "event"]
+SCHEMAS = ["bcsv", "catalog", "dataset", "trial", "event", "timeseries"]
 CONTEXT_SCHEMAS = ["bcsv", "catalog", "dataset", "event"]  # trial ships no context.jsonld
 
 
