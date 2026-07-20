@@ -13,13 +13,13 @@ id: https://behaverse.org/schemas/event
 name: event
 title: "Behaverse Event Schema"
 description: "Raw experimental events for cognitive tests, questionnaires, and games. An xAPI-style envelope (actor / verb / object) carrying a single canonical `bdm:` vocabulary, so one set of analytics tooling can process every domain. Continuous signals (mouse, keyboard, EEG) are referenced via attachments, not inlined."
-version: "26.0720"
+version: "26.0721"
 license: MIT
 
 prefixes:
   event: https://behaverse.org/schemas/event#
   behaverse: https://behaverse.org/schemas/event#
-  bdm: https://behaverse.org/data-model/vocab/
+  bdm: https://behaverse.org/schemas/vocabulary/
   xapi: https://w3id.org/xapi/
   as2: https://www.w3.org/ns/activitystreams#
   schema: http://schema.org/
@@ -37,9 +37,9 @@ annotations:
       objectType:
         "@id": "@type"
       extensions:
-        "@id": "https://behaverse.org/data-model/vocab/extensions"
+        "@id": "https://behaverse.org/schemas/vocabulary/extensions"
       verb:
-        "@id": "https://behaverse.org/data-model/vocab/verb"
+        "@id": "https://behaverse.org/schemas/vocabulary/verb"
         "@type": "@id"
       events:
         "@id": "https://behaverse.org/schemas/event#events"
@@ -402,5 +402,27 @@ classes:
     description: "The authority that generated the event."
 
   Attachment:
-    class_uri: linkml:Any
-    description: "A reference to an additional file/data object associated with the event."
+    description: "A reference to an additional file/data object associated with the event (stimulus blob, recording file, timeseries sidecar). Payloads are never inlined. Field names follow xAPI's attachment conventions where a standard name exists (contentType, length)."
+    attributes:
+      type:
+        required: true
+        range: string
+        description: "What kind of thing the attachment is, as a bdm:-prefixed term (e.g. bdm:Timeseries, bdm:StimulusBlob). Plays the role of xAPI's usageType."
+      contentType:
+        required: true
+        range: string
+        description: "MIME type of the referenced file (e.g. application/json, application/x-ndjson, application/x-edf)."
+      url:
+        required: true
+        range: string
+        description: "Where the referenced file lives: a relative path resolved against the location of the file containing the reference (for an at-rest events file, the activity folder), or an absolute URL."
+      sha256:
+        range: string
+        pattern: "^[a-f0-9]{64}$"
+        description: "SHA-256 hash of the referenced file's bytes, lowercase hex. Recommended for integrity checking."
+      length:
+        range: integer
+        description: "Size of the referenced file in bytes."
+      description:
+        range: string
+        description: "Human-readable note about the attachment."

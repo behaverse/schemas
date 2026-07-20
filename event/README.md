@@ -1,6 +1,6 @@
 # Behaverse Event Schema (WIP)
 
-**Version:** v26.0720
+**Version:** v26.0721
 **Namespace:** `https://behaverse.org/schemas/event#`
 **Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) (envelope + vocabulary) — run `python scripts/generate.py`. [`schema.json`](schema.json) is the validation contract.
 
@@ -30,6 +30,10 @@ Events are positioned in a five-level hierarchy carried in `context.extensions`:
 - Recording engines with private compact formats must document a **lossless mapping** from their rows to canonical `Event` objects.
 
 See [`examples/events.ndjson`](examples/events.ndjson) for a worked stream.
+
+**Attachments** are addressed by `url`: a relative path resolved against the location of the file containing the reference (for an at-rest events file, the activity folder), or an absolute URL. Each attachment carries `type` (a `bdm:` term, e.g. `bdm:Timeseries`), `contentType`, and `url`, plus optional `sha256`, `length`, `description`. Timeseries attachments point at the payload's sidecar metadata file (see the `timeseries` schema), which in turn references the payload.
+
+**Clocks.** Engines record on a monotonic clock and map their compact rows to Events via the session's anchor: `timestamp = anchor_datetime + t` (see the vocabulary [`time` scheme](https://behaverse.org/schemas/vocabulary)). Events may carry the original monotonic sample time as an optional `bdm:t` context extension alongside the wall-clock `timestamp`.
 
 ## Artifacts
 
