@@ -92,6 +92,21 @@
         },
         {
           "categories": [
+            "Context"
+          ],
+          "name": "response_index",
+          "type": "index",
+          "requirement": "optional",
+          "description": "The 1-based ordinal position of this response within the subject's participation in the study. response_index is nested within subjects — not within any lower-level construct (session, activity, block, or trial) — so the counter starts at the subject's first response and increments to their last without ever resetting. Its maximum value for a given subject equals the number of responses recorded from that subject in the study.",
+          "range": "1-based integer, nested within subject (never reset across sessions or activities).",
+          "notes": [
+            "response_index is often redundant with episode_index, but not always: in multitask settings a subject may emit two distinct responses at (approximately) the same time; each response gets its own response_index, but both share one episode_index value.",
+            "In a questionnaire where subjects may answer questions in any order, stimulus_index encodes the order of the questions on the page while response_index encodes the order in which the subject answered them.",
+            "Not to be confused with response_option_index (which option was chosen) or response_id (an identifier unique within this table, assigned in temporal order)."
+          ]
+        },
+        {
+          "categories": [
             "Task"
           ],
           "name": "language",
@@ -592,7 +607,7 @@
             "response_option_index = 0 means the subject chose none of the options (e.g., a “no-go” response in a Go/No-go task).",
             "response_option_index can be directly compared to expected_response_option_index.",
             "response_option_index refers to an entry in the Option table.",
-            "Not to be confused with response_index: response_option_index indexes into the set of options (WHICH option was chosen), whereas response_index is BDM's ordinal position of a response in the indexing hierarchy (WHEN/in what order the response occurred; cf. the temporal ordering carried by response_id, and response_element_index in the Input table for the pieces of one response)."
+            "Not to be confused with response_index: response_option_index indexes into the set of options (WHICH option was chosen), whereas response_index is the ordinal position of the response itself within the subject's study participation (see the response_index field; cf. also response_element_index in the Input table for the pieces of one response)."
           ]
         },
         {

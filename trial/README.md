@@ -14,7 +14,7 @@ A trial is a single instance of a participant interacting with a task. Trial inf
 
 | Table | Fields | Description |
 |-------|-------:|-------------|
-| **Response** | 76 | Main table; one row per response in a trial. |
+| **Response** | 77 | Main table; one row per response in a trial. |
 | **Stimulus** | 19 | Each stimulus shown during a trial. |
 | **Option** | 18 | Each option a subject could choose from. |
 | **Input** | 15 | Detailed log of inputs/clicks during the trial. |

@@ -751,6 +751,14 @@
           "type": "string",
           "title": "Response Id"
         },
+        "response_index": {
+          "description": "The 1-based ordinal position of this response within the subject's participation in the study. response_index is nested within subjects — not within any lower-level construct (session, activity, block, or trial) — so the counter starts at the subject's first response and increments to their last without ever resetting. Its maximum value for a given subject equals the number of responses recorded from that subject in the study.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Response Index"
+        },
         "response_initiation_time": {
           "description": "In some cases (e.g., a reaching movement) it might be useful to encode when a response was initiated.",
           "type": [
