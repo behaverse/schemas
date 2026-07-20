@@ -3,7 +3,7 @@ id: https://behaverse.org/schemas/dataset
 name: dataset
 title: Behaverse Dataset Schema
 description: A metadata schema for cognitive science and neuroscience datasets with mappings to Schema.org, DataCite, BIDS, and other standards
-version: '26.0615'
+version: '26.0703'
 license: MIT
 
 prefixes:
@@ -212,7 +212,7 @@ classes:
         required: true
         slot_uri: sdo:name
         exact_mappings: [dc:identifier]
-        pattern: "^[a-z0-9-_]+$"
+        pattern: "^[a-z0-9_-]+$"
         description: Short URL-friendly identifier
         examples: [{value: axon-game-eeg}, {value: resting-state-fmri}]
       pretty_name:
@@ -239,7 +239,7 @@ classes:
         slot_uri: sdo:license
         exact_mappings: [dc:rights]
         description: License identifier in SPDX format
-        examples: [{value: cc-by-4.0}, {value: mit}]
+        examples: [{value: CC-BY-4.0}, {value: MIT}]
       url:
         recommended: true
         range: uri
@@ -416,9 +416,7 @@ classes:
         range: InterventionType
         slot_uri: ct:interventionType
         description: Type(s) of intervention (applies when study_design_type is intervention)
-        examples:
-          - value: '["behavioral"]'
-          - value: '["pharmacological", "behavioral"]'
+        examples: [{value: behavioral}, {value: pharmacological}]
       session_count:
         range: integer
         slot_uri: bidssession:sessions

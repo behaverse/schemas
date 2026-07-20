@@ -25,7 +25,7 @@ better-fit native formats: **bcsv** (hand-maintained CSVW-based `schema.json`) a
 ### <img src="assets/img/schema_B.png" height="40" style="vertical-align: middle;"> bcsv (Better CSV)
 Extension of W3C CSVW with support for R/Python data types including categorical and ordered factors, missing value codes, units of measurement, and file integrity verification.
 
-- **Version**: v26.0610  ·  **Source**: hand-maintained `schema.json` (not LinkML)
+- **Version**: v26.0703  ·  **Source**: hand-maintained `schema.json` (not LinkML)
 - **Namespace**: `https://behaverse.org/schemas/bcsv#`
 - **Context**: [`bcsv/context.jsonld`](bcsv/context.jsonld) · **JSON Schema**: [`bcsv/schema.json`](bcsv/schema.json) · **Docs**: [`bcsv/README.md`](bcsv/README.md)
 
@@ -34,7 +34,7 @@ Extension of W3C CSVW with support for R/Python data types including categorical
 ### <img src="assets/img/schema_C.png" height="40" style="vertical-align: middle;"> catalog 
 Metadata schema for describing thematic catalogs of datasets that share specific characteristics or serve particular research applications. Extends schema.org/DataCatalog. Supports hierarchical organization through nested catalogs.
 
-- **Version**: v26.0615  ·  **Source**: [`catalog/schema.linkml.yaml`](catalog/schema.linkml.yaml)
+- **Version**: v26.0703  ·  **Source**: [`catalog/schema.linkml.yaml`](catalog/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/catalog#`
 - **Context**: [`catalog/context.jsonld`](catalog/context.jsonld) · **JSON Schema**: [`catalog/schema.json`](catalog/schema.json) · **Docs**: [`catalog/README.md`](catalog/README.md)
 
@@ -43,7 +43,7 @@ Metadata schema for describing thematic catalogs of datasets that share specific
 ### <img src="assets/img/schema_D.png" height="40" style="vertical-align: middle;"> dataset
 Metadata schema for describing cognitive science datasets with comprehensive coverage of participant demographics, measurement techniques, cognitive tasks, and data access information.
 
-- **Version**: v26.0615  ·  **Source**: [`dataset/schema.linkml.yaml`](dataset/schema.linkml.yaml)
+- **Version**: v26.0703  ·  **Source**: [`dataset/schema.linkml.yaml`](dataset/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/dataset#`
 - **Context**: [`dataset/context.jsonld`](dataset/context.jsonld) · **JSON Schema**: [`dataset/schema.json`](dataset/schema.json) · **Docs**: [`dataset/README.md`](dataset/README.md)
 
@@ -61,7 +61,7 @@ Schema for defining the formal structure of studyflow diagrams - sequences of ac
 ### trial
 Tidy, multi-table schema describing trial-level behavioral data (responses, stimuli, instruments, …) for cognitive tests and questionnaires, derived from raw events.
 
-- **Version**: v26.0608  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
+- **Version**: v26.0703  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/trial#`
 - **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
 - _No `context.jsonld` (the trial fields carry no semantic mappings yet)._

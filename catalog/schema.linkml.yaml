@@ -3,7 +3,7 @@ id: https://behaverse.org/schemas/catalog
 name: catalog
 title: Behaverse Catalog Schema
 description: A metadata schema for thematic catalogs of cognitive science and neuroscience datasets
-version: '26.0615'
+version: '26.0703'
 license: MIT
 
 prefixes:
@@ -50,7 +50,7 @@ classes:
       name:
         required: true
         slot_uri: sdo:name
-        pattern: "^[a-z0-9-_]+$"
+        pattern: "^[a-z0-9_-]+$"
         description: Short URL-friendly identifier
         examples: [{value: multi-task}, {value: longitudinal}, {value: multimodal}]
       pretty_name:

@@ -5,6 +5,13 @@ All notable changes to the Dataset schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0703] - 2026-07-03
+
+### Fixed
+- `license` slot examples now use the SPDX casing the `License` enum actually requires (`CC-BY-4.0`, `MIT`; previously `cc-by-4.0`/`mit`, which fail validation).
+- `intervention_type` examples are now individual enum values (`behavioral`, `pharmacological`) instead of stringified JSON arrays, which are not valid values of the enum.
+- `name` pattern rewritten from `^[a-z0-9-_]+$` to `^[a-z0-9_-]+$` (hyphen moved to the end of the character class to avoid an unintended-range reading under stricter regex engines; accepted values unchanged).
+
 ## [26.0615] - 2026-06-15
 
 ### Changed

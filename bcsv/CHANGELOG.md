@@ -5,6 +5,15 @@ All notable changes to the BCSV schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0703] - 2026-07-03
+
+### Fixed
+- Table `name` pattern rewritten from `^[a-z0-9-_]+$` to `^[a-z0-9_-]+$` (hyphen moved to the end of the character class to avoid an unintended-range reading under stricter regex engines; accepted values unchanged).
+
+### Clarified
+- `min_length`/`max_length` descriptions now state explicitly that they are valid for string columns **including columns with no declared `datatype`** (an omitted datatype defaults to string, per CSVW). This documents why length bounds are permitted without a `datatype` while `minimum`/`maximum` require an explicit numeric one — the conditional rules themselves are unchanged.
+- `$id` / `version` bumped to `v26.0703`.
+
 ## [26.0610] - 2026-06-10
 
 ### Changed
