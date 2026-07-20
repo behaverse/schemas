@@ -12,6 +12,10 @@ All notable changes to the event schema are documented here. CalVer `vYY.MMDD`.
 
 - `kitchensink_event_batch.json` used `bdm:sha256` where the `bdm:recording_ended` verb documents `bdm:recording_sha256`; the example now matches the documented key. The kitchensink also gains a `bdm:key_released` event, keeping its all-verbs coverage.
 
+### Documentation
+
+- **Events-at-rest decision recorded** (README "Storage" section): the canonical at-rest representation of the events layer in a BDM dataset is **NDJSON** — one `Event` object per line, UTF-8, append-only, `events_<attempt>.ndjson[.gz]` in the dataset's activity folder beside the trial tables. `EventBatch` is the interchange shape, not the at-rest format; derived copies (e.g. Parquet) are permitted; engines with private compact recording formats must document a lossless mapping to canonical `Event` objects. Added `examples/events.ndjson` (every line schema-validated). No schema change — this is a storage convention over the existing `Event` model.
+
 ## [26.0615] - 2026-06-15
 
 ### Changed
