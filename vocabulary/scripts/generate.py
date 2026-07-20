@@ -39,8 +39,12 @@ CONTEXT = {
     "data_type": "bdm:dataType",
     "range": "bdm:range",
     "status": "bdm:status",
-    "schemes": "@graph",
-    "concepts": "@graph",
+    # NOT two aliases of @graph: aliasing two terms to the same keyword is invalid
+    # JSON-LD ("colliding keywords"; pyld and other 1.1 processors reject it). Distinct
+    # containment properties keep the JSON shape identical for consumers and keep every
+    # scheme/concept node (with its @id/@type/SKOS properties) in the expanded graph.
+    "schemes": {"@id": "bdm:schemes", "@container": "@set"},
+    "concepts": {"@id": "bdm:concepts", "@container": "@set"},
 }
 
 

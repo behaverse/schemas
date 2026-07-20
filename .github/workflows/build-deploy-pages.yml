@@ -41,7 +41,15 @@ jobs:
 
       - name: Install Node dependencies
         working-directory: ./docs
-        run: npm install
+        # npm ci pins the build to gh-pages's docs/package-lock.json (reproducible);
+        # fall back to npm install only if the lockfile is ever removed.
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            echo "::warning::docs/package-lock.json missing on gh-pages — unpinned npm install fallback"
+            npm install
+          fi
 
       - name: Copy raw schemas to static directory
         run: |

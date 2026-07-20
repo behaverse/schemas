@@ -6,7 +6,7 @@
 
 vocabulary_metadata:
   name: Behaverse Vocabulary
-  version: '26.0611'
+  version: '26.0703'
   namespace: https://behaverse.org/schemas/vocabulary
   description: 'Cross-cutting controlled terminology for behaverse data: general terms, demographics,
     and the suffix conventions used in variable names. Terms that one schema owns (e.g. trial table fields)

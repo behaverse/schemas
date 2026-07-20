@@ -1,8 +1,10 @@
 name: Deploy docs (main)
 
-# Pushing to `main` redeploys the docs site. The actual build+deploy lives in the
-# reusable workflow build-deploy-pages.yml (single source of truth); gh-pages's
-# deploy-docs.yml calls the same reusable workflow, so there is no duplicated build job.
+# Pushing to `main` validates the schemas and, only if validation passes, redeploys the
+# docs site — a push that breaks a schema or leaves generated artifacts stale can no
+# longer go live. The build+deploy lives in the reusable workflow build-deploy-pages.yml
+# (single source of truth); gh-pages's deploy-docs.yml calls the same reusable workflow,
+# so there is no duplicated build job.
 
 on:
   push:
@@ -15,5 +17,9 @@ permissions:
   id-token: write
 
 jobs:
+  validate:
+    uses: ./.github/workflows/validate-schemas.yml
+
   deploy:
+    needs: validate
     uses: ./.github/workflows/build-deploy-pages.yml

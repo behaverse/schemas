@@ -1,17 +1,23 @@
 name: Validate schemas
 
-# Guards the source-of-truth contract on `main` (deploy lives in deploy-on-main.yml):
+# Guards the source-of-truth contract on `main` (deploy lives in deploy-on-main.yml,
+# which CALLS this workflow and only deploys if it passes):
 #   1. every LinkML source (catalog/dataset/trial/event/studyflow) is metamodel-valid;
 #   2. generated artifacts (schema.json / context.jsonld / field-definitions.json) are in
 #      sync with their LinkML source — i.e. `scripts/generate.py` regeneration is a no-op;
 #   3. the vocabulary SKOS artifact (terms.jsonld) is in sync with terms.yaml;
-#   4. every schema.json is well-formed and its bundled examples validate.
+#   4. the bcsv conformance fixtures are in sync with their generator;
+#   5. every schema.json is well-formed; examples, conformance fixtures, JSON-LD
+#      contexts (pyld expansion, no network), and LinkML enum usage all validate.
+#
+# No `push: main` trigger: pushes to main run this via deploy-on-main.yml's `validate`
+# job (workflow_call), so it is not duplicated.
 
 on:
   pull_request:
     branches: [main]
-  push:
-    branches: [main]
+  workflow_call:
+  workflow_dispatch:
 
 jobs:
   validate:
@@ -42,5 +48,8 @@ jobs:
       - name: Vocabulary terms.jsonld is in sync with terms.yaml
         run: python vocabulary/scripts/generate.py --check
 
-      - name: Schemas are well-formed and examples validate
+      - name: bcsv conformance fixtures are in sync with their generator
+        run: python bcsv/conformance/_generate.py --check
+
+      - name: Schemas, examples, conformance fixtures, and JSON-LD contexts validate
         run: python scripts/validate_schemas.py

@@ -43,25 +43,35 @@ generated file drifts from its source.
    [`VERSIONING.md`](VERSIONING.md).
 5. **Validate locally** (this is exactly what CI runs):
    ```bash
-   pip install linkml jsonschema pyyaml
+   pip install -r requirements-dev.txt
    linkml-lint --validate --ignore-warnings <schema>/schema.linkml.yaml  # metamodel-valid source
    python scripts/generate.py --check              # drift guard (exit 1 if any would change)
    python vocabulary/scripts/generate.py --check   # vocabulary drift guard
-   python scripts/validate_schemas.py              # well-formedness + examples
+   python bcsv/conformance/_generate.py --check    # conformance-fixture drift guard
+   python scripts/validate_schemas.py              # well-formedness + examples + conformance
+                                                   # fixtures + JSON-LD expansion + LinkML enum use
    ```
 
 ## CI & deployment
 
 Two workflows guard and publish `main`:
 
-- **`/.github/workflows/validate-schemas.yml`** (every PR and push to `main`):
-  1. **Drift guard** — metamodel-validates the LinkML sources, then runs
-     `scripts/generate.py --check` and `vocabulary/scripts/generate.py --check`; fails if
-     any generated file is out of sync with its source.
+- **`/.github/workflows/validate-schemas.yml`** (every PR; called by deploy-on-main.yml
+  on every push to `main`):
+  1. **Drift guards** — metamodel-validates the LinkML sources, then runs
+     `scripts/generate.py --check`, `vocabulary/scripts/generate.py --check`, and
+     `bcsv/conformance/_generate.py --check`; fails if any generated file is out of
+     sync with its source.
   2. **Validation** — `scripts/validate_schemas.py` checks every `schema.json` is
-     well-formed (Draft-07 or 2020-12, per its `$schema`) and that its `examples/*` validate.
-- **`/.github/workflows/deploy-on-main.yml`** (every push to `main`): redeploys the docs
-  site. **So merging to `main` publishes automatically** — no manual deploy needed.
+     well-formed (draft per its `$schema`), that its `examples/*` validate, that the
+     bcsv conformance fixtures agree with `bcsv/schema.json` and their `expected.json`,
+     that every `context.jsonld` (+ `vocabulary/terms.jsonld`) expands cleanly with
+     pyld (remote fetches forbidden), and that LinkML enum-ranged slots only use
+     permissible values in examples and `ifabsent` defaults.
+- **`/.github/workflows/deploy-on-main.yml`** (every push to `main`): runs the
+  validation workflow above and — **only if it passes** — redeploys the docs site.
+  So merging to `main` publishes automatically, and a push that breaks a schema or
+  leaves stale artifacts does not deploy.
 
 The Docusaurus site itself lives on the **`gh-pages`** branch (its `docs/` and
 `scripts/generate_docs.py`). The build+deploy is defined **once**, in the reusable workflow

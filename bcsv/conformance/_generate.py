@@ -13,7 +13,10 @@ contains exactly three files:
 
 Run from the schema repo root::
 
-    python bcsv/conformance/_generate.py
+    python bcsv/conformance/_generate.py            # (re)write the fixtures
+    python bcsv/conformance/_generate.py --check    # drift guard: exit 1 if the
+                                                    # committed fixtures differ from
+                                                    # what this script would write
 
 This overwrites existing fixtures with freshly-computed hashes. Don't edit
 the .csv / .json files by hand — edit this script and regenerate.
@@ -25,6 +28,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Literal
@@ -48,30 +52,35 @@ def _sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def _write_fixture(fx: Fixture) -> None:
-    dir_path = CONFORMANCE_DIR / fx.kind / fx.name
-    dir_path.mkdir(parents=True, exist_ok=True)
-    # Clean any stale files left from previous runs.
-    for child in dir_path.iterdir():
-        child.unlink()
+def _render_fixture(fx: Fixture) -> dict[Path, str]:
+    """Render a fixture to {relative path: file content} without touching disk."""
+    dir_path = Path(fx.kind) / fx.name
+    files: dict[Path, str] = {}
 
     if fx.csv is not None:
-        (dir_path / "data.csv").write_text(fx.csv, encoding="utf-8")
+        files[dir_path / "data.csv"] = fx.csv
 
     meta = dict(fx.metadata) if fx.metadata is not None else None
     if meta is not None and fx.add_hash:
         meta["file_hash"] = _sha256(fx.csv or "")
 
     if fx.invalid_metadata_text is not None:
-        (dir_path / "metadata.json").write_text(fx.invalid_metadata_text, encoding="utf-8")
+        files[dir_path / "metadata.json"] = fx.invalid_metadata_text
     elif meta is not None:
-        (dir_path / "metadata.json").write_text(
-            json.dumps(meta, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-        )
+        files[dir_path / "metadata.json"] = json.dumps(meta, indent=2, ensure_ascii=False) + "\n"
 
-    (dir_path / "expected.json").write_text(
-        json.dumps(fx.expected, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
+    files[dir_path / "expected.json"] = json.dumps(fx.expected, indent=2, ensure_ascii=False) + "\n"
+    return files
+
+
+def _write_fixture(fx: Fixture) -> None:
+    dir_path = CONFORMANCE_DIR / fx.kind / fx.name
+    dir_path.mkdir(parents=True, exist_ok=True)
+    # Clean any stale files left from previous runs.
+    for child in dir_path.iterdir():
+        child.unlink()
+    for rel, content in _render_fixture(fx).items():
+        (CONFORMANCE_DIR / rel).write_text(content, encoding="utf-8")
 
 
 def _meta(columns: list[dict], **extra: Any) -> dict:
@@ -356,11 +365,47 @@ NEGATIVE: list[Fixture] = [
 ]
 
 
-def main() -> None:
+def _check() -> int:
+    """Compare the committed fixtures against a fresh render; exit 1 on drift."""
+    expected_files: dict[Path, str] = {}
+    for fx in POSITIVE + NEGATIVE:
+        expected_files.update(_render_fixture(fx))
+
+    problems: list[str] = []
+    for rel, content in sorted(expected_files.items()):
+        path = CONFORMANCE_DIR / rel
+        if not path.exists():
+            problems.append(f"missing: {rel}")
+        elif path.read_text(encoding="utf-8") != content:
+            problems.append(f"stale: {rel}")
+
+    # Files on disk that no fixture would write (leftovers from removed fixtures).
+    for kind in ("positive", "negative"):
+        base = CONFORMANCE_DIR / kind
+        if not base.is_dir():
+            continue
+        for path in sorted(base.rglob("*")):
+            if path.is_file() and path.relative_to(CONFORMANCE_DIR) not in expected_files:
+                problems.append(f"extra: {path.relative_to(CONFORMANCE_DIR)}")
+
+    if problems:
+        print("conformance fixtures drift from _generate.py:", file=sys.stderr)
+        for p in problems:
+            print(f"  - {p}", file=sys.stderr)
+        print("run `python bcsv/conformance/_generate.py` to regenerate", file=sys.stderr)
+        return 1
+    print(f"conformance fixtures up to date ({len(POSITIVE)} positive + {len(NEGATIVE)} negative)")
+    return 0
+
+
+def main() -> int:
+    if "--check" in sys.argv[1:]:
+        return _check()
     for fx in POSITIVE + NEGATIVE:
         _write_fixture(fx)
     print(f"Wrote {len(POSITIVE)} positive + {len(NEGATIVE)} negative fixtures to {CONFORMANCE_DIR}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
