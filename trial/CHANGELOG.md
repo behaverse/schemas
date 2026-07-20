@@ -10,7 +10,7 @@ All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
 ### Fixed
 
-- Stale field names in notes: `response_index`/`expected_response_index` → `response_option_index`/`expected_response_option_index` (in `option_source`, `expected_response_option_index`, and `response_option_index` notes); removed a confusing parenthetical ("there is no Response table") from the `response_option_index` note; "occured" → "occurred" in `Input.onset`.
+- Notes under `option_source`, `expected_response_option_index`, and `response_option_index` wrote `response_index`/`expected_response_index` where they meant the option indices (`response_option_index`/`expected_response_option_index`). Because `response_index` names a **different** BDM concept — the ordinal position of a response in the indexing hierarchy, not which option was chosen — the notes now spell out the full names, and a new note on `response_option_index` states the distinction explicitly. Also removed a confusing parenthetical ("there is no Response table") and fixed "occured" → "occurred" in `Input.onset`.
 
 ## [26.0703] - 2026-07-03
 

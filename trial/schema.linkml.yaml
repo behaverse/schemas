@@ -687,6 +687,7 @@ classes:
             - "response_option_index = 0 means the subject chose none of the options (e.g., a “no-go” response in a Go/No-go task)."
             - "response_option_index can be directly compared to expected_response_option_index."
             - "response_option_index refers to an entry in the Option table."
+            - "Not to be confused with response_index: response_option_index indexes into the set of options (WHICH option was chosen), whereas response_index is BDM's ordinal position of a response in the indexing hierarchy (WHEN/in what order the response occurred; cf. the temporal ordering carried by response_id, and response_element_index in the Input table for the pieces of one response)."
       response_description:
         range: string
         description: "A description of participant’s response; typically the description of the option that was chosen."
