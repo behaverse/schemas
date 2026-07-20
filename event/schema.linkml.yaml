@@ -13,7 +13,7 @@ id: https://behaverse.org/schemas/event
 name: event
 title: "Behaverse Event Schema"
 description: "Raw experimental events for cognitive tests, questionnaires, and games. An xAPI-style envelope (actor / verb / object) carrying a single canonical `bdm:` vocabulary, so one set of analytics tooling can process every domain. Continuous signals (mouse, keyboard, EEG) are referenced via attachments, not inlined."
-version: "26.0615"
+version: "26.0720"
 license: MIT
 
 prefixes:
@@ -92,6 +92,10 @@ annotations:
           object_types: ['bdm:UIComponent', 'bdm:Stimulus']
           layer: interaction
           description: A single key event. Carries bdm:key and bdm:key_code.
+        - name: 'bdm:key_released'
+          object_types: ['bdm:UIComponent', 'bdm:Stimulus']
+          layer: interaction
+          description: A key released after bdm:key_pressed. Carries bdm:key and bdm:key_code; press duration is derivable from the paired bdm:key_pressed timestamp.
         - name: 'bdm:typed'
           object_types: ['bdm:UIComponent']
           layer: interaction
@@ -202,6 +206,7 @@ enums:
       'bdm:clicked':
       'bdm:drag_and_dropped':
       'bdm:key_pressed':
+      'bdm:key_released':
       'bdm:typed':
       'bdm:selected':
       'bdm:deselected':

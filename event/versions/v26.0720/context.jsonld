@@ -1,0 +1,119 @@
+{
+  "@context": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "as2": "https://www.w3.org/ns/activitystreams#",
+    "bdm": "https://behaverse.org/data-model/vocab/",
+    "behaverse": "https://behaverse.org/schemas/event#",
+    "event": "https://behaverse.org/schemas/event#",
+    "linkml": "https://w3id.org/linkml/",
+    "schema": "http://schema.org/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "xapi": "https://w3id.org/xapi/",
+    "@vocab": "https://behaverse.org/schemas/event#",
+    "id": {
+      "@id": "id"
+    },
+    "name": {
+      "@id": "name"
+    },
+    "objectType": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "@type"
+    },
+    "extensions": {
+      "@type": "@id",
+      "@id": "https://behaverse.org/data-model/vocab/extensions"
+    },
+    "actor": {
+      "@type": "@id",
+      "@id": "bdm:actor"
+    },
+    "attachments": {
+      "@type": "@id",
+      "@id": "attachments",
+      "@container": "@set"
+    },
+    "authority": {
+      "@type": "@id",
+      "@id": "authority"
+    },
+    "context": {
+      "@type": "@id",
+      "@id": "bdm:context"
+    },
+    "object": {
+      "@type": "@id",
+      "@id": "bdm:object"
+    },
+    "result": {
+      "@type": "@id",
+      "@id": "bdm:result"
+    },
+    "stored": {
+      "@type": "xsd:dateTime",
+      "@id": "stored"
+    },
+    "timestamp": {
+      "@type": "xsd:dateTime",
+      "@id": "timestamp"
+    },
+    "updated": {
+      "@type": "xsd:dateTime",
+      "@id": "updated"
+    },
+    "verb": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "https://behaverse.org/data-model/vocab/verb",
+      "@type": "@id"
+    },
+    "version": {
+      "@id": "version"
+    },
+    "batch_id": {
+      "@id": "batch_id"
+    },
+    "events": {
+      "@type": "@id",
+      "@id": "https://behaverse.org/schemas/event#events",
+      "@container": "@list"
+    },
+    "Actor": {
+      "@id": "Actor"
+    },
+    "Attachment": {
+      "@id": "linkml:Any"
+    },
+    "Authority": {
+      "@id": "linkml:Any"
+    },
+    "Context": {
+      "@id": "Context"
+    },
+    "Event": {
+      "@id": "Event"
+    },
+    "EventBatch": {
+      "@id": "EventBatch"
+    },
+    "EventDocument": {
+      "@id": "EventDocument"
+    },
+    "EventObject": {
+      "@id": "EventObject"
+    },
+    "Extensions": {
+      "@id": "linkml:Any"
+    },
+    "Result": {
+      "@id": "Result"
+    }
+  }
+}

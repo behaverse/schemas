@@ -676,6 +676,30 @@
       }
     },
     {
+      "timestamp": "2026-06-05T15:01:13.771Z",
+      "actor": {
+        "objectType": "bdm:Agent",
+        "id": "agent_ks_001"
+      },
+      "verb": "bdm:key_released",
+      "object": {
+        "objectType": "bdm:UIComponent",
+        "id": "keyboard"
+      },
+      "result": {
+        "extensions": {
+          "bdm:key": "ArrowLeft",
+          "bdm:key_code": 37
+        }
+      },
+      "context": {
+        "extensions": {
+          "bdm:session_id": "session_ks_001",
+          "bdm:trial_index": "3"
+        }
+      }
+    },
+    {
       "timestamp": "2026-06-05T15:01:14.100Z",
       "actor": {
         "objectType": "bdm:Engine",
@@ -715,7 +739,7 @@
       "result": {
         "extensions": {
           "bdm:recording_url": "https://storage.behaverse.org/recordings/eeg_ks_001.edf",
-          "bdm:sha256": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+          "bdm:recording_sha256": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
           "bdm:duration": 1.200
         }
       },
@@ -804,7 +828,7 @@
       "result": {
         "extensions": {
           "bdm:recording_url": "https://storage.behaverse.org/recordings/mouse_ks_001.json",
-          "bdm:sha256": "b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3",
+          "bdm:recording_sha256": "b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3",
           "bdm:duration": 75.400
         }
       },

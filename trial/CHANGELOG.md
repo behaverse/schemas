@@ -2,6 +2,16 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0720] - 2026-07-20
+
+### Added
+
+- **`Response.session_uuid`** (optional string) — a globally unique identifier (UUID, RFC 9562) for the session, assigned by the recording engine. Complements `session_index` (a per-subject ordinal) and closes the second half of known issue D3. Deviation from D3's wording: the field is named `session_uuid`, **not** a re-typed `session_id` — reusing `session_id` with a new type and meaning immediately after the v26.0703 rename would silently break existing consumers. Event streams' `bdm:session_id` extension corresponds to this value.
+
+### Fixed
+
+- Stale field names in notes: `response_index`/`expected_response_index` → `response_option_index`/`expected_response_option_index` (in `option_source`, `expected_response_option_index`, and `response_option_index` notes); removed a confusing parenthetical ("there is no Response table") from the `response_option_index` note; "occured" → "occurred" in `Input.onset`.
+
 ## [26.0703] - 2026-07-03
 
 ### Breaking
