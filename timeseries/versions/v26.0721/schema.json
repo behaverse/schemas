@@ -1,0 +1,333 @@
+{
+  "$defs": {
+    "Channel": {
+      "additionalProperties": false,
+      "description": "One channel (column/signal) of the payload.",
+      "properties": {
+        "coordinate_frame": {
+          "$ref": "#/$defs/CoordinateFrameEnum",
+          "description": "For spatial channels: the coordinate frame the values are expressed in.",
+          "title": "Coordinate Frame"
+        },
+        "datatype": {
+          "$ref": "#/$defs/ChannelDatatypeEnum",
+          "description": "Datatype of the channel's values.",
+          "title": "Datatype"
+        },
+        "description": {
+          "description": "Human-readable note about the channel.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Description"
+        },
+        "name": {
+          "description": "Channel name as it appears in the payload (e.g. `t`, `x`, `y`, `Fp1`).",
+          "type": "string",
+          "title": "Name"
+        },
+        "unit": {
+          "description": "Unit of the channel's values (e.g. `s`, `px`, `uV`). Omit for unitless channels.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "name",
+        "datatype"
+      ],
+      "title": "Channel",
+      "type": "object"
+    },
+    "ChannelDatatypeEnum": {
+      "description": "Datatype of a channel's values.",
+      "enum": [
+        "float",
+        "integer",
+        "boolean",
+        "string"
+      ],
+      "title": "ChannelDatatypeEnum",
+      "type": "string"
+    },
+    "CoordinateFrameEnum": {
+      "description": "Coordinate frame of a spatial channel, mirroring the trial Input table's x_screen/x_viewport distinction.",
+      "enum": [
+        "screen_px",
+        "viewport_fraction"
+      ],
+      "title": "CoordinateFrameEnum",
+      "type": "string"
+    },
+    "SamplingNatureEnum": {
+      "description": "How samples are generated in time.",
+      "enum": [
+        "event_driven",
+        "sampled"
+      ],
+      "title": "SamplingNatureEnum",
+      "type": "string"
+    },
+    "TimeseriesMetadata": {
+      "additionalProperties": false,
+      "description": "The sidecar metadata document for one timeseries payload file.",
+      "properties": {
+        "anchor_datetime": {
+          "description": "The RFC 9557 datetime (with timezone offset) corresponding to `t` = 0 on the declared clock — the per-session bridge to wall-clock time. Optional here (the session-level record is the source of truth); duplicating it makes the sidecar standalone.",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Anchor Datetime"
+        },
+        "attempt": {
+          "description": "1-based attempt number, matching the dataset layout's partition-by-attempt convention (`response_1.csv` ↔ `mouse_1.ndjson`).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Attempt"
+        },
+        "byte_length": {
+          "description": "Size of the payload file in bytes (after any content_encoding).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Byte Length"
+        },
+        "channels": {
+          "description": "Definitions of the payload's channels, in payload column order. For self-describing payloads (e.g. EDF) this list mirrors the labels/units consumers need without parsing the container format.",
+          "items": {
+            "$ref": "#/$defs/Channel"
+          },
+          "type": "array",
+          "title": "Channels"
+        },
+        "clock": {
+          "description": "URI of the clock every `t` value is on. Defaults to the vocabulary `engine_seconds` term: a monotonic per-session clock counting seconds since engine start.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Clock"
+        },
+        "content_encoding": {
+          "description": "Optional transport encoding of the payload file, e.g. `gzip`. Absent means the payload is stored uncompressed.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Content Encoding"
+        },
+        "content_type": {
+          "description": "MIME type of the payload (e.g. `application/x-ndjson`, `text/csv`, `application/x-edf`, `application/vnd.apache.parquet`).",
+          "type": "string",
+          "title": "Content Type"
+        },
+        "content_url": {
+          "description": "Where the payload file lives: a relative path resolved against this sidecar's own location (payload and sidecar normally sit side by side in the activity folder), or an absolute URL.",
+          "type": "string",
+          "title": "Content Url"
+        },
+        "description": {
+          "description": "Human-readable description of what was recorded and how.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Description"
+        },
+        "name": {
+          "description": "Short machine-friendly name of the series (e.g. `mouse_trajectory`, `gaze`, `eeg`).",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Name"
+        },
+        "nominal_rate_hz": {
+          "description": "Nominal sampling rate in Hz. Required when `sampling_nature` is `sampled`; meaningless (omit) when `event_driven`.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Nominal Rate Hz"
+        },
+        "sampling_nature": {
+          "$ref": "#/$defs/SamplingNatureEnum",
+          "description": "Whether samples are event-driven (irregular) or taken at a nominal fixed rate.",
+          "title": "Sampling Nature"
+        },
+        "session_uuid": {
+          "description": "UUID of the session this series was recorded in (see the trial schema's `session_uuid`). Lets a sidecar be interpreted standalone, outside the dataset folder hierarchy.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Session Uuid"
+        },
+        "sha256": {
+          "description": "SHA-256 hash of the payload file's bytes (after any content_encoding), lowercase hex. Recommended for integrity checking.",
+          "pattern": "^[a-f0-9]{64}$",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Sha256"
+        },
+        "type": {
+          "description": "Discriminator for the document kind; always `bdm:Timeseries`.",
+          "type": "string",
+          "title": "Type"
+        }
+      },
+      "required": [
+        "type",
+        "content_url",
+        "content_type",
+        "sampling_nature",
+        "channels"
+      ],
+      "title": "TimeseriesMetadata",
+      "type": "object"
+    }
+  },
+  "$id": "https://behaverse.org/schemas/timeseries/v26.0721/schema.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "additionalProperties": true,
+  "description": "The sidecar metadata document for one timeseries payload file.",
+  "metamodel_version": "1.7.0",
+  "properties": {
+    "@type": {
+      "const": "timeseries:TimeseriesMetadata",
+      "title": "Type",
+      "description": "JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverability."
+    },
+    "anchor_datetime": {
+      "description": "The RFC 9557 datetime (with timezone offset) corresponding to `t` = 0 on the declared clock — the per-session bridge to wall-clock time. Optional here (the session-level record is the source of truth); duplicating it makes the sidecar standalone.",
+      "format": "date-time",
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Anchor Datetime"
+    },
+    "attempt": {
+      "description": "1-based attempt number, matching the dataset layout's partition-by-attempt convention (`response_1.csv` ↔ `mouse_1.ndjson`).",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "title": "Attempt"
+    },
+    "byte_length": {
+      "description": "Size of the payload file in bytes (after any content_encoding).",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "title": "Byte Length"
+    },
+    "channels": {
+      "description": "Definitions of the payload's channels, in payload column order. For self-describing payloads (e.g. EDF) this list mirrors the labels/units consumers need without parsing the container format.",
+      "items": {
+        "$ref": "#/$defs/Channel"
+      },
+      "type": "array",
+      "title": "Channels"
+    },
+    "clock": {
+      "description": "URI of the clock every `t` value is on. Defaults to the vocabulary `engine_seconds` term: a monotonic per-session clock counting seconds since engine start.",
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Clock"
+    },
+    "content_encoding": {
+      "description": "Optional transport encoding of the payload file, e.g. `gzip`. Absent means the payload is stored uncompressed.",
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Content Encoding"
+    },
+    "content_type": {
+      "description": "MIME type of the payload (e.g. `application/x-ndjson`, `text/csv`, `application/x-edf`, `application/vnd.apache.parquet`).",
+      "type": "string",
+      "title": "Content Type"
+    },
+    "content_url": {
+      "description": "Where the payload file lives: a relative path resolved against this sidecar's own location (payload and sidecar normally sit side by side in the activity folder), or an absolute URL.",
+      "type": "string",
+      "title": "Content Url"
+    },
+    "description": {
+      "description": "Human-readable description of what was recorded and how.",
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Description"
+    },
+    "name": {
+      "description": "Short machine-friendly name of the series (e.g. `mouse_trajectory`, `gaze`, `eeg`).",
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Name"
+    },
+    "nominal_rate_hz": {
+      "description": "Nominal sampling rate in Hz. Required when `sampling_nature` is `sampled`; meaningless (omit) when `event_driven`.",
+      "type": [
+        "number",
+        "null"
+      ],
+      "title": "Nominal Rate Hz"
+    },
+    "sampling_nature": {
+      "$ref": "#/$defs/SamplingNatureEnum",
+      "description": "Whether samples are event-driven (irregular) or taken at a nominal fixed rate.",
+      "title": "Sampling Nature"
+    },
+    "session_uuid": {
+      "description": "UUID of the session this series was recorded in (see the trial schema's `session_uuid`). Lets a sidecar be interpreted standalone, outside the dataset folder hierarchy.",
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Session Uuid"
+    },
+    "sha256": {
+      "description": "SHA-256 hash of the payload file's bytes (after any content_encoding), lowercase hex. Recommended for integrity checking.",
+      "pattern": "^[a-f0-9]{64}$",
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Sha256"
+    },
+    "type": {
+      "description": "Discriminator for the document kind; always `bdm:Timeseries`.",
+      "type": "string",
+      "title": "Type"
+    }
+  },
+  "required": [
+    "type",
+    "content_url",
+    "content_type",
+    "sampling_nature",
+    "channels"
+  ],
+  "title": "timeseries",
+  "type": "object",
+  "version": "26.0721"
+}

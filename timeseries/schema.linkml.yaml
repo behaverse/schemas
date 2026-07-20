@@ -1,0 +1,117 @@
+# yaml-language-server: $schema=https://linkml.io/linkml-model/linkml_model/jsonschema/meta.schema.json
+# Behaverse Timeseries Schema — LinkML source of truth.
+# Single hand-edited source; run `python scripts/generate.py` to emit schema.json.
+#
+# This schema validates the SIDECAR METADATA document that accompanies each continuous-
+# signal payload file (mouse trajectory, gaze, EEG, ...). The payload itself (NDJSON, CSV,
+# EDF, Parquet, ...) is NOT schema-validated here — it is declared via content_type and
+# described by the channel definitions. Channels are the primitive: a 2-D position series
+# and a 64-channel EEG are the same shape, differing only in their channel lists.
+id: https://behaverse.org/schemas/timeseries
+name: timeseries
+title: "Behaverse Timeseries Schema"
+description: "Sidecar metadata for continuous sampled signals (mouse trajectories, gaze, EEG). A small JSON document — named `<payload-filename>.timeseries.json`, stored beside its payload in the dataset's activity folder — declaring the payload's location, encoding, clock, sampling nature, and channels. Referenced from event streams via `attachments` (type `bdm:Timeseries`)."
+version: "26.0721"
+license: MIT
+
+prefixes:
+  timeseries: https://behaverse.org/schemas/timeseries#
+  behaverse: https://behaverse.org/schemas/timeseries#
+  bdm: https://behaverse.org/schemas/vocabulary/
+  linkml: https://w3id.org/linkml/
+default_prefix: timeseries
+default_range: string
+imports:
+  - linkml:types
+
+enums:
+  SamplingNatureEnum:
+    description: "How samples are generated in time."
+    permissible_values:
+      event_driven:
+        description: "A sample is written when something happens (e.g. the pointer moves); inter-sample intervals are irregular. The payload MUST contain a `t` channel."
+      sampled:
+        description: "Samples are taken at a nominal fixed rate (e.g. gaze at 120 Hz, EEG at 500 Hz). `nominal_rate_hz` is required; a `t` channel is optional (sample times are derivable from the index and rate)."
+  CoordinateFrameEnum:
+    description: "Coordinate frame of a spatial channel, mirroring the trial Input table's x_screen/x_viewport distinction."
+    permissible_values:
+      screen_px:
+        description: "Pixels from the left/top screen edge (cf. the trial tables' x_screen/y_screen)."
+      viewport_fraction:
+        description: "Fraction of screen width/height, 0 to 1 inclusive (cf. x_viewport/y_viewport)."
+  ChannelDatatypeEnum:
+    description: "Datatype of a channel's values."
+    permissible_values:
+      float:
+      integer:
+      boolean:
+      string:
+
+classes:
+  TimeseriesMetadata:
+    tree_root: true
+    description: "The sidecar metadata document for one timeseries payload file."
+    attributes:
+      type:
+        required: true
+        description: "Discriminator for the document kind; always `bdm:Timeseries`."
+      name:
+        description: "Short machine-friendly name of the series (e.g. `mouse_trajectory`, `gaze`, `eeg`)."
+      description:
+        description: "Human-readable description of what was recorded and how."
+      content_url:
+        required: true
+        description: "Where the payload file lives: a relative path resolved against this sidecar's own location (payload and sidecar normally sit side by side in the activity folder), or an absolute URL."
+      content_type:
+        required: true
+        description: "MIME type of the payload (e.g. `application/x-ndjson`, `text/csv`, `application/x-edf`, `application/vnd.apache.parquet`)."
+      content_encoding:
+        description: "Optional transport encoding of the payload file, e.g. `gzip`. Absent means the payload is stored uncompressed."
+      sha256:
+        pattern: "^[a-f0-9]{64}$"
+        description: "SHA-256 hash of the payload file's bytes (after any content_encoding), lowercase hex. Recommended for integrity checking."
+      byte_length:
+        range: integer
+        description: "Size of the payload file in bytes (after any content_encoding)."
+      clock:
+        ifabsent: string(https://behaverse.org/schemas/vocabulary/time/engine-seconds)
+        description: "URI of the clock every `t` value is on. Defaults to the vocabulary `engine_seconds` term: a monotonic per-session clock counting seconds since engine start."
+      anchor_datetime:
+        range: datetime
+        description: "The RFC 9557 datetime (with timezone offset) corresponding to `t` = 0 on the declared clock — the per-session bridge to wall-clock time. Optional here (the session-level record is the source of truth); duplicating it makes the sidecar standalone."
+      sampling_nature:
+        required: true
+        range: SamplingNatureEnum
+        description: "Whether samples are event-driven (irregular) or taken at a nominal fixed rate."
+      nominal_rate_hz:
+        range: float
+        description: "Nominal sampling rate in Hz. Required when `sampling_nature` is `sampled`; meaningless (omit) when `event_driven`."
+      session_uuid:
+        description: "UUID of the session this series was recorded in (see the trial schema's `session_uuid`). Lets a sidecar be interpreted standalone, outside the dataset folder hierarchy."
+      attempt:
+        range: integer
+        description: "1-based attempt number, matching the dataset layout's partition-by-attempt convention (`response_1.csv` ↔ `mouse_1.ndjson`)."
+      channels:
+        required: true
+        multivalued: true
+        range: Channel
+        inlined_as_list: true
+        description: "Definitions of the payload's channels, in payload column order. For self-describing payloads (e.g. EDF) this list mirrors the labels/units consumers need without parsing the container format."
+
+  Channel:
+    description: "One channel (column/signal) of the payload."
+    attributes:
+      name:
+        required: true
+        description: "Channel name as it appears in the payload (e.g. `t`, `x`, `y`, `Fp1`)."
+      datatype:
+        required: true
+        range: ChannelDatatypeEnum
+        description: "Datatype of the channel's values."
+      unit:
+        description: "Unit of the channel's values (e.g. `s`, `px`, `uV`). Omit for unitless channels."
+      coordinate_frame:
+        range: CoordinateFrameEnum
+        description: "For spatial channels: the coordinate frame the values are expressed in."
+      description:
+        description: "Human-readable note about the channel."

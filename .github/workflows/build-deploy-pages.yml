@@ -14,6 +14,11 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  # Every published schema family — the ONE place to add a new family to the deploy.
+  # Used by both the "Checkout schemas from main" and "Copy raw schemas" steps.
+  SCHEMA_DIRS: bcsv catalog dataset studyflow trial event timeseries vocabulary
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,7 +31,7 @@ jobs:
       - name: Checkout schemas from main
         run: |
           git fetch origin main
-          git checkout origin/main -- bcsv/ catalog/ dataset/ studyflow/ trial/ event/ vocabulary/
+          git checkout origin/main -- $SCHEMA_DIRS
 
       - name: Setup Python with uv
         uses: astral-sh/setup-uv@v8.2.0  # no moving `v8` major tag is published; pin the full version
@@ -53,7 +58,7 @@ jobs:
 
       - name: Copy raw schemas to static directory
         run: |
-          for schema in bcsv catalog dataset studyflow trial event vocabulary; do
+          for schema in $SCHEMA_DIRS; do
             cp -r $schema docs/static/
           done
 

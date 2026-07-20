@@ -2,6 +2,18 @@
 
 All notable changes to the event schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0721] - 2026-07-21
+
+### Breaking
+
+- **`Attachment` formalized** (was an unconstrained `linkml:Any`): each attachment now requires `type` (a `bdm:` term such as `bdm:Timeseries`), `contentType` (MIME), and `url`, with optional `sha256` (SHA-256, validated pattern), `length` (bytes), and `description`. Addressing rule: `url` is a relative path resolved against the location of the file containing the reference, or an absolute URL. Field names follow xAPI's attachment conventions where a standard name exists (`contentType`, `length`). Documents with previously arbitrary attachment shapes no longer validate.
+- **`bdm:` prefix rebound** to `https://behaverse.org/schemas/vocabulary/` (was `https://behaverse.org/data-model/vocab/`), unifying the ecosystem on one resolvable vocabulary namespace (see vocabulary v26.0721). Compact JSON forms (`"bdm:key_pressed"`, extension keys) are unchanged; only JSON-LD-expanded RDF IRIs move.
+
+### Added
+
+- The kitchensink example's mouse `bdm:recording_ended` event now carries an `attachments` entry demonstrating the formalized shape (pointing at a timeseries sidecar file).
+- README: attachment addressing rule and the clock-mapping note (`timestamp = anchor_datetime + t`; optional `bdm:t` context extension), referencing the vocabulary `time` scheme.
+
 ## [26.0720] - 2026-07-20
 
 ### Added

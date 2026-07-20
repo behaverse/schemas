@@ -43,6 +43,7 @@ SCHEMAS: list[dict[str, Any]] = [
     {"name": "dataset", "emits_context": True, "emits_field_definitions": False},
     {"name": "trial", "emits_context": False, "emits_field_definitions": True},
     {"name": "event", "emits_context": True, "emits_field_definitions": True},
+    {"name": "timeseries", "emits_context": False, "emits_field_definitions": False},
 ]
 
 LINKML_SRC = "schema.linkml.yaml"

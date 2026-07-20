@@ -61,7 +61,7 @@ Schema for defining the formal structure of studyflow diagrams - sequences of ac
 ### trial
 Tidy, multi-table schema describing trial-level behavioral data (responses, stimuli, instruments, …) for cognitive tests and questionnaires, derived from raw events.
 
-- **Version**: v26.0703  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
+- **Version**: v26.0720  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/trial#`
 - **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
 - _No `context.jsonld` (the trial fields carry no semantic mappings yet)._
@@ -69,14 +69,21 @@ Tidy, multi-table schema describing trial-level behavioral data (responses, stim
 ### event
 Raw experimental events — an xAPI-style envelope (actor / verb / object) carrying the canonical Behaverse `bdm:` vocabulary. Modeled as `EventDocument = Event | EventBatch`.
 
-- **Version**: v26.0615  ·  **Source**: [`event/schema.linkml.yaml`](event/schema.linkml.yaml)
+- **Version**: v26.0721  ·  **Source**: [`event/schema.linkml.yaml`](event/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/event#`
 - **Context**: [`event/context.jsonld`](event/context.jsonld) · **JSON Schema**: [`event/schema.json`](event/schema.json) · **Render artifact**: [`event/field-definitions.json`](event/field-definitions.json) · **Docs**: [`event/README.md`](event/README.md)
 
-### vocabulary
-Cross-cutting controlled terminology (SKOS concept schemes + concepts): general terms, demographics, and the suffix conventions used in variable names — the terms no single schema owns.
+### timeseries
+Sidecar metadata for continuous sampled signals (mouse trajectories, gaze, EEG): a small JSON document beside each payload file declaring its location, clock, sampling nature, and channels. Referenced from event streams via `attachments`.
 
-- **Version**: v26.0703  ·  **Source**: `vocabulary/terms.yaml` (SKOS; not LinkML)
+- **Version**: v26.0721  ·  **Source**: [`timeseries/schema.linkml.yaml`](timeseries/schema.linkml.yaml)
+- **Namespace**: `https://behaverse.org/schemas/timeseries#`
+- **JSON Schema**: [`timeseries/schema.json`](timeseries/schema.json) · **Docs**: [`timeseries/README.md`](timeseries/README.md)
+
+### vocabulary
+Cross-cutting controlled terminology (SKOS concept schemes + concepts): general terms, demographics, clock/timing terms, and the suffix conventions used in variable names — the terms no single schema owns.
+
+- **Version**: v26.0721  ·  **Source**: `vocabulary/terms.yaml` (SKOS; not LinkML)
 - **Namespace**: `https://behaverse.org/schemas/vocabulary`
 - **SKOS JSON-LD**: [`vocabulary/terms.jsonld`](vocabulary/terms.jsonld) · **Docs**: [`vocabulary/README.md`](vocabulary/README.md)
 

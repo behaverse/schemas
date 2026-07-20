@@ -1,7 +1,7 @@
 {
   "@context": {
     "skos": "http://www.w3.org/2004/02/skos/core#",
-    "bdm": "https://behaverse.org/schemas/vocabulary#",
+    "bdm": "https://behaverse.org/schemas/vocabulary/",
     "label": "skos:prefLabel",
     "definition": "skos:definition",
     "description": "skos:definition",
@@ -25,7 +25,7 @@
   "@id": "https://behaverse.org/schemas/vocabulary",
   "@type": "skos:ConceptScheme",
   "name": "Behaverse Vocabulary",
-  "version": "26.0703",
+  "version": "26.0721",
   "description": "Cross-cutting controlled terminology for behaverse data: general terms, demographics, and the suffix conventions used in variable names. Terms that one schema owns (e.g. trial table fields) live in that schema; this resource holds the terms no single schema owns.",
   "schemes": [
     {
@@ -63,6 +63,12 @@
       "@type": "skos:ConceptScheme",
       "label": "Referencing Suffixes",
       "description": "Several variables are used to filter, identify or locate particular rows in a table or across multiple tables. Below is a list of the ones that are usually used in behavioral data and how they can be used."
+    },
+    {
+      "@id": "https://behaverse.org/schemas/vocabulary/time",
+      "@type": "skos:ConceptScheme",
+      "label": "Time",
+      "description": "Clock and timing terms for raw data acquisition. Recording engines timestamp samples on a monotonic clock; a single per-session anchor datetime bridges that clock to wall-clock time."
     },
     {
       "@id": "https://behaverse.org/schemas/vocabulary/variable-type",
@@ -461,6 +467,38 @@
       "data_type": "string",
       "definition": "A text attached to a variable and identifies it. It is expected to be human readable, but not always unique.",
       "scheme": "https://behaverse.org/schemas/vocabulary/referencing-suffixes"
+    },
+    {
+      "@id": "https://behaverse.org/schemas/vocabulary/time/engine-seconds",
+      "@type": "skos:Concept",
+      "label": "engine_seconds",
+      "data_type": "float",
+      "definition": "A monotonic clock measuring seconds since the recording engine started. It never decreases, is unaffected by wall-clock adjustments (NTP, timezone, DST), and is sub-millisecond capable. All acquisition and timeseries sample times (`t`) within a session are expressed on this clock.",
+      "range": ">= 0, seconds",
+      "notes": [
+        "One clock per session; the bridge to wall-clock time is `anchor_datetime`."
+      ],
+      "scheme": "https://behaverse.org/schemas/vocabulary/time"
+    },
+    {
+      "@id": "https://behaverse.org/schemas/vocabulary/time/anchor-datetime",
+      "@type": "skos:Concept",
+      "label": "anchor_datetime",
+      "data_type": "datetime",
+      "definition": "The RFC 9557 datetime (with timezone offset) corresponding to `engine_seconds` = 0 for a session — the single bridge from the monotonic clock to wall-clock time, recorded once per session. Wall-clock datetimes are derived as `anchor_datetime` + `t`.",
+      "notes": [
+        "Trial-table datetime columns (e.g. `trial_start_datetime`, `response_datetime`) are DERIVED via this anchor; the monotonic clock remains the source of truth for raw timing."
+      ],
+      "scheme": "https://behaverse.org/schemas/vocabulary/time"
+    },
+    {
+      "@id": "https://behaverse.org/schemas/vocabulary/time/t",
+      "@type": "skos:Concept",
+      "label": "t",
+      "data_type": "float",
+      "definition": "The per-sample time field of an acquisition or timeseries record, in seconds on the declared monotonic clock (see `engine_seconds`). Event streams may carry it as the optional `bdm:t` context extension alongside the wall-clock `timestamp`.",
+      "range": ">= 0, seconds",
+      "scheme": "https://behaverse.org/schemas/vocabulary/time"
     },
     {
       "@id": "https://behaverse.org/schemas/vocabulary/variable-category/identifier",

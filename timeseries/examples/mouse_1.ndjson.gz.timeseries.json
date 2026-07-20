@@ -1,0 +1,37 @@
+{
+  "type": "bdm:Timeseries",
+  "name": "mouse_trajectory",
+  "description": "Mouse cursor positions during the SOS activity; one sample per pointer move, crash-flushed NDJSON, gzipped after the recording closed.",
+  "content_url": "mouse_1.ndjson.gz",
+  "content_type": "application/x-ndjson",
+  "content_encoding": "gzip",
+  "sha256": "d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5",
+  "byte_length": 48213,
+  "clock": "https://behaverse.org/schemas/vocabulary/time/engine-seconds",
+  "anchor_datetime": "2026-07-21T09:14:03.281+02:00",
+  "sampling_nature": "event_driven",
+  "session_uuid": "018f3a2b-5c6d-7e8f-9a0b-1c2d3e4f5a6b",
+  "attempt": 1,
+  "channels": [
+    {
+      "name": "t",
+      "datatype": "float",
+      "unit": "s",
+      "description": "Sample time in seconds on the declared clock."
+    },
+    {
+      "name": "x",
+      "datatype": "float",
+      "unit": "px",
+      "coordinate_frame": "screen_px",
+      "description": "Cursor X, pixels from the left screen edge."
+    },
+    {
+      "name": "y",
+      "datatype": "float",
+      "unit": "px",
+      "coordinate_frame": "screen_px",
+      "description": "Cursor Y, pixels from the top screen edge."
+    }
+  ]
+}

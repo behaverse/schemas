@@ -75,8 +75,8 @@ regenerate; never hand-edit the generated `schema.json`/`context.jsonld`.
    git push origin main
    ```
 
-**Available schemas:** `bcsv`, `catalog`, `dataset`, `trial`, `event`, `studyflow`,
-`vocabulary`.
+**Available schemas:** `bcsv`, `catalog`, `dataset`, `trial`, `event`, `timeseries`,
+`studyflow`, `vocabulary`.
 
 ## Version Format
 

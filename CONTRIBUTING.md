@@ -2,7 +2,7 @@
 
 This repo publishes metadata **schemas** for the Behaverse data ecosystem at
 `https://behaverse.org/schemas/<name>`. Each schema lives in its own directory
-(`bcsv/`, `catalog/`, `dataset/`, `studyflow/`, `trial/`, `event/`) and ships a
+(`bcsv/`, `catalog/`, `dataset/`, `studyflow/`, `trial/`, `event/`, `timeseries/`) and ships a
 `schema.json`, a `context.jsonld` (where applicable), examples, a `README.md`, a
 `CHANGELOG.md`, and per-version snapshots under `versions/`.
 
@@ -17,6 +17,7 @@ generated file drifts from its source.
 |---|---|---|---|
 | **catalog**, **dataset** | `schema.linkml.yaml` | `scripts/generate.py` | `schema.json`, `context.jsonld` |
 | **trial** | `schema.linkml.yaml` | `scripts/generate.py` | `schema.json`, `field-definitions.json` (multi-table render artifact) |
+| **timeseries** | `schema.linkml.yaml` | `scripts/generate.py` | `schema.json` |
 | **event** | `schema.linkml.yaml` | `scripts/generate.py` | `schema.json`, `context.jsonld`, `field-definitions.json` |
 | **studyflow** | `schema.linkml.yaml` | — (consumed directly by the Studyflow Modeler; docs Overview generated on gh-pages) | — (no in-repo JSON artifact) |
 | **vocabulary** | `terms.yaml` (SKOS) | `vocabulary/scripts/generate.py` | `terms.jsonld` |
