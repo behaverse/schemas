@@ -1,6 +1,6 @@
 # Behaverse Event Schema (WIP)
 
-**Version:** v26.0615
+**Version:** v26.0720
 **Namespace:** `https://behaverse.org/schemas/event#`
 **Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) (envelope + vocabulary) — run `python scripts/generate.py`. [`schema.json`](schema.json) is the validation contract.
 
@@ -10,7 +10,7 @@ Raw experimental events for cognitive tests, questionnaires, and games. An xAPI-
 
 ## Vocabulary at a glance
 
-- **24 verbs** across 6 layers: RuntimeInstance lifecycle (7), presentation (1 polymorphic), agent interaction (10), system (3), recording (2), navigation (1).
+- **25 verbs** across 6 layers: RuntimeInstance lifecycle (7), presentation (1 polymorphic), agent interaction (11), system (3), recording (2), navigation (1).
 - **15 object types:** RuntimeInstance, Screen, Panel, Stimulus, Option, Trial, UIComponent, Window, Feedback, ConsentForm, Consent, Recording, Timer, Scorer, LocaleSwitch.
 - **5 actor types:** Agent, Group, Engine, Orchestrator, Researcher.
 - **`bdm:*` extension keys** (open-by-design) carry response data, the scoping hierarchy, environment, and interaction-specific payloads under `result.extensions` / `context.extensions`.

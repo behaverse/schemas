@@ -2,6 +2,16 @@
 
 All notable changes to the event schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0720] - 2026-07-20
+
+### Added
+
+- **`bdm:key_released`** interaction verb (objects: `bdm:UIComponent`, `bdm:Stimulus`) — the release counterpart to `bdm:key_pressed`, so a pure event stream can express a key release (press duration derives from the paired press/release timestamps). The trial `Input` table already modeled releases (`key-release` in `input_action_type`, press duration in `duration`); the event vocabulary could not. 25 verbs total.
+
+### Fixed
+
+- `kitchensink_event_batch.json` used `bdm:sha256` where the `bdm:recording_ended` verb documents `bdm:recording_sha256`; the example now matches the documented key. The kitchensink also gains a `bdm:key_released` event, keeping its all-verbs coverage.
+
 ## [26.0615] - 2026-06-15
 
 ### Changed

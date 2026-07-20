@@ -1,6 +1,6 @@
 # Behaverse Trial Schema (WIP)
 
-**Version:** v26.0703
+**Version:** v26.0720
 **Namespace:** `https://behaverse.org/schemas/trial#`
 **Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) — edit it, then run `python scripts/generate.py`
 
@@ -14,7 +14,7 @@ A trial is a single instance of a participant interacting with a task. Trial inf
 
 | Table | Fields | Description |
 |-------|-------:|-------------|
-| **Response** | 75 | Main table; one row per response in a trial. |
+| **Response** | 77 | Main table; one row per response in a trial. |
 | **Stimulus** | 19 | Each stimulus shown during a trial. |
 | **Option** | 18 | Each option a subject could choose from. |
 | **Input** | 15 | Detailed log of inputs/clicks during the trial. |
@@ -41,7 +41,7 @@ A trial is a single instance of a participant interacting with a task. Trial inf
 Relocated from `behaverse/data-model` (where it was generated from a Google Sheet). Published **as-is**; these known issues are tracked as follow-ups, not yet applied:
 
 - **D1** — `Response.stimulus_id` typing (`integer` → `string | integer`) for compositional questionnaire stimuli.
-- **D3** — `Response.session_id` is typed integer but its description calls it `session_index`; rename and add a UUID `session_id`.
+- **D3** — **resolved**: renamed `session_id` → `session_index` (v26.0703) and added `session_uuid` (v26.0720). Deviation from the issue's wording: the UUID field is named `session_uuid`, not `session_id` — reusing `session_id` with a new type and meaning right after it had meant "integer index" would silently break existing consumers.
 - **D5** — events `agent` → `actor` (applied in the `event` schema).
 - Several `description`/`range` fields still mix prose with enum listings that could become structured `enum` constraints.
 

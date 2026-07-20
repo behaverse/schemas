@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events."
-version: "26.0703"
+version: "26.0720"
 license: MIT
 
 prefixes:
@@ -124,7 +124,21 @@ classes:
             value: "index of session within subject."
           notes:
             value:
-            - "We currently don’t use session_name, session_id and session_repetition in this table."
+            - "We currently don’t use session_name and session_repetition in this table."
+      session_uuid:
+        range: string
+        description: "A globally unique identifier (UUID) for the session, assigned by the recording engine when the session starts. Unlike `session_index` (a per-subject ordinal), `session_uuid` identifies the session across datasets and systems; it is the value event streams refer to when scoping events to a session."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "UUID string (RFC 9562), e.g. `018f3a2b-5c6d-7e8f-9a0b-1c2d3e4f5a6b`."
+          notes:
+            value:
+            - "Optional: datasets recorded before this field existed have no value to backfill. New recording engines should always populate it."
       activity_index:
         range: integer
         description: "When subjects complete multiple activities (e.g., a cognitive test followed by a questionnaire), this variable indicates the order of each activity (i.e., the first activity completed by the subject has `activity_index` = 1, the second activity has `activity_index` = 2; even if the second activity is an exact repetition of the first one)."
@@ -139,6 +153,22 @@ classes:
           notes:
             value:
             - "See `Studyflow` table for more details."
+      response_index:
+        range: integer
+        description: "The 1-based ordinal position of this response within the subject's participation in the study. response_index is nested within subjects — not within any lower-level construct (session, activity, block, or trial) — so the counter starts at the subject's first response and increments to their last without ever resetting. Its maximum value for a given subject equals the number of responses recorded from that subject in the study."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based integer, nested within subject (never reset across sessions or activities)."
+          notes:
+            value:
+            - "response_index is often redundant with episode_index, but not always: in multitask settings a subject may emit two distinct responses at (approximately) the same time; each response gets its own response_index, but both share one episode_index value."
+            - "In a questionnaire where subjects may answer questions in any order, stimulus_index encodes the order of the questions on the page while response_index encodes the order in which the subject answered them."
+            - "Not to be confused with response_option_index (which option was chosen) or response_id (an identifier unique within this table, assigned in temporal order)."
       language:
         range: string
         description: "The language the task was completed in, expressed as a two-letter code within the [ISO_639-1 standard](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)."
@@ -532,7 +562,7 @@ classes:
             value: "string"
           notes:
             value:
-            - "While there is a stimulus_index_in_source to refer to the particular stimulus that was used, we don’t have an equivalent option_index_in_source since all options are displayed. Instead, we use response_index and expected_response_index to refer to a particular option within the set of options."
+            - "While there is a stimulus_index_in_source to refer to the particular stimulus that was used, we don’t have an equivalent option_index_in_source since all options are displayed. Instead, we use response_option_index and expected_response_option_index to refer to a particular option within the set of options."
       option_count:
         range: integer
         description: "The number of options the participant can choose from on a given trial."
@@ -621,7 +651,7 @@ classes:
             value: "integer"
           notes:
             value:
-            - "When expected_response_index = 0, it means that the subject should not respond at all."
+            - "When expected_response_option_index = 0, it means that the subject should not respond at all."
             - "Sometimes stimuli serve both as stimuli and as response options as subjects have to click on a particular stimuli to give their response (e.g., spatial span, odd one out). It is convenient in those cases to use stimulus_position_index to order/index the options (i.e., option_index == stimulus_position_index) and consequently also the responses."
       expected_response_description:
         range: string
@@ -671,8 +701,9 @@ classes:
           notes:
             value:
             - "response_option_index = 0 means the subject chose none of the options (e.g., a “no-go” response in a Go/No-go task)."
-            - "response_index can be directly compared to expected_response_index."
-            - "response_index refers to an entry in the Option table (i.e., there is no Response table)."
+            - "response_option_index can be directly compared to expected_response_option_index."
+            - "response_option_index refers to an entry in the Option table."
+            - "Not to be confused with response_index: response_option_index indexes into the set of options (WHICH option was chosen), whereas response_index is the ordinal position of the response itself within the subject's study participation (see the response_index field; cf. also response_element_index in the Input table for the pieces of one response)."
       response_description:
         range: string
         description: "A description of participant’s response; typically the description of the option that was chosen."
@@ -1352,7 +1383,7 @@ classes:
       onset:
         range: float
         required: true
-        description: "Duration between the start of the trial and the moment the mouse button press occured, in seconds."
+        description: "Duration between the start of the trial and the moment the mouse button press occurred, in seconds."
         annotations:
           categories:
             value:
