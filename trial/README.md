@@ -1,6 +1,6 @@
 # Behaverse Trial Schema (WIP)
 
-**Version:** v26.0720
+**Version:** v26.0721
 **Namespace:** `https://behaverse.org/schemas/trial#`
 **Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) — edit it, then run `python scripts/generate.py`
 
@@ -14,13 +14,15 @@ A trial is a single instance of a participant interacting with a task. Trial inf
 
 | Table | Fields | Description |
 |-------|-------:|-------------|
-| **Response** | 77 | Main table; one row per response in a trial. |
+| **Response** | 79 | Main table; one row per response in a trial. |
 | **Stimulus** | 19 | Each stimulus shown during a trial. |
 | **Option** | 18 | Each option a subject could choose from. |
 | **Input** | 15 | Detailed log of inputs/clicks during the trial. |
 | **StimulusComponent** | 13 | Components that make up a stimulus. |
 | **OptionComponent** | 14 | Components that make up an option. |
 | **Instrument** | 7 | The instrument (and its parameterizations) used for acquisition. |
+| **Subtrial** | 19 | Per-stage detail for staged trials (e.g. the two-step); the trial row stays the unit. |
+| **TaskParameter** | 6 | Per-trial ground-truth generative task parameters, long format. |
 
 ## Conventions
 
