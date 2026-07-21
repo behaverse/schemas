@@ -82,7 +82,7 @@
     {
       "type": "behavior",
       "technique": "behavior",
-      "response_type": ["button-press"],
+      "response_modality": ["button-press"],
       "details": "4-button response box, millisecond timing accuracy"
     }
   ],

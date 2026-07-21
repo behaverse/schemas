@@ -2,6 +2,15 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0721] - 2026-07-21
+
+### Added
+
+- **`Subtrial` table** (19 fields) — per-stage detail for trials composed of successive dependent stages, each with its own stimulus → response → outcome cycle (e.g. the two-step task). The trial row in `Response` remains THE unit and carries the trial-level (aggregate or final) response and evaluation; each `Subtrial` row is a miniature trial anatomy (`subtrial_index`, stimulus reference, response, response_time, evaluation, outcome), keyed by the parent trial, with optional `task_index` so the same mechanism serves compound/concurrent multitasking.
+- **`TaskParameter` table** (6 fields) — per-trial ground-truth generative task parameters in long format (`trial_index` | `task_index` | `parameter` | `index_1` | `index_2` | `value`); serves simulation, parameter recovery, and engine calibration. Doctrine noted in-schema: generative state is not behavior, and must not be consumed as a predictor of the responses it generated.
+- **`Response.subtrial_count`** (optional integer, derived) — number of stages; 1 for simple trials. Documented contrast: digit-span "3-5-7" = 1 subtrial with `response_count` 3; the two-step = 2 subtrials. `response_count` keeps its existing meaning.
+- **`Response.response_type`** (optional enum — the schema's first structured LinkML enum): the form of the response act — `choice` · `rating` · `ranking` (select mode) · `production` · `motor` (generate mode). Orthogonal to `job_type` (membership test: varies while the job is fixed AND recurs across jobs; "recall" is a job, never a response_type). Declared even where derivable; the derivations serve as validation checks.
+
 ## [26.0720] - 2026-07-20
 
 ### Added

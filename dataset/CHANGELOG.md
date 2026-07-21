@@ -5,6 +5,13 @@ All notable changes to the Dataset schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0721] - 2026-07-21
+
+### Breaking
+
+- **`MeasurementTechnique.response_type` renamed to `response_modality`** (enum `ResponseType` → `ResponseModality`). Its values (`button-press`, `key-press`, `mouse`, `voice`, `eye-gaze`, `touchscreen`) are input modalities — device/action facts — not the form of the answer. The rename frees `response_type` for the trial schema's new answer-form field (`choice` · `rating` · `ranking` · `production` · `motor`, trial v26.0721), so the same term cannot mean two different things across the ecosystem (the docs-site glossary harvests terms first-definition-wins).
+- README: removed the stale `tasks[].response_type` row, which documented a slot that does not exist in the schema.
+
 ## [26.0703] - 2026-07-03
 
 ### Fixed
