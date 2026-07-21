@@ -43,7 +43,7 @@ Metadata schema for describing thematic catalogs of datasets that share specific
 ### <img src="assets/img/schema_D.png" height="40" style="vertical-align: middle;"> dataset
 Metadata schema for describing cognitive science datasets with comprehensive coverage of participant demographics, measurement techniques, cognitive tasks, and data access information.
 
-- **Version**: v26.0703  ·  **Source**: [`dataset/schema.linkml.yaml`](dataset/schema.linkml.yaml)
+- **Version**: v26.0721  ·  **Source**: [`dataset/schema.linkml.yaml`](dataset/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/dataset#`
 - **Context**: [`dataset/context.jsonld`](dataset/context.jsonld) · **JSON Schema**: [`dataset/schema.json`](dataset/schema.json) · **Docs**: [`dataset/README.md`](dataset/README.md)
 
@@ -61,7 +61,7 @@ Schema for defining the formal structure of studyflow diagrams - sequences of ac
 ### trial
 Tidy, multi-table schema describing trial-level behavioral data (responses, stimuli, instruments, …) for cognitive tests and questionnaires, derived from raw events.
 
-- **Version**: v26.0720  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
+- **Version**: v26.0721  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/trial#`
 - **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
 - _No `context.jsonld` (the trial fields carry no semantic mappings yet)._

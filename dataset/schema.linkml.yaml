@@ -3,7 +3,7 @@ id: https://behaverse.org/schemas/dataset
 name: dataset
 title: Behaverse Dataset Schema
 description: A metadata schema for cognitive science and neuroscience datasets with mappings to Schema.org, DataCite, BIDS, and other standards
-version: '26.0703'
+version: '26.0721'
 license: MIT
 
 prefixes:
@@ -175,8 +175,8 @@ enums:
       ECG:
       EMG:
       other:
-  ResponseType:
-    description: Types of behavior responses
+  ResponseModality:
+    description: Response input modalities — the device/action through which responses are given (cf. the trial schema's `input_action_type`). Distinct from the trial schema's `response_type`, which names the FORM of the answer (choice, rating, production, ...).
     permissible_values:
       button-press:
       key-press:
@@ -569,10 +569,10 @@ classes:
         description: Echo time in ms (for MRI)
       details:
         description: Additional technique-specific details
-      response_type:
+      response_modality:
         multivalued: true
-        range: ResponseType
-        description: Types of behavior responses (applies when technique is behavior)
+        range: ResponseModality
+        description: Response input modalities used (applies when technique is behavior)
       format:
         description: File format for this specific measurement (e.g., edf, bdf, nii, csv)
       granularity:

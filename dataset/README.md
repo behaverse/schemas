@@ -162,7 +162,7 @@ The schema organizes fields into logical groups:
 | `measurement_technique[].tr` | number | optional | Repetition time in ms (for fMRI) | — |
 | `measurement_technique[].te` | number | optional | Echo time in ms (for MRI) | — |
 | `measurement_technique[].details` | string | optional | Additional technique-specific details | — |
-| `measurement_technique[].response_type` | array[string] | optional | Response types: `button-press`, `key-press`, `mouse`, `voice`, `eye-gaze`, `touchscreen` | — |
+| `measurement_technique[].response_modality` | array[string] | optional | Response input modalities: `button-press`, `key-press`, `mouse`, `voice`, `eye-gaze`, `touchscreen` | — |
 | `measurement_technique[].format` | string | optional | File format (e.g., edf, bdf, nii, csv) | — |
 | `measurement_technique[].granularity` | string | optional | Data granularity: `event-data`, `timecourse-data`, `trial-data`, `construct-data`, `aggregate-data` | — |
 | `constructs_measured` | array[string] | optional | Cognitive or psychological constructs measured | schema:variableMeasured |
@@ -176,7 +176,6 @@ The schema organizes fields into logical groups:
 | `tasks[].type` | string | optional | Task type (e.g., "cognitive", "motor") | — |
 | `tasks[].description` | string | optional | Task description | schema:description |
 | `tasks[].stimulus_type` | array[string] | optional | Stimulus types (e.g., "visual", "auditory") | — |
-| `tasks[].response_type` | string | optional | Response mode (e.g., "button_press", "verbal") | — |
 | `tasks[].trial_count` | integer | optional | Number of trials | — |
 | `tasks[].duration` | number | optional | Task duration (seconds) | — |
 | `tasks[].url` | string | optional | Task documentation URL | schema:url |
