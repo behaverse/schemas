@@ -2,6 +2,12 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0722] - 2026-07-22
+
+### Changed
+
+- Field-description prose now says **agent(s)** wherever it said subject(s)/participant(s) (75 replacements across all tables), aligning the schema's wording with BDM naming Rule 6 ("use 'agent' to refer to the entity generating the response data"). Also reworded the `stop_signal` stimulus-role description to gender-neutral phrasing. No structural changes — field names, types, requirements, and ranges are untouched.
+
 ## [26.0721] - 2026-07-21
 
 ### Added
