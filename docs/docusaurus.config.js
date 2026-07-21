@@ -101,6 +101,12 @@ const config = {
           },
           {
             type: 'docSidebar',
+            sidebarId: 'timeseriesSidebar',
+            position: 'left',
+            label: 'timeseries',
+          },
+          {
+            type: 'docSidebar',
             sidebarId: 'vocabularySidebar',
             position: 'left',
             label: 'vocabulary',
@@ -141,6 +147,10 @@ const config = {
               {
                 label: 'event',
                 to: '/event',
+              },
+              {
+                label: 'timeseries',
+                to: '/timeseries',
               },
               {
                 label: 'vocabulary',

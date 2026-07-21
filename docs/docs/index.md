@@ -51,6 +51,42 @@ Schema for defining the formal structure of studyflow diagrams - sequences of ac
 - Resource management
 - Visual modeling support
 
+### [trial](/trial)
+
+Tidy, multi-table schema describing trial-level behavioral data — the task-specific aggregates derived from raw events — for cognitive tests and questionnaires.
+
+**Key features:**
+- 9 related tables (Response, Stimulus, Option, Input, Subtrial, TaskParameter, …)
+- One row per response, joined by `_id` foreign keys
+- Per-stage subtrial detail and generative task parameters
+
+### [event](/event)
+
+Raw experimental events: an xAPI-style envelope (actor / verb / object) carrying the canonical Behaverse `bdm:` vocabulary, so one set of analytics tooling can process every domain.
+
+**Key features:**
+- 25 canonical verbs across 6 layers
+- Continuous signals referenced via attachments, never inlined
+- NDJSON at-rest storage convention
+
+### [timeseries](/timeseries)
+
+Sidecar metadata for continuous sampled signals (mouse trajectories, gaze, EEG): a small JSON document beside each payload file declaring its clock, sampling nature, and channels.
+
+**Key features:**
+- Channel-based — one shape for mouse, gaze, and EEG
+- Monotonic-clock semantics with a wall-clock anchor
+- Payload-format agnostic (NDJSON, CSV, EDF, Parquet)
+
+### [vocabulary](/vocabulary)
+
+Cross-cutting controlled terminology (SKOS concept schemes and concepts): general terms, demographics, clock/timing terms, and the suffix conventions used in variable names.
+
+**Key features:**
+- Stable term URIs under one `bdm:` namespace
+- Clock terms (`engine_seconds`, `anchor_datetime`, `t`)
+- Naming-suffix conventions (`*_index`, `*_id`, `*_count`, …)
+
 ## Quick Links
 
 - [GitHub Repository](https://github.com/behaverse/schemas)

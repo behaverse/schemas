@@ -9,14 +9,14 @@ slug: /dataset
 
 # <img src={require('@site/static/assets/img/schema_D.png').default} height="80" style={{verticalAlign: 'middle'}} /> dataset
 
-**Version**: v25.1201  
+**Version**: v26.0721  
 **Namespace**: `https://behaverse.org/schemas/dataset`
 
 A metadata schema for cognitive science and neuroscience datasets with mappings to Schema.org, DataCite, BIDS, and other standards
 
 ## Properties
 
-This schema defines **44 properties** for describing dataset metadata.
+This schema defines **45 properties** for describing dataset metadata.
 
 ### Core Metadata
 
@@ -24,11 +24,12 @@ Essential fields for dataset identification
 
 | Property | Type | Requirement | Description |
 |:---------|:-----|:------------|:------------|
+| [@type](dataset/@type) | `schema:Dataset` | optional | JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverabil... |
 | [name](dataset/name) | `string` | required | Short URL-friendly identifier |
 | [pretty_name](dataset/pretty_name) | `string` | recommended | Human-readable display title |
 | [description](dataset/description) | `string` | required | Comprehensive dataset description |
 | [version](dataset/version) | `string` | recommended | Dataset version (semantic versioning) |
-| [license](dataset/license) | `string` | required | License identifier in SPDX format |
+| [license](dataset/license) | `enum` | required | License identifier in SPDX format |
 | [url](dataset/url) | `string` | recommended | Dataset homepage or landing page |
 | [doi](dataset/doi) | `string` | recommended | Digital Object Identifier |
 | [keywords](dataset/keywords) | `array` | recommended | Keywords for discovery |
@@ -63,22 +64,15 @@ Each creator in the `creator` array is an object with the following properties:
 
 | Property | Type | Requirement | Description |
 |:---------|:-----|:------------|:------------|
-| [name](dataset/creator/name) | `string` | required | Creator full name |
-| [email](dataset/creator/email) | `string` | optional | Creator email address (format: email) |
+| [name](dataset/creator/name) | `string` | required | Full name of the person |
+| [email](dataset/creator/email) | `string` | optional | Email address |
 | [orcid](dataset/creator/orcid) | `string` | optional | ORCID identifier (format: 0000-0000-0000-0000) |
 | [affiliation](dataset/creator/affiliation) | `string` | optional | Institutional affiliation |
 
 **Example:**
 ```json
 {
-  "creator": [
-  {
-    "name": "Jane Researcher",
-    "email": "jane@university.edu",
-    "orcid": "0000-0001-2345-6789",
-    "affiliation": "University Psychology Department"
-  }
-]
+  "creator": "[{\"name\": \"Jane Researcher\", \"email\": \"jane@university.edu\", \"orcid\": \"0000-0001-2345-6789\", \"affiliation\": \"University Psychology Department\"}]"
 }
 ```
 
@@ -88,8 +82,8 @@ Each curator in the `curator` array is an object with the following properties:
 
 | Property | Type | Requirement | Description |
 |:---------|:-----|:------------|:------------|
-| [name](dataset/curator/name) | `string` | required | Curator full name |
-| [email](dataset/curator/email) | `string` | optional | Curator email address (format: email) |
+| [name](dataset/curator/name) | `string` | required | Full name of the person |
+| [email](dataset/curator/email) | `string` | optional | Email address |
 | [orcid](dataset/curator/orcid) | `string` | optional | ORCID identifier (format: 0000-0000-0000-0000) |
 | [affiliation](dataset/curator/affiliation) | `string` | optional | Institutional affiliation |
 
@@ -108,7 +102,7 @@ Each citation in the `citation` array is an object with the following properties
 
 | Property | Type | Requirement | Description |
 |:---------|:-----|:------------|:------------|
-| [type](dataset/citation/type) | `string` | optional | Citation type |
+| [type](dataset/citation/type) | `enum` | optional | Citation type |
 | [doi](dataset/citation/doi) | `string` | optional | DOI of cited paper |
 | [url](dataset/citation/url) | `string` | optional | URL of cited resource |
 | [text](dataset/citation/text) | `string` | optional | Full citation text |
@@ -127,7 +121,7 @@ Aggregate-level population demographics and coverage
 | [age_std](dataset/age_std) | `number` | optional | Standard deviation of age |
 | [sex_distribution](dataset/sex_distribution) | `object` | recommended | Participant counts by sex |
 | [age_category](dataset/age_category) | `array` | optional | Age group classification |
-| [population_category](dataset/population_category) | `string` | optional | Population type (clinical vs healthy) |
+| [population_category](dataset/population_category) | `enum` | optional | Population type (clinical vs healthy) |
 | [inclusion_criteria](dataset/inclusion_criteria) | `array` | optional | Participant inclusion criteria |
 | [exclusion_criteria](dataset/exclusion_criteria) | `array` | optional | Participant exclusion criteria |
 | [spatial_coverage](dataset/spatial_coverage) | `string` | optional | Geographic location/region |
@@ -147,12 +141,7 @@ Each sex_distribution in the `sex_distribution` array is an object with the foll
 **Example:**
 ```json
 {
-  "sex_distribution": {
-  "female": 52,
-  "male": 45,
-  "other": 2,
-  "not_reported": 1
-}
+  "sex_distribution": "{\"female\": 52, \"male\": 45, \"other\": 2, \"not_reported\": 1}"
 }
 ```
 
@@ -172,8 +161,8 @@ Each measurement_technique in the `measurement_technique` array is an object wit
 
 | Property | Type | Requirement | Description |
 |:---------|:-----|:------------|:------------|
-| [type](dataset/measurement_technique/type) | `string` | optional | High-level category of measurement |
-| [technique](dataset/measurement_technique/technique) | `string` | required | Specific measurement technique |
+| [type](dataset/measurement_technique/type) | `enum` | optional | High-level category of measurement |
+| [technique](dataset/measurement_technique/technique) | `enum` | required | Specific measurement technique |
 | [channels](dataset/measurement_technique/channels) | `integer` | optional | Number of channels/electrodes (for EEG, MEG) |
 | [sampling_rate](dataset/measurement_technique/sampling_rate) | `number` | optional | Sampling rate in Hz (for EEG, MEG, physiological) |
 | [reference](dataset/measurement_technique/reference) | `string` | optional | Reference type (for EEG, MEG) |
@@ -182,24 +171,14 @@ Each measurement_technique in the `measurement_technique` array is an object wit
 | [tr](dataset/measurement_technique/tr) | `number` | optional | Repetition time in ms (for fMRI) |
 | [te](dataset/measurement_technique/te) | `number` | optional | Echo time in ms (for MRI) |
 | [details](dataset/measurement_technique/details) | `string` | optional | Additional technique-specific details |
-| [response_type](dataset/measurement_technique/response_type) | `array` | optional | Types of behavior responses (applies when technique is behavior) |
+| [response_modality](dataset/measurement_technique/response_modality) | `array` | optional | Response input modalities used (applies when technique is behavior) |
 | [format](dataset/measurement_technique/format) | `string` | optional | File format for this specific measurement (e.g., edf, bdf, nii, csv) |
-| [granularity](dataset/measurement_technique/granularity) | `string` | optional | Granularity of the measurement (e.g., per trial, per subject, per session) |
+| [granularity](dataset/measurement_technique/granularity) | `enum` | optional | Granularity of the measurement (e.g., per trial, per subject, per session) |
 
 **Example:**
 ```json
 {
-  "measurement_technique": [
-  {
-    "type": "electrophysiology",
-    "technique": "EEG",
-    "channels": 64,
-    "sampling_rate": 512,
-    "reference": "average",
-    "manufacturer": "BioSemi",
-    "granularity": "event-data"
-  }
-]
+  "measurement_technique": "[{\"type\": \"electrophysiology\", \"technique\": \"EEG\", \"channels\": 64, \"sampling_rate\": 512, \"reference\": \"average\", \"manufacturer\": \"BioSemi\", \"granularity\": \"event-data\"}]"
 }
 ```
 
@@ -219,7 +198,7 @@ Each activity in the `activity` array is an object with the following properties
 | Property | Type | Requirement | Description |
 |:---------|:-----|:------------|:------------|
 | [name](dataset/activity/name) | `string` | required | Activity/task name |
-| [type](dataset/activity/type) | `string` | optional | Activity type/category |
+| [type](dataset/activity/type) | `enum` | optional | Activity type/category |
 | [measurements](dataset/activity/measurements) | `array` | optional | List of measurement techniques collected during this activity (reference by technique name) |
 | [trials](dataset/activity/trials) | `integer` | optional | Number of trials |
 | [duration](dataset/activity/duration) | `number` | optional | Typical duration in minutes |
@@ -230,30 +209,7 @@ Each activity in the `activity` array is an object with the following properties
 **Example:**
 ```json
 {
-  "activity": [
-  {
-    "name": "N-Back",
-    "type": "task",
-    "measurements": [
-      "EEG",
-      "eye-tracking",
-      "response-device"
-    ],
-    "trials": 150,
-    "duration": 20,
-    "conditions": [
-      "0-back",
-      "2-back"
-    ],
-    "measures": [
-      "d_prime",
-      "reaction_time"
-    ],
-    "constructs": [
-      "working memory"
-    ]
-  }
-]
+  "activity": "[{\"name\": \"N-Back\", \"type\": \"task\", \"measurements\": [\"EEG\", \"eye-tracking\", \"response-device\"], \"trials\": 150, \"duration\": 20, \"conditions\": [\"0-back\", \"2-back\"], \"measures\": [\"d_prime\", \"reaction_time\"], \"constructs\": [\"working memory\"]}]"
 }
 ```
 
@@ -264,7 +220,7 @@ Study design and methodology
 
 | Property | Type | Requirement | Description |
 |:---------|:-----|:------------|:------------|
-| [study_design_type](dataset/study_design_type) | `string` | recommended | Study design category |
+| [study_design_type](dataset/study_design_type) | `enum` | recommended | Study design category |
 | [intervention_type](dataset/intervention_type) | `array` | optional | Type(s) of intervention (applies when study_design_type is intervention) |
 | [session_count](dataset/session_count) | `integer` | optional | Number of experimental sessions per participant |
 | [session_description](dataset/session_description) | `string` | optional | Brief description of session structure (if multi-session) |
@@ -295,10 +251,7 @@ Each access_conditions in the `access_conditions` array is an object with the fo
 **Example:**
 ```json
 {
-  "access_conditions": {
-  "is_free": true,
-  "requirements": "Publicly available"
-}
+  "access_conditions": "{\"is_free\": true, \"requirements\": \"Publicly available\"}"
 }
 ```
 
@@ -324,11 +277,7 @@ Each ethical_approval in the `ethical_approval` array is an object with the foll
 **Example:**
 ```json
 {
-  "ethical_approval": {
-  "obtained": true,
-  "institution": "University IRB",
-  "protocol": "IRB-2024-001"
-}
+  "ethical_approval": "{\"obtained\": true, \"institution\": \"University IRB\", \"protocol\": \"IRB-2024-001\"}"
 }
 ```
 
@@ -339,7 +288,7 @@ ML dataset metadata
 
 | Property | Type | Requirement | Description |
 |:---------|:-----|:------------|:------------|
-| [size_category](dataset/size_category) | `string` | optional | HF size bucket |
+| [size_category](dataset/size_category) | `enum` | optional | HF size bucket |
 | [task_categories](dataset/task_categories) | `array` | optional | ML task types |
 
 
@@ -350,6 +299,6 @@ See the [examples](dataset/examples) for practical usage patterns.
 
 ## Version History
 
-The current version of `dataset` is `v25.1201`.
+The current version of `dataset` is `v26.0721`.
 
 Older versions are available in the [`dataset/versions/`](https://github.com/behaverse/schemas/tree/main/dataset/versions) directory.

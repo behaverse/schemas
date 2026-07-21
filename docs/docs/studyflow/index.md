@@ -9,7 +9,7 @@ slug: /studyflow
 
 # <img src={require('@site/static/assets/img/schema_S.png').default} height="80" style={{verticalAlign: 'middle'}} /> studyflow
 
-**Version**: v25.1217.dev  
+**Version**: v25.1217.dev2  
 **Namespace**: `http://behaverse.org/schemas/studyflow`
 
 LinkML schema for Behaverse Studyflow
@@ -47,6 +47,6 @@ See the [examples](./studyflow/examples) for practical usage patterns.
 
 ## Version History
 
-The current version of `studyflow` is `v25.1217.dev`.
+The current version of `studyflow` is `v25.1217.dev2`.
 
 Older versions are available in the [`studyflow/versions/`](https://github.com/behaverse/schemas/tree/main/studyflow/versions) directory.

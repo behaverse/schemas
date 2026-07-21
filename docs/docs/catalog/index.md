@@ -9,14 +9,14 @@ slug: /catalog
 
 # <img src={require('@site/static/assets/img/schema_C.png').default} height="80" style={{verticalAlign: 'middle'}} /> catalog
 
-**Version**: v26.0107  
+**Version**: v26.0703  
 **Namespace**: `https://behaverse.org/schemas/catalog`
 
 A metadata schema for thematic catalogs of cognitive science and neuroscience datasets
 
 ## Properties
 
-This schema defines **13 properties** for describing catalog metadata.
+This schema defines **14 properties** for describing catalog metadata.
 
 ### Core Metadata
 
@@ -24,6 +24,7 @@ Essential fields for catalog identification
 
 | Property | Type | Requirement | Description |
 |:---------|:-----|:------------|:------------|
+| [@type](catalog/@type) | `schema:DataCatalog` | optional | JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverabil... |
 | [name](catalog/name) | `string` | required | Short URL-friendly identifier |
 | [pretty_name](catalog/pretty_name) | `string` | required | Human-readable display title |
 | [description](catalog/description) | `string` | required | Comprehensive description of the catalog's purpose and scope |
@@ -39,20 +40,14 @@ Each curator in the `curator` array is an object with the following properties:
 | Property | Type | Requirement | Description |
 |:---------|:-----|:------------|:------------|
 | [name](catalog/curator/name) | `string` | required | Curator full name |
-| [email](catalog/curator/email) | `string` | optional | Curator email address (format: email) |
+| [email](catalog/curator/email) | `string` | optional | Curator email address |
 | [orcid](catalog/curator/orcid) | `string` | optional | ORCID identifier (format: 0000-0000-0000-0000) |
 | [affiliation](catalog/curator/affiliation) | `string` | optional | Institutional affiliation |
 
 **Example:**
 ```json
 {
-  "curator": [
-  {
-    "name": "Curator Name",
-    "email": "curator@institution.edu",
-    "orcid": "0000-0001-2345-6789"
-  }
-]
+  "curator": "[{\"name\": \"Curator Name\", \"email\": \"curator@institution.edu\", \"orcid\": \"0000-0001-2345-6789\"}]"
 }
 ```
 
@@ -94,6 +89,6 @@ See the [examples](catalog/examples) for practical usage patterns.
 
 ## Version History
 
-The current version of `catalog` is `v26.0107`.
+The current version of `catalog` is `v26.0703`.
 
 Older versions are available in the [`catalog/versions/`](https://github.com/behaverse/schemas/tree/main/catalog/versions) directory.

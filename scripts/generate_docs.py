@@ -78,6 +78,11 @@ SCHEMAS = {
         'name': 'Event Schema',
         'icon': '',
     },
+    'timeseries': {
+        'source': 'linkml',  # tree_root class attributes (no field_groups annotation)
+        'name': 'Timeseries Schema',
+        'icon': '',
+    },
     'vocabulary': {
         'source': 'terms',  # SKOS-style terms.yaml: schemes + concepts
         'skos_vocabulary': True,  # grouped Overview (one section per public scheme)
@@ -921,8 +926,8 @@ def generate_sidebar_config(schema_name: str, data: Dict[str, Any]) -> Dict[str,
         }
     ]
     
-    # Add about page for bcsv, catalog, and dataset
-    if schema_name in ['bcsv', 'catalog', 'dataset']:
+    # Add about page for the schemas that ship a hand-written about.md
+    if schema_name in ['bcsv', 'catalog', 'dataset', 'timeseries']:
         sidebar.append({
             'type': 'doc',
             'id': f'{schema_name}/about',
