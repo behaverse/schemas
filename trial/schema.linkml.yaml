@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events."
-version: "26.0721"
+version: "26.0727"
 license: MIT
 
 prefixes:
@@ -21,8 +21,19 @@ imports:
   - linkml:types
 
 enums:
+  RunStatusEnum:
+    description: "How far an activity run got. Derived from the lifecycle events (`bdm:started`, `bdm:completed`, `bdm:abandoned`) where an event stream exists, and authored directly otherwise. In a published dataset every run has reached a terminal state; `initialized`/`in_progress` describe runs recorded while still in flight."
+    permissible_values:
+      initialized:
+        description: "The run was created but no content was ever shown to the agent (no `bdm:started`)."
+      in_progress:
+        description: "The run started but has no terminal state — still running, or interrupted without a recorded ending (e.g. an engine crash)."
+      completed:
+        description: "All required content was done (`bdm:completed`)."
+      abandoned:
+        description: "The run ended without completion (`bdm:abandoned`); see `abandon_reason`."
   ResponseTypeEnum:
-    description: "The FORM of the response act — how the answer is expressed and recorded (\"what kind of answer is collected?\"). Orthogonal to `job_type` (the cognitive operation asked of the subject) and to `response_structure` (unitary/set/sequence). Values group into two modes: SELECT (the answer is chosen from presented options/scale/ordering) and GENERATE (the subject produces the answer's content); the mode is derivable from the value and is not a separate column."
+    description: "The FORM of the response act — how the answer is expressed and recorded (\"what kind of answer is collected?\"). Orthogonal to `job_type` (the cognitive operation asked of the agent) and to `response_structure` (unitary/set/sequence). Values group into two modes: SELECT (the answer is chosen from presented options/scale/ordering) and GENERATE (the agent produces the answer's content); the mode is derivable from the value and is not a separate column."
     permissible_values:
       choice:
         description: "SELECT mode: pick one (or more) of the presented options."
@@ -85,6 +96,16 @@ classes:
         range: TaskParameter
         inlined_as_list: true
         description: "Rows of the TaskParameter table."
+      TrialParameter:
+        multivalued: true
+        range: TrialParameter
+        inlined_as_list: true
+        description: "Rows of the TrialParameter table."
+      Studyflow:
+        multivalued: true
+        range: Studyflow
+        inlined_as_list: true
+        description: "Rows of the Studyflow table (the run log)."
 
   Response:
     description: "Main table where each row describes a response in a trial."
@@ -94,9 +115,20 @@ classes:
         value:
         - "The information in this table should be sufficient for most analyses, but more detailed information may be linked from other tables via identifiers (`response_id` and `trial_index`)."
     attributes:
+      runtime_id:
+        required: true
+        description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this response belongs to. Unique dataset-wide, so rows from different agents, sessions, or attempts stay distinguishable when files are concatenated. Resolves in the `Studyflow` table, and equals the event layer's `bdm:runtime_id` for the same run."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`runtime_id` in the `Studyflow` table."
       response_id:
         required: true
-        description: "A unique identifier assigned to responses in temporal order, meaning that larger IDs correspond to more recent responses that occurred later in time. This ID is unique within this table; no two rows share the same value."
+        description: "A unique identifier assigned to responses in temporal order, meaning that larger IDs correspond to more recent responses that occurred later in time. This ID is unique within one activity run; the dataset-wide key is the pair (`runtime_id`, `response_id`)."
         annotations:
           categories:
             value:
@@ -118,7 +150,7 @@ classes:
             value: "string"
       group_name:
         range: string
-        description: "Subjects may be assigned to different groups. Typically, different groups will have different experiences within a study."
+        description: "Agents may be assigned to different groups. Typically, different groups will have different experiences within a study."
         annotations:
           categories:
             value:
@@ -138,7 +170,7 @@ classes:
       session_index:
         range: integer
         required: true
-        description: "When there are multiple sessions, this variable indicates the order of each session (i.e., the first session completed by the subject has `session_index` = 1, the second session has `session_index` = 2; even if the second session is an exact repetition of the first one)."
+        description: "When there are multiple sessions, this variable indicates the order of each session (i.e., the first session completed by the agent has `session_index` = 1, the second session has `session_index` = 2; even if the second session is an exact repetition of the first one)."
         annotations:
           categories:
             value:
@@ -146,13 +178,13 @@ classes:
           bdm_type:
             value: "integer"
           range_description:
-            value: "index of session within subject."
+            value: "index of session within agent."
           notes:
             value:
             - "We currently don’t use session_name and session_repetition in this table."
       session_uuid:
         range: string
-        description: "A globally unique identifier (UUID) for the session, assigned by the recording engine when the session starts. Unlike `session_index` (a per-subject ordinal), `session_uuid` identifies the session across datasets and systems; it is the value event streams refer to when scoping events to a session."
+        description: "A globally unique identifier (UUID) for the session, assigned by the recording engine when the session starts. Unlike `session_index` (a per-agent ordinal), `session_uuid` identifies the session across datasets and systems; it is the value event streams refer to when scoping events to a session."
         annotations:
           categories:
             value:
@@ -166,7 +198,7 @@ classes:
             - "Optional: datasets recorded before this field existed have no value to backfill. New recording engines should always populate it."
       activity_index:
         range: integer
-        description: "When subjects complete multiple activities (e.g., a cognitive test followed by a questionnaire), this variable indicates the order of each activity (i.e., the first activity completed by the subject has `activity_index` = 1, the second activity has `activity_index` = 2; even if the second activity is an exact repetition of the first one)."
+        description: "When agents complete multiple activities (e.g., a cognitive test followed by a questionnaire), this variable indicates the order of each activity (i.e., the first activity completed by the agent has `activity_index` = 1, the second activity has `activity_index` = 2; even if the second activity is an exact repetition of the first one)."
         annotations:
           categories:
             value:
@@ -174,13 +206,13 @@ classes:
           bdm_type:
             value: "index"
           range_description:
-            value: "1-based index of activity within the subject-level data."
+            value: "1-based index of activity within the agent-level data."
           notes:
             value:
             - "See `Studyflow` table for more details."
       response_index:
         range: integer
-        description: "The 1-based ordinal position of this response within the subject's participation in the study. response_index is nested within subjects — not within any lower-level construct (session, activity, block, or trial) — so the counter starts at the subject's first response and increments to their last without ever resetting. Its maximum value for a given subject equals the number of responses recorded from that subject in the study."
+        description: "The 1-based ordinal position of this response within the agent's participation in the study. response_index is nested within agents — not within any lower-level construct (session, activity, block, or trial) — so the counter starts at the agent's first response and increments to their last without ever resetting. Its maximum value for a given agent equals the number of responses recorded from that agent in the study."
         annotations:
           categories:
             value:
@@ -188,11 +220,11 @@ classes:
           bdm_type:
             value: "index"
           range_description:
-            value: "1-based integer, nested within subject (never reset across sessions or activities)."
+            value: "1-based integer, nested within agent (never reset across sessions or activities)."
           notes:
             value:
-            - "response_index is often redundant with episode_index, but not always: in multitask settings a subject may emit two distinct responses at (approximately) the same time; each response gets its own response_index, but both share one episode_index value."
-            - "In a questionnaire where subjects may answer questions in any order, stimulus_index encodes the order of the questions on the page while response_index encodes the order in which the subject answered them."
+            - "response_index is often redundant with episode_index, but not always: in multitask settings a agent may emit two distinct responses at (approximately) the same time; each response gets its own response_index, but both share one episode_index value."
+            - "In a questionnaire where agents may answer questions in any order, stimulus_index encodes the order of the questions on the page while response_index encodes the order in which the agent answered them."
             - "Not to be confused with response_option_index (which option was chosen) or response_id (an identifier unique within this table, assigned in temporal order)."
       language:
         range: string
@@ -217,7 +249,7 @@ classes:
             value: "`id` in the `Instrument` table."
       instrument_repetition:
         range: integer
-        description: "The number of times this particular instrument has already been completed anytime in the past by this particular subject in this study. This variable has a value 0 the first time an instrument is used."
+        description: "The number of times this particular instrument has already been completed **by this agent** anywhere earlier in this study. It counts one agent's own history across sessions — never how many times the instrument was completed across participants. This variable has a value 0 the first time an instrument is used."
         annotations:
           categories:
             value:
@@ -226,6 +258,33 @@ classes:
             value: "integer"
           range_description:
             value: "0-based"
+          notes:
+            value:
+            - "Distinct from `attempt`, which counts runs of the activity within the current session and is what identifies a session that was interrupted and restarted. See the `Studyflow` table."
+      attempt:
+        range: integer
+        required: true
+        description: "The 1-based ordinal of this activity run within the session: the first run of the activity has `attempt` = 1, a restart after an interruption has `attempt` = 2, and so on. This is what distinguishes several runs of the same activity that now live in one file together."
+        annotations:
+          categories:
+            value:
+            - "Task"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based index of the run within (agent, session, activity). See `attempt` in the `Studyflow` table."
+      status:
+        range: RunStatusEnum
+        description: "How far this response's activity run got — copied from the run's row in the `Studyflow` table so that trials from abandoned runs can be filtered without a join. The `Studyflow` table is authoritative; a disagreement between the two is a dataset error."
+        annotations:
+          categories:
+            value:
+            - "Task"
+          bdm_type:
+            value: "enum"
+          notes:
+            value:
+            - "Derived, and only final once the run has ended; runs recorded while still in flight read `in_progress`. In a published dataset every run has reached a terminal state."
       timeline_id:
         range: string
         description: "Timelines are specific parameterization of an instrument and their identifiers are unique within the corresponding table for the instrument in the `instruments/` folder."
@@ -237,7 +296,7 @@ classes:
             value: "string"
       timeline_repetition:
         range: integer
-        description: "The number of times this particular timeline has already been completed anytime in the past by this particular subject in this study. This variable has a value 0 the first time a timeline is completed."
+        description: "The number of times this particular timeline has already been completed anytime in the past by this particular agent in this study. This variable has a value 0 the first time a timeline is completed."
         annotations:
           categories:
             value:
@@ -249,7 +308,7 @@ classes:
       multitask_type:
         range: string
         required: true
-        description: "Subjects may be required to perform multiple tasks at the same time. This variable indicates the type of multitasking required."
+        description: "Agents may be required to perform multiple tasks at the same time. This variable indicates the type of multitasking required."
         annotations:
           categories:
             value:
@@ -287,7 +346,7 @@ classes:
             - "Not the same as `response_count`, which counts the pieces of ONE response: a digit-span trial recalling \"3-5-7\" has `response_count` = 3 but `subtrial_count` = 1 (one stimulus, one recall, one evaluation), while a two-step trial has `subtrial_count` = 2 (two stages, each with its own stimulus and outcome)."
       job_type:
         range: string
-        description: "The general type of operation the subject needs to perform. The job typically is expressed as a verb (e.g., \"recall\", \"sort\") and can be the same for different instruments (e.g., Digit Span test and Spatial Span test both have a job of type \"recall-forward\")."
+        description: "The general type of operation the agent needs to perform. The job typically is expressed as a verb (e.g., \"recall\", \"sort\") and can be the same for different instruments (e.g., Digit Span test and Spatial Span test both have a job of type \"recall-forward\")."
         annotations:
           categories:
             value:
@@ -313,11 +372,11 @@ classes:
           bdm_type:
             value: "enum"
           range_description:
-            value: "- `new`: The job has never been seen before by this subject in the current study. - `repeat`: The job is the same as the previous trial. - `switch`: The job is different from the previous trial but has been seen prior in the timeline."
+            value: "- `new`: The job has never been seen before by this agent in the current study. - `repeat`: The job is the same as the previous trial. - `switch`: The job is different from the previous trial but has been seen prior in the timeline."
       block_index:
         range: integer
         required: true
-        description: "Refers to the order in which this block has been experienced by the subject. When there are multiple blocks, this variable indicates the order of each block (i.e., the first block completed by the subject has `block_index=1`, the second block has `block_index=2`, even if the second block is an exact repetition of the first one)."
+        description: "Refers to the order in which this block has been experienced by the agent. When there are multiple blocks, this variable indicates the order of each block (i.e., the first block completed by the agent has `block_index=1`, the second block has `block_index=2`, even if the second block is an exact repetition of the first one)."
         annotations:
           categories:
             value:
@@ -349,7 +408,7 @@ classes:
           bdm_type:
             value: "enum"
           range_description:
-            value: "- `tutorial`: A simplified version of the test designed to teach participants how the test works. - `practice`: Typically identical to the main test blocks but are used to get subjects accustomed to the task in a no-stakes environment. - `test`: Primary blocks used to measure the desired behaviors. - `instruction`: Presents written and/or visual instructions to the subject."
+            value: "- `tutorial`: A simplified version of the test designed to teach agents how the test works. - `practice`: Typically identical to the main test blocks but are used to get agents accustomed to the task in a no-stakes environment. - `test`: Primary blocks used to measure the desired behaviors. - `instruction`: Presents written and/or visual instructions to the agent."
       transformation_name:
         range: string
         required: true
@@ -440,7 +499,7 @@ classes:
           bdm_type:
             value: "enum"
           range_description:
-            value: "- `message`: The stimulus is a message shown to subjects (e.g., task instructions). - `question`: The stimulus may consist of text, images and/or sounds; they require subjects to make a decision based on the content of the stimulus."
+            value: "- `message`: The stimulus is a message shown to agents (e.g., task instructions). - `question`: The stimulus may consist of text, images and/or sounds; they require agents to make a decision based on the content of the stimulus."
       stimulus_onset:
         range: float
         description: "Duration between the start of the trial and the appearance of the stimulus, in seconds."
@@ -578,7 +637,7 @@ classes:
           bdm_type:
             value: "enum"
           range_description:
-            value: "- \"target\": \"A stimulus the subject must process and which should trigger the completion of the response (e.g., classify, reach, memorize) if the subject is doing the task as intended. Note that in some cases (e.g., in a go/no-go task) the correct response to a stimulus is to NOT click the button. In this case, the stimulus that triggered the decision to NOT click the button is still a *target*.\" - \"non_target\": \"A stimulus the subject must process but which does not trigger the completion of the response (e.g., the first two stimuli in a 2-back test).\" - \"distractor\": \"A stimulus the subject should not process at all (i.e., ignore) and which is unrelated to the correct execution of the task.\" - \"location_cue\": \"A stimulus giving a spatial location information that subjects could use to improve their performance.\" - \"job_specifier\": \"A stimulus specifying which job the subject should perform.\" - \"stop_signal\": \"A stimulus signaling the participant he should abort his current action.\" - \"probe\": \"A stimulus indicating about which stimulus to respond.\""
+            value: "- \"target\": \"A stimulus the agent must process and which should trigger the completion of the response (e.g., classify, reach, memorize) if the agent is doing the task as intended. Note that in some cases (e.g., in a go/no-go task) the correct response to a stimulus is to NOT click the button. In this case, the stimulus that triggered the decision to NOT click the button is still a *target*.\" - \"non_target\": \"A stimulus the agent must process but which does not trigger the completion of the response (e.g., the first two stimuli in a 2-back test).\" - \"distractor\": \"A stimulus the agent should not process at all (i.e., ignore) and which is unrelated to the correct execution of the task.\" - \"location_cue\": \"A stimulus giving a spatial location information that agents could use to improve their performance.\" - \"job_specifier\": \"A stimulus specifying which job the agent should perform.\" - \"stop_signal\": \"A stimulus signaling the agent that they should abort the current action.\" - \"probe\": \"A stimulus indicating about which stimulus to respond.\""
       option_source_type:
         range: string
         description: "A set of options is typically created using a particular procedure/algorithm (“generator”) or is sampled from a particular set (“set”). This variable indicates which of these two applies for the current options."
@@ -642,7 +701,7 @@ classes:
             value: "- \"nominal\": Set of unordered labels (e.g., {“Luxembourg”, “France”, “Germany”}). - \"ordinal\": \"Ordered values without clear distance (e.g., {“a lot”, “a bit”, “not at all”}). - \"interval\": Ordered values with clear distances but no absolute zero (e.g., 10 versus 20 degrees Celsius). - \"ratio\": Values with clear distance metrics and absolute zero (e.g., length in cm)."
       input_interface_type:
         range: string
-        description: "Refers to the type of interface subjects used to input actions. Possible values include (non-exhaustive):"
+        description: "Refers to the type of interface agents used to input actions. Possible values include (non-exhaustive):"
         annotations:
           categories:
             value:
@@ -653,7 +712,7 @@ classes:
             value: "- `keyboard`: A keyboard is displayed on the screen. - `buttons`: Dedicated buttons on the screen. - `stimulus-button`: Stimuli serves as buttons. - `text-field`: A text field is displayed on the screen. - `slider`: A slider is displayed on the screen."
       input_action_type:
         range: string
-        description: "Refers to the type of action the subject performs to give a response. Possible values include (non-exhaustive):"
+        description: "Refers to the type of action the agent performs to give a response. Possible values include (non-exhaustive):"
         annotations:
           categories:
             value:
@@ -679,7 +738,7 @@ classes:
             - "For mouse-drag, it corresponds to the number of drag points that have been sampled during the drag-and-drop."
       expected_response_option_index:
         range: integer
-        description: "The index of the option the subject is expected to choose from the set of options."
+        description: "The index of the option the agent is expected to choose from the set of options."
         annotations:
           categories:
             value:
@@ -688,8 +747,8 @@ classes:
             value: "integer"
           notes:
             value:
-            - "When expected_response_option_index = 0, it means that the subject should not respond at all."
-            - "Sometimes stimuli serve both as stimuli and as response options as subjects have to click on a particular stimuli to give their response (e.g., spatial span, odd one out). It is convenient in those cases to use stimulus_position_index to order/index the options (i.e., option_index == stimulus_position_index) and consequently also the responses."
+            - "When expected_response_option_index = 0, it means that the agent should not respond at all."
+            - "Sometimes stimuli serve both as stimuli and as response options as agents have to click on a particular stimuli to give their response (e.g., spatial span, odd one out). It is convenient in those cases to use stimulus_position_index to order/index the options (i.e., option_index == stimulus_position_index) and consequently also the responses."
       expected_response_description:
         range: string
         description: "A description of the expected response using the same convention as response_description."
@@ -701,7 +760,7 @@ classes:
             value: "string"
       response_structure:
         range: string
-        description: "The structure of the response required by the subject; can take values in:"
+        description: "The structure of the response required by the agent; can take values in:"
         annotations:
           categories:
             value:
@@ -709,13 +768,13 @@ classes:
           bdm_type:
             value: "string"
           range_description:
-            value: "- `unitary`: The subject provides a single input (e.g., chooses option *same*). - `set`: The subject provides a set of information, and the order does not matter (e.g., list words that start with the letter *A*). - `sequence`: The subject provides a sequence of information, and the order matters (e.g., a sequence of memorized digits in their order of appearance)."
+            value: "- `unitary`: The agent provides a single input (e.g., chooses option *same*). - `set`: The agent provides a set of information, and the order does not matter (e.g., list words that start with the letter *A*). - `sequence`: The agent provides a sequence of information, and the order matters (e.g., a sequence of memorized digits in their order of appearance)."
           notes:
             value:
-            - "Note that the distinction between set and sequence refers to the importance of order information to evaluate if the response is correct or not; a response with a set structure may unfold over time (each piece of information is given in a particular temporal order) and it may be of scientific interest to take into account that order; however, the order itself is not important within the task itself. For example, in the [MOT task](https://en.wikipedia.org/wiki/Multiple_object_tracking) one may ask subjects to point to all dots that hide a token. If subjects point to all such dots they will be correct no matter in which order the dots were clicked in."
+            - "Note that the distinction between set and sequence refers to the importance of order information to evaluate if the response is correct or not; a response with a set structure may unfold over time (each piece of information is given in a particular temporal order) and it may be of scientific interest to take into account that order; however, the order itself is not important within the task itself. For example, in the [MOT task](https://en.wikipedia.org/wiki/Multiple_object_tracking) one may ask agents to point to all dots that hide a token. If agents point to all such dots they will be correct no matter in which order the dots were clicked in."
       response_type:
         range: ResponseTypeEnum
-        description: "The form of the response act — what kind of answer is collected: `choice`, `rating`, `ranking` (selected from what is presented) or `production`, `motor` (generated by the subject). Declared per response even where derivable from other fields, because the derivations then serve as validation checks rather than the source of truth."
+        description: "The form of the response act — what kind of answer is collected: `choice`, `rating`, `ranking` (selected from what is presented) or `production`, `motor` (generated by the agent). Declared per response even where derivable from other fields, because the derivations then serve as validation checks rather than the source of truth."
         annotations:
           categories:
             value:
@@ -737,7 +796,7 @@ classes:
             value: "integer"
           notes:
             value:
-            - "response_count is different from input_count; a subject may in some cases change their response multiple times before submitting the final response. In such cases, there would be many more inputs than there are components to the final response."
+            - "response_count is different from input_count; a agent may in some cases change their response multiple times before submitting the final response. In such cases, there would be many more inputs than there are components to the final response."
             - "While we have stimulus_set_size we currently don’t have a response_set_size, but we do have option_count and response_count."
       response_option_index:
         range: integer
@@ -750,10 +809,10 @@ classes:
             value: "integer"
           notes:
             value:
-            - "response_option_index = 0 means the subject chose none of the options (e.g., a “no-go” response in a Go/No-go task)."
+            - "response_option_index = 0 means the agent chose none of the options (e.g., a “no-go” response in a Go/No-go task)."
             - "response_option_index can be directly compared to expected_response_option_index."
             - "response_option_index refers to an entry in the Option table."
-            - "Not to be confused with response_index: response_option_index indexes into the set of options (WHICH option was chosen), whereas response_index is the ordinal position of the response itself within the subject's study participation (see the response_index field; cf. also response_element_index in the Input table for the pieces of one response)."
+            - "Not to be confused with response_index: response_option_index indexes into the set of options (WHICH option was chosen), whereas response_index is the ordinal position of the response itself within the agent's study participation (see the response_index field; cf. also response_element_index in the Input table for the pieces of one response)."
       response_description:
         range: string
         description: "A description of participant’s response; typically the description of the option that was chosen."
@@ -768,7 +827,7 @@ classes:
             - "response_description can be directly compared to expected_response_description."
       response_numeric:
         range: float
-        description: "A numeric value associated with a particular response; this could be a numeric value entered directly by the subject or the numeric meaning of a selected option (for example, the choice of option \"Never\" may be associated with the numeric value of 0). Note that this variable describes the subject's response; it does not describe the value (e.g., correctness or goodness) that is associated with that response."
+        description: "A numeric value associated with a particular response; this could be a numeric value entered directly by the agent or the numeric meaning of a selected option (for example, the choice of option \"Never\" may be associated with the numeric value of 0). Note that this variable describes the agent's response; it does not describe the value (e.g., correctness or goodness) that is associated with that response."
         annotations:
           categories:
             value:
@@ -795,7 +854,7 @@ classes:
             value: "datetime"
       response_validation_time:
         range: float
-        description: "In some cases, subjects may need to press an extra key to validate previous responses. When relevant, this variable may encode this duration."
+        description: "In some cases, agents may need to press an extra key to validate previous responses. When relevant, this variable may encode this duration."
         annotations:
           categories:
             value:
@@ -813,7 +872,7 @@ classes:
             value: "float"
       response_skipped:
         range: boolean
-        description: "In some cases (e.g., in some questionnaires), subjects have the option to skip a question."
+        description: "In some cases (e.g., in some questionnaires), agents have the option to skip a question."
         annotations:
           categories:
             value:
@@ -822,7 +881,7 @@ classes:
             value: "boolean"
       timed_out:
         range: boolean
-        description: "Some tasks require subjects to give a response within a certain time limit. When subjects fail to respond before that time runs out, timed_out is set to TRUE."
+        description: "Some tasks require agents to give a response within a certain time limit. When agents fail to respond before that time runs out, timed_out is set to TRUE."
         annotations:
           categories:
             value:
@@ -866,7 +925,7 @@ classes:
           bdm_type:
             value: "enum"
           range_description:
-            value: "- `correct`: The response is correct. - `error`: The response is incorrect. - `hit`: The stimulus was *present* and the subject correctly responded *present*. - `miss`: The stimulus was *present* and the subject incorrectly responded *absent*. - `fa`: The stimulus was *absent* and the subject incorrectly responded *present*. - `cr`: The stimulus was *absent* and the subject correctly responded *absent*."
+            value: "- `correct`: The response is correct. - `error`: The response is incorrect. - `hit`: The stimulus was *present* and the agent correctly responded *present*. - `miss`: The stimulus was *present* and the agent incorrectly responded *absent*. - `fa`: The stimulus was *absent* and the agent incorrectly responded *present*. - `cr`: The stimulus was *absent* and the agent correctly responded *absent*."
       feedback_description:
         range: string
         description: "Lists the different kinds of feedback that were shown on a given trial. When multiple types of feedback were used, feedback will list them using `;` as a separator. If a given type of feedback was shown multiple times during a trial, that feedback type is listed only once (i.e., feedback_description does NOT represent the sequence of feedbacks). The possible values for feedback are:"
@@ -884,7 +943,7 @@ classes:
             - "NOTE2: We don’t consider here as “feedback”, the kind of feedback that is used in UI to confirm to users that a button has indeed been clicked."
       outcome_description:
         range: string
-        description: "Describes the observable consequences of the subject's response (e.g., \"the opened box is empty\")."
+        description: "Describes the observable consequences of the agent's response (e.g., \"the opened box is empty\")."
         annotations:
           categories:
             value:
@@ -893,7 +952,7 @@ classes:
             value: "string"
       outcome_numeric:
         range: float
-        description: "A numeric value describing the observable consequences of the subject's response (e.g., +3 points)."
+        description: "A numeric value describing the observable consequences of the agent's response (e.g., +3 points)."
         annotations:
           categories:
             value:
@@ -916,7 +975,7 @@ classes:
             - "Leave this field empty if no additional measures were recorded for this specific response."
       adaptive_method_name:
         range: string
-        description: "Specifies the adaptive procedure used to modify instrument parameters in response to subject performance (e.g., `staircase`)."
+        description: "Specifies the adaptive procedure used to modify instrument parameters in response to agent performance (e.g., `staircase`)."
         annotations:
           categories:
             value:
@@ -934,10 +993,10 @@ classes:
             value: "string"
           notes:
             value:
-            - "For example, `1up-2down`. The 1-up, 2-down is a common adaptive staircase procedure used to estimate a subject's threshold or sensitivity. After a correct response, the difficulty level is increased, and after two incorrect responses, the difficulty level is decreased."
+            - "For example, `1up-2down`. The 1-up, 2-down is a common adaptive staircase procedure used to estimate a agent's threshold or sensitivity. After a correct response, the difficulty level is increased, and after two incorrect responses, the difficulty level is decreased."
       adaptive_parameter_name:
         range: string
-        description: "Specific instrument parameter that is dynamically modified based on the subject's performance."
+        description: "Specific instrument parameter that is dynamically modified based on the agent's performance."
         annotations:
           categories:
             value:
@@ -945,7 +1004,7 @@ classes:
           bdm_type:
             value: "string"
       adaptive_parameter_value:
-        description: "The specific value of the instrument parameter that was used for this trial. This value is updated as the adaptive algorithm adjusts the parameter based on the subject's responses."
+        description: "The specific value of the instrument parameter that was used for this trial. This value is updated as the adaptive algorithm adjusts the parameter based on the agent's responses."
         annotations:
           categories:
             value:
@@ -972,6 +1031,17 @@ classes:
         value:
         - "Each row of `Stimulus` table corresponds to a stimulus in a trial. Each trial can contain different number of stimuli."
     attributes:
+      runtime_id:
+        required: true
+        description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this stimulus belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `stimulus_id` it forms this table's dataset-wide key."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`runtime_id` in the `Studyflow` table."
       stimulus_id:
         required: true
         description: "Primary key of the `Stimulus` table. References to this identifier in other tables are thus named `stimulus_id`."
@@ -996,7 +1066,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`trial_index` in the `Response` table of the same agent/session/activity/attempt"
+            value: "`trial_index` in the `Response` table, within the same `runtime_id`"
       response_id:
         required: true
         description: "Refers to the `response_id` in the `Response` table and indicates for which response this stimulus was shown."
@@ -1007,7 +1077,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`response_id` in the `Response` table of the same agent/session/activity/attempt"
+            value: "`response_id` in the `Response` table, within the same `runtime_id`"
       object_id:
         range: string
         description: "A stimulus is defined by a set of features. This variable is used to identify each time the same stimulus features were used."
@@ -1189,13 +1259,24 @@ classes:
             value:
             - "To maintain clarity and consistency, BDM recommends using CSS-style naming conventions for common animations (e.g., \"3s linear slide-in\")."
   Option:
-    description: "Describes each option that a subject could choose from in a trial."
+    description: "Describes each option that a agent could choose from in a trial."
     title: "Option"
     annotations:
       notes:
         value:
         - "Note that in some tasks, the options may change within a trial after each input (e.g., serial self-ordered search task); therefore the options are optionally indexed by `input_index`."
     attributes:
+      runtime_id:
+        required: true
+        description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this option belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `option_id` it forms this table's dataset-wide key."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`runtime_id` in the `Studyflow` table."
       option_id:
         required: true
         description: "Primary key of the `Option` table. References to this identifier in other tables are thus named `option_id`."
@@ -1220,7 +1301,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`trial_index` in the `Response` table for the same subject/session/activity"
+            value: "`trial_index` in the `Response` table for the same agent/session/activity"
       response_id:
         description: "Refers to the `response_id` in the `Response` table and indicates for which response this option was shown."
         annotations:
@@ -1230,10 +1311,10 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`response_id` in the `Response` table of the same subject/activity"
+            value: "`response_id` in the `Response` table of the same agent/activity"
       index_in_trial:
         range: integer
-        description: "Indexing each of the options within the set of options that were available to subjects on a given trial."
+        description: "Indexing each of the options within the set of options that were available to agents on a given trial."
         annotations:
           categories:
             value:
@@ -1398,6 +1479,17 @@ classes:
     description: "A detailed log of all inputs and clicks recorded during the trial."
     title: "Input"
     attributes:
+      runtime_id:
+        required: true
+        description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this input belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `input_id` it forms this table's dataset-wide key."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`runtime_id` in the `Studyflow` table."
       input_id:
         required: true
         description: "Primary key; each input or click has its own identifier value that is unique within the table."
@@ -1559,6 +1651,17 @@ classes:
     description: "Stimuli can comprise multiple components. This table describes each component of a stimulus."
     title: "StimulusComponent"
     attributes:
+      runtime_id:
+        required: true
+        description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this stimulus component belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with (`stimulus_id`, `index`) it forms this table's dataset-wide key."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`runtime_id` in the `Studyflow` table."
       stimulus_id:
         required: true
         description: "A reference to the primary key `id` of the `Stimulus` table."
@@ -1569,7 +1672,7 @@ classes:
           bdm_type:
             value: null
           range_description:
-            value: "`stimulus_id` in the corresponding `Stimulus` table (same subject/session/activity)."
+            value: "`stimulus_id` in the corresponding `Stimulus` table (same agent/session/activity)."
       index:
         range: integer
         required: true
@@ -1715,6 +1818,17 @@ classes:
     description: "Options can comprise multiple components. This table describes each component of an option."
     title: "OptionComponent"
     attributes:
+      runtime_id:
+        required: true
+        description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this option component belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with (`option_id`, `index`) it forms this table's dataset-wide key."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`runtime_id` in the `Studyflow` table."
       index:
         range: integer
         required: true
@@ -1737,7 +1851,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`option_id` in the corresponding `Option` table (same subject/session/activity)."
+            value: "`option_id` in the corresponding `Option` table (same agent/session/activity)."
       panel_id:
         range: string
         description: "Identifier of the panel this option is displayed over."
@@ -1959,6 +2073,17 @@ classes:
         - "The stage count of a trial is derived: `subtrial_count` = max `subtrial_index` among the trial's rows."
         - "Do not confuse stages with the pieces of one response: a digit-span trial recalling \"3-5-7\" is ONE subtrial with `response_count` = 3 in the `Response` table; a two-step trial is TWO subtrials, each with its own stimulus and outcome."
     attributes:
+      runtime_id:
+        required: true
+        description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this subtrial belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `subtrial_id` it forms this table's dataset-wide key."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`runtime_id` in the `Studyflow` table."
       subtrial_id:
         required: true
         description: "Primary key; each subtrial row has its own identifier, unique within the table."
@@ -1978,7 +2103,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`trial_index` in the `Response` table of the same agent/session/activity/attempt."
+            value: "`trial_index` in the `Response` table, within the same `runtime_id`."
       response_id:
         description: "Refers to the `response_id` in the `Response` table for the parent trial's response row."
         annotations:
@@ -1988,7 +2113,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`response_id` in the `Response` table of the same agent/session/activity/attempt."
+            value: "`response_id` in the `Response` table, within the same `runtime_id`."
       subtrial_index:
         range: integer
         required: true
@@ -2046,7 +2171,7 @@ classes:
             value: "`stimulus_id` in the `Stimulus` table."
       expected_response_option_index:
         range: integer
-        description: "The index of the option the subject is expected to choose in this stage. Same conventions as the `Response` table's field of the same name."
+        description: "The index of the option the agent is expected to choose in this stage. Same conventions as the `Response` table's field of the same name."
         annotations:
           categories:
             value:
@@ -2055,7 +2180,7 @@ classes:
             value: "integer"
       response_option_index:
         range: integer
-        description: "The index of the option the subject chose in this stage, starting from 1; 0 means none of the options was chosen. Same conventions as the `Response` table's field of the same name."
+        description: "The index of the option the agent chose in this stage, starting from 1; 0 means none of the options was chosen. Same conventions as the `Response` table's field of the same name."
         annotations:
           categories:
             value:
@@ -2064,7 +2189,7 @@ classes:
             value: "integer"
       response_description:
         range: string
-        description: "A description of the subject's response in this stage; typically the description of the chosen option."
+        description: "A description of the agent's response in this stage; typically the description of the chosen option."
         annotations:
           categories:
             value:
@@ -2143,18 +2268,216 @@ classes:
             - "Outcome"
           bdm_type:
             value: "float"
-  TaskParameter:
-    description: "Per-trial ground-truth GENERATIVE task parameters (latent task state, not behavior), in long format: one row per parameter (and grid cell) per trial — e.g., a bandit's true reward probabilities per (state, action), a slot machine's true means. Serves simulation, parameter recovery, and engine calibration."
-    title: "TaskParameter"
+  Studyflow:
+    description: "The run log: one row per activity run — a single execution of one activity by one agent, with restarts counted as separate runs. Shipped as `studyflow.csv` in the agent's folder. This is the REALIZED record of what an agent actually did; it is not the study-level plan (the BPMN studyflow diagram authored in the `studyflow` schema family), which describes what was designed to happen."
+    title: "Studyflow"
     annotations:
       notes:
         value:
-        - "Rows are keyed by the natural key (`trial_index`, `task_index`, `parameter`, `index_1`, `index_2`); like `StimulusComponent`/`OptionComponent`, this table has no surrogate primary key."
+        - "This table is what makes an activity run addressable: every other trial table carries its `runtime_id`, so files can be concatenated across agents, sessions, and attempts without losing scope."
+        - "A run that was started and abandoned before any trial finished produces no rows in the other tables; its row here is the only record that it happened."
+        - "Selecting the last complete attempt is a filter plus a join: keep rows with `status` = `completed`, take the largest `attempt` per (`agent_id`, `instrument_id`), then join `Response` on `runtime_id`."
+        - "The same run is identified in the event layer by `bdm:runtime_id`, so events and trials join directly."
+    attributes:
+      runtime_id:
+        required: true
+        description: "Primary key: a dataset-wide unique identifier for this activity run. A UUID is recommended so that runs stay distinguishable when datasets are pooled. Equals the event layer's `bdm:runtime_id` for the same run."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "PRIMARY KEY"
+          range_description:
+            value: "Unique across the whole dataset."
+      agent_id:
+        range: string
+        required: true
+        description: "The agent who performed this run. See `Agent` table."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`agent_id` in the `Response` table."
+      session_index:
+        range: integer
+        required: true
+        description: "The 1-based session, within this agent, that the run belongs to."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based index of session within agent."
+      session_uuid:
+        range: string
+        description: "Globally unique identifier (UUID, RFC 9562) of the session, when one was assigned. Matches `session_uuid` in the `Response` table."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "UUID string (RFC 9562)."
+      activity_index:
+        range: integer
+        required: true
+        description: "The 1-based order of this activity within the session."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based index of activity within the session."
+      instrument_id:
+        range: string
+        required: true
+        description: "The instrument (task) that ran."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`instrument_id` in the `Instrument` table."
+      timeline_id:
+        range: string
+        description: "The specific parameterization of the instrument that ran."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`timeline_id` in the `Instrument` table."
+      attempt:
+        range: integer
+        required: true
+        description: "The 1-based ordinal of this run of the activity within the session: the first run has `attempt` = 1, a restart after an interruption has `attempt` = 2, and so on. This is what identifies sessions that were interrupted and possibly restarted several times."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based index of the run within (agent, session, activity)."
+      instrument_repetition:
+        range: integer
+        description: "The number of times this instrument had already been completed by this agent earlier in the study (0 the first time). Counts one agent's own history across sessions — not completions across participants, and not restarts within a session (that is `attempt`)."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "integer"
+          range_description:
+            value: "0-based"
+      timeline_repetition:
+        range: integer
+        description: "The same count for this timeline: how many times this agent had already completed it earlier in the study."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "integer"
+          range_description:
+            value: "0-based"
+      status:
+        range: RunStatusEnum
+        required: true
+        description: "How far this run got: `initialized`, `in_progress`, `completed`, or `abandoned`. Derived from the lifecycle events where an event stream exists, and authored directly otherwise. This is the authoritative record of completion; `Response.status` is a copy of it."
+        annotations:
+          categories:
+            value:
+            - "Evaluation"
+          bdm_type:
+            value: "enum"
+      abandon_reason:
+        range: string
+        description: "Why the run ended without completion, when known (e.g. `timeout`, `withdrew`, `technical_failure`). Mirrors the event layer's `bdm:abandon_reason`. Empty unless `status` is `abandoned`."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+      start_datetime:
+        range: datetime
+        description: "When the run started — the moment the first content was shown to the agent (the event layer's `bdm:started`)."
+        annotations:
+          categories:
+            value:
+            - "When"
+          bdm_type:
+            value: "datetime"
+      end_datetime:
+        range: datetime
+        description: "When the run reached its terminal state, whether completed or abandoned."
+        annotations:
+          categories:
+            value:
+            - "When"
+          bdm_type:
+            value: "datetime"
+      anchor_datetime:
+        range: datetime
+        description: "The datetime (RFC 9557, with timezone offset) corresponding to zero on this run's monotonic clock — the bridge from engine seconds to wall-clock time. It belongs to the run rather than the session because a restart starts a new engine clock. Datetime columns in the trial tables are derived through it."
+        annotations:
+          categories:
+            value:
+            - "When"
+          bdm_type:
+            value: "datetime"
+          notes:
+            value:
+            - "See the `engine_seconds` and `anchor_datetime` terms in the Behaverse vocabulary."
+
+  TrialParameter:
+    description: "Per-trial (and per-subtrial) ground-truth GENERATIVE task parameters — latent task state, not behavior — in long format: one row per parameter, per grid cell, per trial. These are the values that vary from trial to trial within a run, such as a two-step task's drifting reward probabilities. Serves simulation, parameter recovery, and engine calibration."
+    title: "TrialParameter"
+    annotations:
+      notes:
+        value:
+        - "Rows are keyed by the natural key (`runtime_id`, `response_id`, `subtrial_index`, `task_index`, `parameter`, `parameter_index`); like `StimulusComponent`/`OptionComponent`, this table has no surrogate primary key."
+        - "Values that are constant across a whole activity run belong in the `TaskParameter` table instead; joining the two on `runtime_id` reconstructs the full generative state in effect on any trial."
         - "These values are legitimate inputs for simulation and recovery tooling and ILLEGITIMATE as predictors for models of behavior: analysis pipelines should refuse (or loudly flag) any model that consumes ground-truth task parameters when predicting the very responses those parameters generated."
     attributes:
-      trial_index:
+      runtime_id:
         required: true
-        description: "Refers to the `trial_index` in the `Response` table: the trial whose generative state this row records."
+        description: "Identifies the activity run this row's trial belongs to. Unique dataset-wide, so rows stay distinguishable when files are concatenated."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`runtime_id` in the `Studyflow` table."
+      response_id:
+        required: true
+        description: "Refers to the `response_id` in the `Response` table: the trial whose generative state this row records."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`response_id` in the `Response` table, within the same `runtime_id`."
+      trial_index:
+        description: "Refers to the `trial_index` in the `Response` table for the same trial. Redundant with `response_id`; kept because the sibling detail tables carry both."
         annotations:
           categories:
             value:
@@ -2162,10 +2485,21 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`trial_index` in the `Response` table of the same agent/session/activity/attempt."
+            value: "`trial_index` in the `Response` table, within the same `runtime_id`."
+      subtrial_index:
+        range: integer
+        description: "When the parameter is realized at a specific stage of a staged trial, the 1-based `subtrial_index` of that stage (see the `Subtrial` table). Empty for trial-level parameters."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based index."
       task_index:
         range: integer
-        description: "When `multitask_type` is not empty, refers to the individual task this parameter belongs to — different tasks have different parameters, which is exactly the ambiguity a wide encoding cannot express."
+        description: "When `multitask_type` is not empty, the individual task this parameter belongs to."
         annotations:
           categories:
             value:
@@ -2177,43 +2511,184 @@ classes:
       parameter:
         range: string
         required: true
-        description: "Name of the generative parameter (e.g., `p_reward`, `slot_mean`, `drift_rate`). Parameter definitions (meaning, units, grid semantics) belong in the dataset's codebook."
+        description: "Name of the generative parameter (e.g., `p_reward`, `slot_mean`, `drift_rate`). What the parameter means, its unit, and the meaning of its dimensions belong in the dataset's codebook."
         annotations:
           categories:
             value:
             - "What"
           bdm_type:
             value: "string"
-      index_1:
-        range: integer
-        description: "First grid index, when the parameter is defined over a grid (e.g., state). Leave empty for scalar parameters."
+      parameter_dimensions:
+        range: string
+        multivalued: true
+        description: "Names of the parameter's coordinate axes, in order — e.g. `state;action` for a per-(state, action) reward probability. Empty for scalar parameters. Repeating the names on every row keeps the file readable without a codebook lookup."
         annotations:
           categories:
             value:
             - "What"
           bdm_type:
-            value: "index"
-          range_description:
-            value: "1-based index."
-      index_2:
+            value: "list[string]"
+          notes:
+            value:
+            - "Use semicolon-separated names on CSV export, e.g. `state;action`."
+      parameter_index:
         range: integer
-        description: "Second grid index, when the parameter is defined over a two-dimensional grid (e.g., action within state). Leave empty otherwise."
+        multivalued: true
+        description: "This row's coordinates within the parameter's index space, in the same order as `parameter_dimensions` — e.g. `1;2` means state 1, action 2. Empty for scalar parameters. There is no fixed limit on the number of dimensions, so grids of any arity (including a transition tensor indexed by state, action, and next state) are expressible."
         annotations:
           categories:
             value:
             - "What"
           bdm_type:
-            value: "index"
+            value: "list[index]"
           range_description:
-            value: "1-based index."
-      value:
+            value: "1-based indices."
+          notes:
+            value:
+            - "Use semicolon-separated indices on CSV export, e.g. `1;2`."
+            - "A vector-valued parameter is represented as one row per element, with the element position carried here — that is the tidy form, and the reason parameters are not packed into wide columns."
+      value_numeric:
+        range: float
+        description: "The parameter's value when it is numeric. Mirrors the `*_numeric` / `*_description` pairing used for responses and outcomes, so each column keeps a usable type instead of collapsing to a mixed-type column."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "float"
+      value_description:
+        range: string
+        description: "The parameter's value when it is textual or categorical (e.g. a named reward schedule), or a human-readable rendering of a numeric value."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "string"
+
+  TaskParameter:
+    description: "Per-activity-run ground-truth GENERATIVE task parameters — latent task state, not behavior — in long format: one row per parameter and grid cell per run. These are the values that stay constant across one run of an activity but vary between runs and agents, such as a per-agent fixed reward mapping or a per-group volatility level."
+    title: "TaskParameter"
+    annotations:
+      notes:
+        value:
+        - "Rows are keyed by the natural key (`runtime_id`, `task_index`, `parameter`, `parameter_index`); no surrogate primary key. The grain is the activity run, so there is no `response_id` — the value applies to all of the run's trials."
+        - "Values that change from trial to trial belong in the `TrialParameter` table instead; joining the two on `runtime_id` reconstructs the full generative state in effect on any trial."
+        - "The instrument-level configuration that GENERATED these values (drift hyperparameters, fixed task constants) is a different level of description and is not represented here."
+        - "These values are legitimate inputs for simulation and recovery tooling and ILLEGITIMATE as predictors for models of behavior: analysis pipelines should refuse (or loudly flag) any model that consumes ground-truth task parameters when predicting the very responses those parameters generated."
+    attributes:
+      runtime_id:
         required: true
-        description: "The ground-truth value of the parameter for this trial (and grid cell)."
+        description: "Identifies the activity run these parameters describe. Unique dataset-wide, so rows stay distinguishable when files are concatenated."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`runtime_id` in the `Studyflow` table."
+      agent_id:
+        range: string
+        required: true
+        description: "The agent whose run these parameters describe. Carried directly so the file can be read without resolving `runtime_id`."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`agent_id` in the `Response` table."
+      session_index:
+        range: integer
+        required: true
+        description: "The 1-based session, within the agent, that this run belongs to."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "`session_index` in the `Response` table."
+      instrument_id:
+        range: string
+        required: true
+        description: "The instrument (task) these parameters belong to — this is what names the activity the row is about."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`instrument_id` in the `Instrument` table."
+      task_index:
+        range: integer
+        description: "When `multitask_type` is not empty, the individual task this parameter belongs to."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based index."
+      parameter:
+        range: string
+        required: true
+        description: "Name of the generative parameter (e.g., `p_reward`, `slot_mean`, `drift_rate`). What the parameter means, its unit, and the meaning of its dimensions belong in the dataset's codebook."
         annotations:
           categories:
             value:
             - "What"
           bdm_type:
-            value: "any"
+            value: "string"
+      parameter_dimensions:
+        range: string
+        multivalued: true
+        description: "Names of the parameter's coordinate axes, in order — e.g. `state;action` for a per-(state, action) reward probability. Empty for scalar parameters. Repeating the names on every row keeps the file readable without a codebook lookup."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "list[string]"
+          notes:
+            value:
+            - "Use semicolon-separated names on CSV export, e.g. `state;action`."
+      parameter_index:
+        range: integer
+        multivalued: true
+        description: "This row's coordinates within the parameter's index space, in the same order as `parameter_dimensions` — e.g. `1;2` means state 1, action 2. Empty for scalar parameters. There is no fixed limit on the number of dimensions, so grids of any arity (including a transition tensor indexed by state, action, and next state) are expressible."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "list[index]"
           range_description:
-            value: "Data type depends on the parameter, as defined in the codebook."
+            value: "1-based indices."
+          notes:
+            value:
+            - "Use semicolon-separated indices on CSV export, e.g. `1;2`."
+            - "A vector-valued parameter is represented as one row per element, with the element position carried here — that is the tidy form, and the reason parameters are not packed into wide columns."
+      value_numeric:
+        range: float
+        description: "The parameter's value when it is numeric. Mirrors the `*_numeric` / `*_description` pairing used for responses and outcomes, so each column keeps a usable type instead of collapsing to a mixed-type column."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "float"
+      value_description:
+        range: string
+        description: "The parameter's value when it is textual or categorical (e.g. a named reward schedule), or a human-readable rendering of a numeric value."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "string"

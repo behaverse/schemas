@@ -1,6 +1,6 @@
 {
   "schema": "trial",
-  "version": "26.0727",
+  "version": "26.0722",
   "namespace": "https://behaverse.org/schemas/trial",
   "description": "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events.",
   "tables": [
@@ -16,20 +16,10 @@
           "categories": [
             "Key"
           ],
-          "name": "runtime_id",
-          "type": "id",
-          "requirement": "required",
-          "description": "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this response belongs to. Unique dataset-wide, so rows from different agents, sessions, or attempts stay distinguishable when files are concatenated. Resolves in the `Studyflow` table, and equals the event layer's `bdm:runtime_id` for the same run.",
-          "range": "`runtime_id` in the `Studyflow` table."
-        },
-        {
-          "categories": [
-            "Key"
-          ],
           "name": "response_id",
           "type": "PRIMARY KEY",
           "requirement": "required",
-          "description": "A unique identifier assigned to responses in temporal order, meaning that larger IDs correspond to more recent responses that occurred later in time. This ID is unique within one activity run; the dataset-wide key is the pair (`runtime_id`, `response_id`).",
+          "description": "A unique identifier assigned to responses in temporal order, meaning that larger IDs correspond to more recent responses that occurred later in time. This ID is unique within this table; no two rows share the same value.",
           "notes": [
             "This identifier is used by other tables, for example `Stimulus` table which describes in greater detail the sequence of images shown during a trial, their timing, and visual properties. That table will refer to this `id` in order to link those descriptions (typically multiple lines in the Stimulus table) to a unique row in the `Response` table."
           ]
@@ -141,33 +131,8 @@
           "name": "instrument_repetition",
           "type": "integer",
           "requirement": "optional",
-          "description": "The number of times this particular instrument has already been completed **by this agent** anywhere earlier in this study. It counts one agent's own history across sessions — never how many times the instrument was completed across participants. This variable has a value 0 the first time an instrument is used.",
-          "range": "0-based",
-          "notes": [
-            "Distinct from `attempt`, which counts runs of the activity within the current session and is what identifies a session that was interrupted and restarted. See the `Studyflow` table."
-          ]
-        },
-        {
-          "categories": [
-            "Task"
-          ],
-          "name": "attempt",
-          "type": "index",
-          "requirement": "required",
-          "description": "The 1-based ordinal of this activity run within the session: the first run of the activity has `attempt` = 1, a restart after an interruption has `attempt` = 2, and so on. This is what distinguishes several runs of the same activity that now live in one file together.",
-          "range": "1-based index of the run within (agent, session, activity). See `attempt` in the `Studyflow` table."
-        },
-        {
-          "categories": [
-            "Task"
-          ],
-          "name": "status",
-          "type": "enum",
-          "requirement": "optional",
-          "description": "How far this response's activity run got — copied from the run's row in the `Studyflow` table so that trials from abandoned runs can be filtered without a join. The `Studyflow` table is authoritative; a disagreement between the two is a dataset error.",
-          "notes": [
-            "Derived, and only final once the run has ended; runs recorded while still in flight read `in_progress`. In a published dataset every run has reached a terminal state."
-          ]
+          "description": "The number of times this particular instrument has already been completed anytime in the past by this particular agent in this study. This variable has a value 0 the first time an instrument is used.",
+          "range": "0-based"
         },
         {
           "categories": [
@@ -891,16 +856,6 @@
           "categories": [
             "Key"
           ],
-          "name": "runtime_id",
-          "type": "id",
-          "requirement": "required",
-          "description": "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this stimulus belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `stimulus_id` it forms this table's dataset-wide key.",
-          "range": "`runtime_id` in the `Studyflow` table."
-        },
-        {
-          "categories": [
-            "Key"
-          ],
           "name": "stimulus_id",
           "type": "PRIMARY KEY",
           "requirement": "required",
@@ -919,7 +874,7 @@
           "type": "id",
           "requirement": "optional",
           "description": "Refers to the `trial_index` in the `Response` table and indicates in which trial this stimulus was shown.",
-          "range": "`trial_index` in the `Response` table, within the same `runtime_id`"
+          "range": "`trial_index` in the `Response` table of the same agent/session/activity/attempt"
         },
         {
           "categories": [
@@ -929,7 +884,7 @@
           "type": "id",
           "requirement": "required",
           "description": "Refers to the `response_id` in the `Response` table and indicates for which response this stimulus was shown.",
-          "range": "`response_id` in the `Response` table, within the same `runtime_id`"
+          "range": "`response_id` in the `Response` table of the same agent/session/activity/attempt"
         },
         {
           "categories": [
@@ -1110,16 +1065,6 @@
         "Note that in some tasks, the options may change within a trial after each input (e.g., serial self-ordered search task); therefore the options are optionally indexed by `input_index`."
       ],
       "fields": [
-        {
-          "categories": [
-            "Key"
-          ],
-          "name": "runtime_id",
-          "type": "id",
-          "requirement": "required",
-          "description": "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this option belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `option_id` it forms this table's dataset-wide key.",
-          "range": "`runtime_id` in the `Studyflow` table."
-        },
         {
           "categories": [
             "Key"
@@ -1317,16 +1262,6 @@
           "categories": [
             "Key"
           ],
-          "name": "runtime_id",
-          "type": "id",
-          "requirement": "required",
-          "description": "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this input belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `input_id` it forms this table's dataset-wide key.",
-          "range": "`runtime_id` in the `Studyflow` table."
-        },
-        {
-          "categories": [
-            "Key"
-          ],
           "name": "input_id",
           "type": "PRIMARY KEY",
           "requirement": "required",
@@ -1481,16 +1416,6 @@
           "categories": [
             "Key"
           ],
-          "name": "runtime_id",
-          "type": "id",
-          "requirement": "required",
-          "description": "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this stimulus component belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with (`stimulus_id`, `index`) it forms this table's dataset-wide key.",
-          "range": "`runtime_id` in the `Studyflow` table."
-        },
-        {
-          "categories": [
-            "Key"
-          ],
           "name": "stimulus_id",
           "type": null,
           "requirement": "required",
@@ -1635,16 +1560,6 @@
       "label": "OptionComponent",
       "description": "Options can comprise multiple components. This table describes each component of an option.",
       "fields": [
-        {
-          "categories": [
-            "Key"
-          ],
-          "name": "runtime_id",
-          "type": "id",
-          "requirement": "required",
-          "description": "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this option component belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with (`option_id`, `index`) it forms this table's dataset-wide key.",
-          "range": "`runtime_id` in the `Studyflow` table."
-        },
         {
           "categories": [
             "Key"
@@ -1883,16 +1798,6 @@
           "categories": [
             "Key"
           ],
-          "name": "runtime_id",
-          "type": "id",
-          "requirement": "required",
-          "description": "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this subtrial belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `subtrial_id` it forms this table's dataset-wide key.",
-          "range": "`runtime_id` in the `Studyflow` table."
-        },
-        {
-          "categories": [
-            "Key"
-          ],
           "name": "subtrial_id",
           "type": "PRIMARY KEY",
           "requirement": "required",
@@ -1906,7 +1811,7 @@
           "type": "id",
           "requirement": "required",
           "description": "Refers to the `trial_index` in the `Response` table and indicates which trial this stage belongs to.",
-          "range": "`trial_index` in the `Response` table, within the same `runtime_id`."
+          "range": "`trial_index` in the `Response` table of the same agent/session/activity/attempt."
         },
         {
           "categories": [
@@ -1916,7 +1821,7 @@
           "type": "id",
           "requirement": "optional",
           "description": "Refers to the `response_id` in the `Response` table for the parent trial's response row.",
-          "range": "`response_id` in the `Response` table, within the same `runtime_id`."
+          "range": "`response_id` in the `Response` table of the same agent/session/activity/attempt."
         },
         {
           "categories": [
@@ -2070,215 +1975,23 @@
       ]
     },
     {
-      "name": "Studyflow",
-      "label": "Studyflow",
-      "description": "The run log: one row per activity run — a single execution of one activity by one agent, with restarts counted as separate runs. Shipped as `studyflow.csv` in the agent's folder. This is the REALIZED record of what an agent actually did; it is not the study-level plan (the BPMN studyflow diagram authored in the `studyflow` schema family), which describes what was designed to happen.",
+      "name": "TaskParameter",
+      "label": "TaskParameter",
+      "description": "Per-trial ground-truth GENERATIVE task parameters (latent task state, not behavior), in long format: one row per parameter (and grid cell) per trial — e.g., a bandit's true reward probabilities per (state, action), a slot machine's true means. Serves simulation, parameter recovery, and engine calibration.",
       "notes": [
-        "This table is what makes an activity run addressable: every other trial table carries its `runtime_id`, so files can be concatenated across agents, sessions, and attempts without losing scope.",
-        "A run that was started and abandoned before any trial finished produces no rows in the other tables; its row here is the only record that it happened.",
-        "Selecting the last complete attempt is a filter plus a join: keep rows with `status` = `completed`, take the largest `attempt` per (`agent_id`, `instrument_id`), then join `Response` on `runtime_id`.",
-        "The same run is identified in the event layer by `bdm:runtime_id`, so events and trials join directly."
-      ],
-      "fields": [
-        {
-          "categories": [
-            "Key"
-          ],
-          "name": "runtime_id",
-          "type": "PRIMARY KEY",
-          "requirement": "required",
-          "description": "Primary key: a dataset-wide unique identifier for this activity run. A UUID is recommended so that runs stay distinguishable when datasets are pooled. Equals the event layer's `bdm:runtime_id` for the same run.",
-          "range": "Unique across the whole dataset."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "agent_id",
-          "type": "string",
-          "requirement": "required",
-          "description": "The agent who performed this run. See `Agent` table.",
-          "range": "`agent_id` in the `Response` table."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "session_index",
-          "type": "index",
-          "requirement": "required",
-          "description": "The 1-based session, within this agent, that the run belongs to.",
-          "range": "1-based index of session within agent."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "session_uuid",
-          "type": "string",
-          "requirement": "optional",
-          "description": "Globally unique identifier (UUID, RFC 9562) of the session, when one was assigned. Matches `session_uuid` in the `Response` table.",
-          "range": "UUID string (RFC 9562)."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "activity_index",
-          "type": "index",
-          "requirement": "required",
-          "description": "The 1-based order of this activity within the session.",
-          "range": "1-based index of activity within the session."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "instrument_id",
-          "type": "string",
-          "requirement": "required",
-          "description": "The instrument (task) that ran.",
-          "range": "`instrument_id` in the `Instrument` table."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "timeline_id",
-          "type": "string",
-          "requirement": "optional",
-          "description": "The specific parameterization of the instrument that ran.",
-          "range": "`timeline_id` in the `Instrument` table."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "attempt",
-          "type": "index",
-          "requirement": "required",
-          "description": "The 1-based ordinal of this run of the activity within the session: the first run has `attempt` = 1, a restart after an interruption has `attempt` = 2, and so on. This is what identifies sessions that were interrupted and possibly restarted several times.",
-          "range": "1-based index of the run within (agent, session, activity)."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "instrument_repetition",
-          "type": "integer",
-          "requirement": "optional",
-          "description": "The number of times this instrument had already been completed by this agent earlier in the study (0 the first time). Counts one agent's own history across sessions — not completions across participants, and not restarts within a session (that is `attempt`).",
-          "range": "0-based"
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "timeline_repetition",
-          "type": "integer",
-          "requirement": "optional",
-          "description": "The same count for this timeline: how many times this agent had already completed it earlier in the study.",
-          "range": "0-based"
-        },
-        {
-          "categories": [
-            "Evaluation"
-          ],
-          "name": "status",
-          "type": "enum",
-          "requirement": "required",
-          "description": "How far this run got: `initialized`, `in_progress`, `completed`, or `abandoned`. Derived from the lifecycle events where an event stream exists, and authored directly otherwise. This is the authoritative record of completion; `Response.status` is a copy of it."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "abandon_reason",
-          "type": "string",
-          "requirement": "optional",
-          "description": "Why the run ended without completion, when known (e.g. `timeout`, `withdrew`, `technical_failure`). Mirrors the event layer's `bdm:abandon_reason`. Empty unless `status` is `abandoned`."
-        },
-        {
-          "categories": [
-            "When"
-          ],
-          "name": "start_datetime",
-          "type": "datetime",
-          "requirement": "optional",
-          "description": "When the run started — the moment the first content was shown to the agent (the event layer's `bdm:started`)."
-        },
-        {
-          "categories": [
-            "When"
-          ],
-          "name": "end_datetime",
-          "type": "datetime",
-          "requirement": "optional",
-          "description": "When the run reached its terminal state, whether completed or abandoned."
-        },
-        {
-          "categories": [
-            "When"
-          ],
-          "name": "anchor_datetime",
-          "type": "datetime",
-          "requirement": "optional",
-          "description": "The datetime (RFC 9557, with timezone offset) corresponding to zero on this run's monotonic clock — the bridge from engine seconds to wall-clock time. It belongs to the run rather than the session because a restart starts a new engine clock. Datetime columns in the trial tables are derived through it.",
-          "notes": [
-            "See the `engine_seconds` and `anchor_datetime` terms in the Behaverse vocabulary."
-          ]
-        }
-      ]
-    },
-    {
-      "name": "TrialParameter",
-      "label": "TrialParameter",
-      "description": "Per-trial (and per-subtrial) ground-truth GENERATIVE task parameters — latent task state, not behavior — in long format: one row per parameter, per grid cell, per trial. These are the values that vary from trial to trial within a run, such as a two-step task's drifting reward probabilities. Serves simulation, parameter recovery, and engine calibration.",
-      "notes": [
-        "Rows are keyed by the natural key (`runtime_id`, `response_id`, `subtrial_index`, `task_index`, `parameter`, `parameter_index`); like `StimulusComponent`/`OptionComponent`, this table has no surrogate primary key.",
-        "Values that are constant across a whole activity run belong in the `TaskParameter` table instead; joining the two on `runtime_id` reconstructs the full generative state in effect on any trial.",
+        "Rows are keyed by the natural key (`trial_index`, `task_index`, `parameter`, `index_1`, `index_2`); like `StimulusComponent`/`OptionComponent`, this table has no surrogate primary key.",
         "These values are legitimate inputs for simulation and recovery tooling and ILLEGITIMATE as predictors for models of behavior: analysis pipelines should refuse (or loudly flag) any model that consumes ground-truth task parameters when predicting the very responses those parameters generated."
       ],
       "fields": [
-        {
-          "categories": [
-            "Key"
-          ],
-          "name": "runtime_id",
-          "type": "id",
-          "requirement": "required",
-          "description": "Identifies the activity run this row's trial belongs to. Unique dataset-wide, so rows stay distinguishable when files are concatenated.",
-          "range": "`runtime_id` in the `Studyflow` table."
-        },
-        {
-          "categories": [
-            "Key"
-          ],
-          "name": "response_id",
-          "type": "id",
-          "requirement": "required",
-          "description": "Refers to the `response_id` in the `Response` table: the trial whose generative state this row records.",
-          "range": "`response_id` in the `Response` table, within the same `runtime_id`."
-        },
         {
           "categories": [
             "Context"
           ],
           "name": "trial_index",
           "type": "id",
-          "requirement": "optional",
-          "description": "Refers to the `trial_index` in the `Response` table for the same trial. Redundant with `response_id`; kept because the sibling detail tables carry both.",
-          "range": "`trial_index` in the `Response` table, within the same `runtime_id`."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "subtrial_index",
-          "type": "index",
-          "requirement": "optional",
-          "description": "When the parameter is realized at a specific stage of a staged trial, the 1-based `subtrial_index` of that stage (see the `Subtrial` table). Empty for trial-level parameters.",
-          "range": "1-based index."
+          "requirement": "required",
+          "description": "Refers to the `trial_index` in the `Response` table: the trial whose generative state this row records.",
+          "range": "`trial_index` in the `Response` table of the same agent/session/activity/attempt."
         },
         {
           "categories": [
@@ -2287,7 +2000,7 @@
           "name": "task_index",
           "type": "index",
           "requirement": "optional",
-          "description": "When `multitask_type` is not empty, the individual task this parameter belongs to.",
+          "description": "When `multitask_type` is not empty, refers to the individual task this parameter belongs to — different tasks have different parameters, which is exactly the ambiguity a wide encoding cannot express.",
           "range": "1-based index."
         },
         {
@@ -2297,167 +2010,37 @@
           "name": "parameter",
           "type": "string",
           "requirement": "required",
-          "description": "Name of the generative parameter (e.g., `p_reward`, `slot_mean`, `drift_rate`). What the parameter means, its unit, and the meaning of its dimensions belong in the dataset's codebook."
+          "description": "Name of the generative parameter (e.g., `p_reward`, `slot_mean`, `drift_rate`). Parameter definitions (meaning, units, grid semantics) belong in the dataset's codebook."
         },
         {
           "categories": [
             "What"
           ],
-          "name": "parameter_dimensions",
-          "type": "list[string]",
-          "requirement": "optional",
-          "description": "Names of the parameter's coordinate axes, in order — e.g. `state;action` for a per-(state, action) reward probability. Empty for scalar parameters. Repeating the names on every row keeps the file readable without a codebook lookup.",
-          "notes": [
-            "Use semicolon-separated names on CSV export, e.g. `state;action`."
-          ]
-        },
-        {
-          "categories": [
-            "What"
-          ],
-          "name": "parameter_index",
-          "type": "list[index]",
-          "requirement": "optional",
-          "description": "This row's coordinates within the parameter's index space, in the same order as `parameter_dimensions` — e.g. `1;2` means state 1, action 2. Empty for scalar parameters. There is no fixed limit on the number of dimensions, so grids of any arity (including a transition tensor indexed by state, action, and next state) are expressible.",
-          "range": "1-based indices.",
-          "notes": [
-            "Use semicolon-separated indices on CSV export, e.g. `1;2`.",
-            "A vector-valued parameter is represented as one row per element, with the element position carried here — that is the tidy form, and the reason parameters are not packed into wide columns."
-          ]
-        },
-        {
-          "categories": [
-            "What"
-          ],
-          "name": "value_numeric",
-          "type": "float",
-          "requirement": "optional",
-          "description": "The parameter's value when it is numeric. Mirrors the `*_numeric` / `*_description` pairing used for responses and outcomes, so each column keeps a usable type instead of collapsing to a mixed-type column."
-        },
-        {
-          "categories": [
-            "What"
-          ],
-          "name": "value_description",
-          "type": "string",
-          "requirement": "optional",
-          "description": "The parameter's value when it is textual or categorical (e.g. a named reward schedule), or a human-readable rendering of a numeric value."
-        }
-      ]
-    },
-    {
-      "name": "TaskParameter",
-      "label": "TaskParameter",
-      "description": "Per-activity-run ground-truth GENERATIVE task parameters — latent task state, not behavior — in long format: one row per parameter and grid cell per run. These are the values that stay constant across one run of an activity but vary between runs and agents, such as a per-agent fixed reward mapping or a per-group volatility level.",
-      "notes": [
-        "Rows are keyed by the natural key (`runtime_id`, `task_index`, `parameter`, `parameter_index`); no surrogate primary key. The grain is the activity run, so there is no `response_id` — the value applies to all of the run's trials.",
-        "Values that change from trial to trial belong in the `TrialParameter` table instead; joining the two on `runtime_id` reconstructs the full generative state in effect on any trial.",
-        "The instrument-level configuration that GENERATED these values (drift hyperparameters, fixed task constants) is a different level of description and is not represented here.",
-        "These values are legitimate inputs for simulation and recovery tooling and ILLEGITIMATE as predictors for models of behavior: analysis pipelines should refuse (or loudly flag) any model that consumes ground-truth task parameters when predicting the very responses those parameters generated."
-      ],
-      "fields": [
-        {
-          "categories": [
-            "Key"
-          ],
-          "name": "runtime_id",
-          "type": "id",
-          "requirement": "required",
-          "description": "Identifies the activity run these parameters describe. Unique dataset-wide, so rows stay distinguishable when files are concatenated.",
-          "range": "`runtime_id` in the `Studyflow` table."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "agent_id",
-          "type": "string",
-          "requirement": "required",
-          "description": "The agent whose run these parameters describe. Carried directly so the file can be read without resolving `runtime_id`.",
-          "range": "`agent_id` in the `Response` table."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "session_index",
-          "type": "index",
-          "requirement": "required",
-          "description": "The 1-based session, within the agent, that this run belongs to.",
-          "range": "`session_index` in the `Response` table."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "instrument_id",
-          "type": "string",
-          "requirement": "required",
-          "description": "The instrument (task) these parameters belong to — this is what names the activity the row is about.",
-          "range": "`instrument_id` in the `Instrument` table."
-        },
-        {
-          "categories": [
-            "Context"
-          ],
-          "name": "task_index",
+          "name": "index_1",
           "type": "index",
           "requirement": "optional",
-          "description": "When `multitask_type` is not empty, the individual task this parameter belongs to.",
+          "description": "First grid index, when the parameter is defined over a grid (e.g., state). Leave empty for scalar parameters.",
           "range": "1-based index."
         },
         {
           "categories": [
             "What"
           ],
-          "name": "parameter",
-          "type": "string",
+          "name": "index_2",
+          "type": "index",
+          "requirement": "optional",
+          "description": "Second grid index, when the parameter is defined over a two-dimensional grid (e.g., action within state). Leave empty otherwise.",
+          "range": "1-based index."
+        },
+        {
+          "categories": [
+            "What"
+          ],
+          "name": "value",
+          "type": "any",
           "requirement": "required",
-          "description": "Name of the generative parameter (e.g., `p_reward`, `slot_mean`, `drift_rate`). What the parameter means, its unit, and the meaning of its dimensions belong in the dataset's codebook."
-        },
-        {
-          "categories": [
-            "What"
-          ],
-          "name": "parameter_dimensions",
-          "type": "list[string]",
-          "requirement": "optional",
-          "description": "Names of the parameter's coordinate axes, in order — e.g. `state;action` for a per-(state, action) reward probability. Empty for scalar parameters. Repeating the names on every row keeps the file readable without a codebook lookup.",
-          "notes": [
-            "Use semicolon-separated names on CSV export, e.g. `state;action`."
-          ]
-        },
-        {
-          "categories": [
-            "What"
-          ],
-          "name": "parameter_index",
-          "type": "list[index]",
-          "requirement": "optional",
-          "description": "This row's coordinates within the parameter's index space, in the same order as `parameter_dimensions` — e.g. `1;2` means state 1, action 2. Empty for scalar parameters. There is no fixed limit on the number of dimensions, so grids of any arity (including a transition tensor indexed by state, action, and next state) are expressible.",
-          "range": "1-based indices.",
-          "notes": [
-            "Use semicolon-separated indices on CSV export, e.g. `1;2`.",
-            "A vector-valued parameter is represented as one row per element, with the element position carried here — that is the tidy form, and the reason parameters are not packed into wide columns."
-          ]
-        },
-        {
-          "categories": [
-            "What"
-          ],
-          "name": "value_numeric",
-          "type": "float",
-          "requirement": "optional",
-          "description": "The parameter's value when it is numeric. Mirrors the `*_numeric` / `*_description` pairing used for responses and outcomes, so each column keeps a usable type instead of collapsing to a mixed-type column."
-        },
-        {
-          "categories": [
-            "What"
-          ],
-          "name": "value_description",
-          "type": "string",
-          "requirement": "optional",
-          "description": "The parameter's value when it is textual or categorical (e.g. a named reward schedule), or a human-readable rendering of a numeric value."
+          "description": "The ground-truth value of the parameter for this trial (and grid cell).",
+          "range": "Data type depends on the parameter, as defined in the codebook."
         }
       ]
     }

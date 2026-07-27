@@ -2,6 +2,16 @@
 
 All notable changes to the timeseries schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0727] - 2026-07-27
+
+### Added
+
+- **`runtime_id`** (optional) — identifies the activity run the series was recorded during, resolving in the trial schema's new `Studyflow` table and equal to the event layer's `bdm:runtime_id`. A sidecar can now be tied to its run without relying on where the file sits. Both examples updated.
+
+### Changed
+
+- `attempt`'s description now defines it against `Studyflow.attempt` and explains why timeseries payloads keep a per-run filename while the tidy tables and the event stream do not: unlike those, a binary recording cannot be concatenated into a single file.
+
 ## [26.0721] - 2026-07-21
 
 ### Added

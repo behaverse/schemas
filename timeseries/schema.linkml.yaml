@@ -11,7 +11,7 @@ id: https://behaverse.org/schemas/timeseries
 name: timeseries
 title: "Behaverse Timeseries Schema"
 description: "Sidecar metadata for continuous sampled signals (mouse trajectories, gaze, EEG). A small JSON document — named `<payload-filename>.timeseries.json`, stored beside its payload in the dataset's activity folder — declaring the payload's location, encoding, clock, sampling nature, and channels. Referenced from event streams via `attachments` (type `bdm:Timeseries`)."
-version: "26.0721"
+version: "26.0727"
 license: MIT
 
 prefixes:
@@ -86,11 +86,13 @@ classes:
       nominal_rate_hz:
         range: float
         description: "Nominal sampling rate in Hz. Required when `sampling_nature` is `sampled`; meaningless (omit) when `event_driven`."
+      runtime_id:
+        description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this series was recorded during. Resolves in the trial schema's `Studyflow` table and equals the event layer's `bdm:runtime_id`, so a sidecar can be tied to its run without relying on where the file sits."
       session_uuid:
         description: "UUID of the session this series was recorded in (see the trial schema's `session_uuid`). Lets a sidecar be interpreted standalone, outside the dataset folder hierarchy."
       attempt:
         range: integer
-        description: "1-based attempt number, matching the dataset layout's partition-by-attempt convention (`response_1.csv` ↔ `mouse_1.ndjson`)."
+        description: "1-based ordinal of the activity run within the session (see `attempt` in the trial schema's `Studyflow` table). Timeseries payloads keep a per-run filename because, unlike the tidy tables and the event stream, binary recordings cannot be concatenated into a single file."
       channels:
         required: true
         multivalued: true

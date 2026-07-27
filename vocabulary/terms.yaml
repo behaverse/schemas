@@ -6,7 +6,7 @@
 
 vocabulary_metadata:
   name: Behaverse Vocabulary
-  version: '26.0721'
+  version: '26.0727'
   namespace: https://behaverse.org/schemas/vocabulary
   description: 'Cross-cutting controlled terminology for behaverse data: general terms, demographics,
     and the suffix conventions used in variable names. Terms that one schema owns (e.g. trial table fields)
@@ -390,8 +390,9 @@ concepts:
   label: anchor_datetime
   scheme: time
   data_type: datetime
-  definition: The RFC 9557 datetime (with timezone offset) corresponding to `engine_seconds` = 0 for
-    a session — the single bridge from the monotonic clock to wall-clock time, recorded once per session.
+  definition: The RFC 9557 datetime (with timezone offset) corresponding to `engine_seconds` = 0 —
+    the single bridge from the monotonic clock to wall-clock time, recorded once per runtime instance
+    (one execution of an activity; a restart begins a new engine clock and therefore a new anchor).
     Wall-clock datetimes are derived as `anchor_datetime` + `t`.
   notes:
   - Trial-table datetime columns (e.g. `trial_start_datetime`, `response_datetime`) are DERIVED via this

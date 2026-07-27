@@ -10,6 +10,7 @@
   "anchor_datetime": "2026-07-21T10:02:41.000+02:00",
   "sampling_nature": "sampled",
   "nominal_rate_hz": 500.0,
+  "runtime_id": "018f3a2b-8e9f-a012-b3c4-5d6e7f8a9b0c",
   "session_uuid": "018f3a2b-5c6d-7e8f-9a0b-1c2d3e4f5a6b",
   "attempt": 1,
   "channels": [
