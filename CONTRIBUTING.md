@@ -92,6 +92,32 @@ is Cloudflare/Varnish-cached (~10 min) and lags.
 
 ## Conventions
 
+### Field notes and their severity
+
+Per-field `notes` (carried in a slot's `annotations`, published in `field-definitions.json`,
+and rendered on both documentation sites) are plain strings. A note that is more than
+informational says so with a **leading marker**:
+
+```yaml
+notes:
+  value:
+  - "For questionnaires this is typically the label of the chosen option."
+  - ".warning `response_numeric` and `score` must both be populated and must never be
+     collapsed into a single column."
+```
+
+Markers: `.warning` (doing this wrong damages the data), `.important` (easy to get wrong,
+consequences are recoverable), `.tip` (helpful guidance). No marker means an ordinary note.
+Renderers map the marker to a callout and strip it from the displayed text; a renderer that
+does not understand markers still shows readable prose.
+
+This is deliberately a **prefix inside the string**, not a structured `{level, text}` object:
+`notes` stays a list of strings, so the shape of `field-definitions.json` — which is consumed
+by this repo's docs generator *and* by `behaverse/data-model`'s `build_spec.py` in another
+repository — never changes. The convention originated in `vocabulary/terms.yaml`.
+
+### Other
+
 - **CalVer** `vYY.MMDD`; snapshots under `versions/` are immutable.
 - Don't reference sibling consumer packages (`bcsv-py`, `bcsv-r`) in user-facing docs
   until they ship.

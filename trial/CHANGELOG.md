@@ -2,6 +2,40 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0728] - 2026-07-28
+
+*(Dated 26.0728 because the 26.0727 slot was published and snapshotted the same day, and
+snapshots are immutable.)*
+
+### Added
+
+- **Questionnaire guidance moved into the schema**, migrated from the `behaverse/data-model`
+  questionnaire guide where it had been maintained separately (and had drifted — that page
+  documented a `trial_id` column that does not exist here). Field notes added to
+  `Response.stimulus_index`, `stimulus_description`, `stimulus_onset`, `option_id`,
+  `option_source`, `response_description`, `response_option_index`, `response_numeric`,
+  `score`, and `Option.onset`. Because the guidance is a property of the fields rather than of
+  the task of building a dataset, it now travels with the field definitions and appears on both
+  documentation sites automatically.
+  - The `option_onset` guidance from that guide was reattached to **`Option.onset`**: there is
+    no `option_onset` field in `Response`, so the note had no valid home as written.
+  - **The `response_numeric` / `score` distinction is now stated on both fields, as a
+    `.warning`** — the single most consequential item in that guide, and previously recorded
+    only on the data-model site. `response_numeric` is the raw answer, independent of the
+    question; `score` is the value the experimenter assigns to it in context. Collapsing them
+    into one column leaves a reader unable to distinguish raw answers, option positions, and
+    reverse-coded values.
+- **Note severity convention** (`.warning` / `.important` / `.tip` markers at the start of a
+  note) documented in `CONTRIBUTING.md` and used here for the first time in this family. Kept
+  as a string prefix rather than a structured field so that the shape of
+  `field-definitions.json` — consumed by another repository's generator — stays unchanged.
+
+### Fixed
+
+- Four field descriptions linked to `/spec/general/2-dataset-cards.qmd`, a legacy site path the
+  data-model site had been rewriting at build time as a stopgap; they now point at the
+  published dataset-card page.
+
 ## [26.0727] - 2026-07-27
 
 ### Breaking

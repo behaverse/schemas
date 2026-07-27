@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events."
-version: "26.0727"
+version: "26.0728"
 license: MIT
 
 prefixes:
@@ -478,6 +478,7 @@ classes:
           notes:
             value:
             - "Use semicolon-separated indices if more than one stimulus was presented, e.g., `1;2;3`."
+            - "In a questionnaire this is the position of the question: `stimulus_index` = 1 is the first question presented, = 23 the twenty-third."
       stimulus_id:
         range: integer
         required: true
@@ -511,6 +512,9 @@ classes:
             value: "float"
           range_description:
             value: "In seconds"
+          notes:
+            value:
+            - "In questionnaires this is typically 0, since the question is usually present from the start of the trial."
       stimulus_panel_count:
         range: integer
         description: "The number of panels or screen areas stimuli may appear on during the trial. For example, in a task where stimuli to be compared are presented on the left and right side of the screen, stimulus_panel_count = 2."
@@ -627,6 +631,7 @@ classes:
           notes:
             value:
             - "In some cases, when stimuli are too complex or can't be precisely described, a summary of all stimuli is given instead."
+            - "For questionnaires this holds the question text as presented, in English. When a question was shown in another language (recorded in `language`), the translations belong in the questionnaire's supplementary resources rather than in this column."
       stimulus_role:
         range: string
         description: "A stimulus may play different roles within a trial. Below is a list of some possible roles:"
@@ -659,6 +664,7 @@ classes:
           notes:
             value:
             - "While there is a stimulus_index_in_source to refer to the particular stimulus that was used, we don’t have an equivalent option_index_in_source since all options are displayed. Instead, we use response_option_index and expected_response_option_index to refer to a particular option within the set of options."
+            - "Identifies where the option set came from (e.g. `likert_1_to_7`, `gender`). This is what lets a reader determine whether two datasets used the same scale, and it is the natural attachment point for psychometric metadata about that scale."
       option_count:
         range: integer
         description: "The number of options the participant can choose from on a given trial."
@@ -677,6 +683,9 @@ classes:
             - "Option"
           bdm_type:
             value: "integer"
+          notes:
+            value:
+            - "A question is often reused with different option sets (e.g. `agreement_7` vs `agreement_5`), and the resulting measures are not interchangeable. The combination of a question and its options is what the survey literature calls an *item*; BDM has no separate identifier for it — an item is `stimulus_id` together with `option_id`."
       option_data_type:
         range: string
         description: "Describes the type of data this option entails. Possible values include:"
@@ -813,6 +822,7 @@ classes:
             - "response_option_index can be directly compared to expected_response_option_index."
             - "response_option_index refers to an entry in the Option table."
             - "Not to be confused with response_index: response_option_index indexes into the set of options (WHICH option was chosen), whereas response_index is the ordinal position of the response itself within the agent's study participation (see the response_index field; cf. also response_element_index in the Input table for the pieces of one response)."
+            - "Records which option the agent chose by its position in the offered set. Essential whenever options are presented in a random order, since the label alone does not identify the choice."
       response_description:
         range: string
         description: "A description of participant’s response; typically the description of the option that was chosen."
@@ -825,6 +835,7 @@ classes:
           notes:
             value:
             - "response_description can be directly compared to expected_response_description."
+            - "For questionnaires this is typically the label of the chosen option (e.g. \"strongly agree\"), the text entered in a free-text field, or a numeric entry."
       response_numeric:
         range: float
         description: "A numeric value associated with a particular response; this could be a numeric value entered directly by the agent or the numeric meaning of a selected option (for example, the choice of option \"Never\" may be associated with the numeric value of 0). Note that this variable describes the agent's response; it does not describe the value (e.g., correctness or goodness) that is associated with that response."
@@ -834,6 +845,10 @@ classes:
             - "Response"
           bdm_type:
             value: "float"
+          notes:
+            value:
+            - "A numeric reading of what the agent chose, independent of the question asked (e.g. \"never\" → 0, \"always\" → 1). It is empty for free-text answers, and equal to `response_description` when the agent entered a number. It is NOT an encoding of the scoring — that is `score`."
+            - ".warning `response_numeric` and `score` must both be populated and must never be collapsed into a single column: a reader would then be unable to tell whether the numbers are raw answers, option positions, or already reverse-coded, which can render the dataset unusable."
       response_time:
         range: float
         description: "The duration, in seconds, between the earliest possible time a response could have been completed and the moment that response was actually completed (and NOT when it was initiated)."
@@ -915,6 +930,10 @@ classes:
             - "Evaluation"
           bdm_type:
             value: "float"
+          notes:
+            value:
+            - "For questionnaires, `score` is the value the experimenter assigns to an answer in this particular context. In the BIS/BAS questionnaire, answering \"very true for me\" yields a score of 1 for some items, 4 for reverse-coded items, and 0 for filler items; item scores are then aggregated into questionnaire-level scores."
+            - ".warning `score` and `response_numeric` capture different things and must both be present: `response_numeric` is the raw answer, `score` is its interpretation in this context."
       evaluation_label:
         range: string
         description: "There are several labels that can be assigned to a given response to specify what that response means in terms of evaluation within a task. The most general terms are \"correct” and \"error\" (which are already given by the correct variable). There are however more specific sets of terms that may apply in different contexts. For example, in a signal detection task, it is common to use labels from the signal detection theory framework (i.e., “hit”, “miss”, “false alarm”, “correct rejection”). In other contexts, researchers might use terms like “omission” or “commission” errors or even things like “perseveration” error (e.g., in the Wisconsin Card Sorting Test). Note that these terms are not always well defined or exclusive. For example, a “hit” is also a “correct” response and a “false alarm” may be synonymous to “commission error”. Whenever possible use the more specific terms (i.e., always use “hit” rather than “correct” when applicable). Here are few evaluation labels that are commonly used:"
@@ -1155,7 +1174,7 @@ classes:
             value: "integer"
           notes:
             value:
-            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [codebook](/spec/general/2-dataset-cards.qmd)."
+            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/general/dataset-cards.html)."
       y_screen:
         range: integer
         description: "Y coordinates of the stimulus on the screen in pixels."
@@ -1347,6 +1366,9 @@ classes:
             value: "float"
           range_description:
             value: "In seconds"
+          notes:
+            value:
+            - "In questionnaires this is typically 0, since the options usually appear together with the question."
       duration:
         range: float
         required: true
@@ -1379,7 +1401,7 @@ classes:
             value: "float"
           notes:
             value:
-            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [codebook](/spec/general/2-dataset-cards.qmd)."
+            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/general/dataset-cards.html)."
       y_screen:
         range: float
         description: "Y coordinates of the option component on the screen in pixels."
@@ -1701,7 +1723,7 @@ classes:
             value: "pixels"
           notes:
             value:
-            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [codebook](/spec/general/2-dataset-cards.qmd)."
+            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/general/dataset-cards.html)."
       y_screen:
         range: integer
         description: "Y coordinates of the stimulus component relative to the top edge of the screen in pixels."
@@ -1874,7 +1896,7 @@ classes:
             value: "pixels"
           notes:
             value:
-            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [codebook](/spec/general/2-dataset-cards.qmd)."
+            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/general/dataset-cards.html)."
       y_screen:
         range: integer
         description: "Y coordinates of the option component relative to the top edge of the screen in pixels."
