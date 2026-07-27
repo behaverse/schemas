@@ -2,6 +2,27 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0727] - 2026-07-27
+
+### Breaking
+
+- **Every table now carries `runtime_id`** (required), identifying the activity run — one execution of one activity by one agent, with restarts counted separately. Until now a table's identity depended on the folder it sat in: `response_id` was unique only within a file, so concatenating all `stimulus.csv` files in a dataset silently mixed agents. The dataset-wide key is now the pair (`runtime_id`, `response_id`) — and correspondingly (`runtime_id`, `stimulus_id`), (`runtime_id`, `option_id`), etc. Every affected `range_description` was reworded from "of the same agent/session/activity/attempt" to "within the same `runtime_id`". Folder layout is unchanged, but it is no longer load-bearing: it becomes an export view of data that carries its own scope.
+- **`TaskParameter` renamed to `TrialParameter`**, and its payload restructured (below). The name `TaskParameter` is now used for a different, coarser-grained table (also below).
+- **Parameter payload restructured** in both parameter tables: `index_1` / `index_2` / `value` are replaced by `parameter_dimensions` (semicolon-separated axis names, e.g. `state;action`), `parameter_index` (the matching coordinates, e.g. `1;2`), `value_numeric`, and `value_description`. Three fixes in one: values are no longer an untyped `any` (the `*_numeric` / `*_description` pairing already used for responses and outcomes keeps CSV columns typed); the arbitrary two-dimension cap is gone, so a transition tensor indexed by state, action, and next state is now expressible; and the index is self-describing, where previously nothing recorded that `index_1` meant "state".
+
+### Added
+
+- **`Studyflow` table** (15 fields) — the run log, shipped as `studyflow.csv` in the agent's folder, with one row per activity run: `runtime_id` (PK), the full scope (`agent_id`, `session_index`, `session_uuid`, `activity_index`, `instrument_id`, `timeline_id`, `attempt`, the two repetition counts), `status`, `abandon_reason`, `start_datetime`, `end_datetime`, and `anchor_datetime`. It resolves the schema's long-standing dangling reference to a "`Studyflow` table" and gives `studyflow.csv` a schema for the first time. It is the **realized run log**, distinct from the study-level BPMN plan modeled by the `studyflow` schema family.
+  - **`RunStatusEnum`** (`initialized` · `in_progress` · `completed` · `abandoned`), derived from the event layer's lifecycle verbs. This makes "the last complete attempt" a filter plus a join instead of a reconstruction, and — decisively — makes a run that was abandoned before any trial finished representable at all: such a run produces no rows in any other table, so its `Studyflow` row is the only record that it happened.
+- **`TaskParameter` table** (10 fields), rebuilt at the **activity-run** grain — values constant across one run but varying between runs and agents (a per-agent reward mapping, a per-group volatility level). Carries `runtime_id` plus `agent_id`, `session_index`, and `instrument_id` so the file names the activity it is about without a join. Joining it with `TrialParameter` on `runtime_id` reconstructs the full generative state in effect on any trial.
+- **`Response.attempt`** (required) — the 1-based ordinal of the activity run within the session, which identifies a session that was interrupted and restarted. Files are no longer split by attempt, so this column is what separates several runs now sharing one file.
+- **`Response.status`** (optional) — a copy of the run's status so trials from abandoned runs can be filtered without a join. `Studyflow` is authoritative; disagreement is a dataset error.
+- **`TrialParameter.subtrial_index`** (optional) — for parameters realized at a specific stage of a staged trial.
+
+### Changed
+
+- `instrument_repetition` now states explicitly that it counts **this agent's own** prior completions across sessions — never completions across participants — and is distinct from `attempt`, which counts restarts within a session.
+
 ## [26.0722] - 2026-07-22
 
 ### Changed

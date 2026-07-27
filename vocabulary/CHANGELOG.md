@@ -6,6 +6,17 @@ documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0727] - 2026-07-27
+
+### Changed
+- **`anchor_datetime` is recorded once per runtime instance, not once per session.**
+  `engine_seconds` counts from engine start, so a restart begins a new clock and
+  therefore a new anchor — and a session may contain several runs. The definition
+  now says so; the anchor's home in the data is the trial schema's `Studyflow`
+  table (v26.0727).
+- First `versions/` snapshot published for the vocabulary (`versions/v26.0727/`);
+  earlier releases were never archived.
+
 ## [26.0721] - 2026-07-21
 
 ### Added

@@ -10,6 +10,7 @@
   "clock": "https://behaverse.org/schemas/vocabulary/time/engine-seconds",
   "anchor_datetime": "2026-07-21T09:14:03.281+02:00",
   "sampling_nature": "event_driven",
+  "runtime_id": "018f3a2b-7d8e-9f01-a2b3-4c5d6e7f8a9b",
   "session_uuid": "018f3a2b-5c6d-7e8f-9a0b-1c2d3e4f5a6b",
   "attempt": 1,
   "channels": [

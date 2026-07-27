@@ -11,6 +11,8 @@ Currently the main use case for the studyflow schema is to support the Studyflow
 
 For detailed documentation, visit the [Studyflow Documentation](https://behaverse.org/studyflow-modeler/docs).
 
+> **The plan, not the run log.** This schema describes a studyflow *as designed* — the diagram of activities, gateways, and resources authored in the Studyflow Modeler. What an agent **actually did** is recorded per dataset in `studyflow.csv`, whose columns are defined by the `Studyflow` table in the [`trial`](../trial/) schema (one row per activity run, with `attempt`, `status`, and timing). The two are different levels: design-time artifact here, realized run log there.
+
 
 ## Files
 

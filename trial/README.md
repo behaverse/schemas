@@ -1,6 +1,6 @@
 # Behaverse Trial Schema (WIP)
 
-**Version:** v26.0721
+**Version:** v26.0727
 **Namespace:** `https://behaverse.org/schemas/trial#`
 **Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) — edit it, then run `python scripts/generate.py`
 
@@ -14,20 +14,30 @@ A trial is a single instance of a participant interacting with a task. Trial inf
 
 | Table | Fields | Description |
 |-------|-------:|-------------|
-| **Response** | 79 | Main table; one row per response in a trial. |
-| **Stimulus** | 19 | Each stimulus shown during a trial. |
-| **Option** | 18 | Each option a subject could choose from. |
-| **Input** | 15 | Detailed log of inputs/clicks during the trial. |
-| **StimulusComponent** | 13 | Components that make up a stimulus. |
-| **OptionComponent** | 14 | Components that make up an option. |
+| **Studyflow** | 15 | The run log: one row per activity run (`studyflow.csv`). |
+| **Response** | 82 | Main table; one row per response in a trial. |
+| **Stimulus** | 20 | Each stimulus shown during a trial. |
+| **Option** | 19 | Each option an agent could choose from. |
+| **Input** | 16 | Detailed log of inputs/clicks during the trial. |
+| **StimulusComponent** | 14 | Components that make up a stimulus. |
+| **OptionComponent** | 15 | Components that make up an option. |
 | **Instrument** | 7 | The instrument (and its parameterizations) used for acquisition. |
-| **Subtrial** | 19 | Per-stage detail for staged trials (e.g. the two-step); the trial row stays the unit. |
-| **TaskParameter** | 6 | Per-trial ground-truth generative task parameters, long format. |
+| **Subtrial** | 20 | Per-stage detail for staged trials (e.g. the two-step); the trial row stays the unit. |
+| **TrialParameter** | 10 | Ground-truth generative parameters that vary trial to trial, long format. |
+| **TaskParameter** | 10 | Ground-truth generative parameters constant across an activity run, long format. |
 
 ## Conventions
 
 - A trailing `_id` denotes a **foreign key** into the table of that name (e.g. `stimulus_id` → the Stimulus table).
 - When several entities occur in one trial (e.g. multiple stimuli), their ids/values are concatenated into a single string on CSV export.
+- **Every table carries `runtime_id`**, identifying the activity run — one execution of one activity by one agent, with restarts counted separately. Local keys (`response_id`, `stimulus_id`, …) are unique *within a run*, so the dataset-wide key is the pair, e.g. (`runtime_id`, `response_id`). This is what lets files of the same type be concatenated across agents, sessions, and attempts without losing scope: a data file carries the information needed to interpret it, and the folder layout is a view rather than the source of truth.
+- `runtime_id` is the same identifier the event layer carries as `bdm:runtime_id`, so events and trials join directly.
+
+## The run log
+
+`Studyflow` (shipped as `studyflow.csv` in the agent's folder) records what an agent **actually did** — one row per activity run, with its scope, `attempt`, `status`, timing, and the `anchor_datetime` that bridges the monotonic recording clock to wall-clock time. It is distinct from the study-level *plan*: the BPMN studyflow diagram described by the [`studyflow`](../studyflow/) schema family, which says what was designed to happen.
+
+Because it exists per run rather than per trial, it can represent a run that was started and abandoned before any trial finished — such a run produces no rows in any other table. Selecting the last complete attempt is a filter plus a join: keep `status = completed`, take the largest `attempt` per (`agent_id`, `instrument_id`), then join `Response` on `runtime_id`.
 
 ## Artifacts
 
