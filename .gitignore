@@ -89,3 +89,5 @@ git_ignored/
 baselines/
 # Local planning/working notes (not published, not tracked)
 docs/superpowers/
+# Superseded working notes, kept for rationale/history (see _archive/README.md)
+_archive/
