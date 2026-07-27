@@ -1003,6 +1003,23 @@ def generate_sidebar_config(schema_name: str, data: Dict[str, Any]) -> Dict[str,
     return sidebar
 
 
+# A note may declare its severity with a leading marker (see the schemas repo's
+# CONTRIBUTING.md). The marker is stripped and mapped to a Docusaurus admonition;
+# an unmarked note keeps its plain rendering.
+_NOTE_LEVELS = {'.warning': 'warning', '.important': 'info', '.tip': 'tip', '.note': 'note'}
+
+
+def _split_note_level(note: Any) -> tuple:
+    """`'.warning Do not …'` -> `('warning', 'Do not …')`; unmarked -> `(None, text)`."""
+    s = str(note).strip()
+    for marker, level in _NOTE_LEVELS.items():
+        if s == marker:
+            return level, ''
+        if s.startswith(marker + ' '):
+            return level, s[len(marker):].strip()
+    return None, s
+
+
 def _mdx_cell(text: str) -> str:
     """Escape a string for safe use inside an MDX markdown table cell."""
     s = (text or '').replace('|', '\\|').replace('\n', ' ')
@@ -1090,7 +1107,11 @@ def generate_member_page(field: Dict[str, Any], schema_name: str, section_note: 
     if notes:
         mdx += "\n## Notes\n\n"
         for n in (notes if isinstance(notes, list) else [notes]):
-            mdx += f"- {_mdx_cell(str(n))}\n"
+            level, text = _split_note_level(n)
+            if level:
+                mdx += f"\n:::{level}\n\n{_mdx_text(text)}\n\n:::\n\n"
+            else:
+                mdx += f"- {_mdx_cell(text)}\n"
     return mdx
 
 
@@ -1153,7 +1174,8 @@ def generate_trial_pages(schema_name: str, data: Dict[str, Any],
         if table.get('description'):
             tp.append(f"\n{_mdx_text(table['description'])}\n")
         for note in table.get('notes') or []:
-            tp.append(f"\n:::note\n{_mdx_text(str(note))}\n:::\n")
+            level, text = _split_note_level(note)
+            tp.append(f"\n:::{level or 'note'}\n{_mdx_text(text)}\n:::\n")
 
         cat_groups: List[Dict[str, Any]] = []  # one sidebar sub-category per category
         for cat in cat_order:
