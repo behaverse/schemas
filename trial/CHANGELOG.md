@@ -2,6 +2,41 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0802] - 2026-08-02
+
+### Changed
+
+- **Prose sweep of every published string, prompted by a `behaverse/data-model` review of the
+  rendered spec pages.** Content only — no field was added, removed, renamed, or retyped.
+  - Rhetorical ALL-CAPS emphasis (24 instances: `NOT` ×7, `ONE` ×3, `GENERATIVE`,
+    `ILLEGITIMATE`, `OR` ×2 each, and 8 singletons) replaced with italics or a rewritten
+    sentence. Acronyms and literal values (`NA`, `UUID`, `RFC`, …) are untouched. The
+    `ResponseTypeEnum` mode labels (`SELECT`/`GENERATE`/`FORM`) got the same treatment ahead
+    of the enum migration, which will publish them.
+  - Grammar and mechanics: "a agent"/"a option" → "an …" (×5); the seven notes and one
+    description that began lowercase now start with a capital (identifiers moved out of
+    sentence-initial position); one spelling per word — `parameterization` (was also
+    `parameterisation`, `parametrization`) and `summarize*` (was `summarise*` on `Score`),
+    following the corpus's US-spelling majority; a stray trailing quote removed from
+    `Response.transformation_name`.
+  - `range` fragments now follow one convention — lowercase, no terminal period (`0-based`,
+    `seconds`, `pixels`); `In seconds` → `seconds` (×7). Alongside: the two
+    `adaptive_parameter_value*` ranges lose a stray `)`; `Response.instrument_id`'s range
+    names the real key (`instrument_id`, not `id`); scalar index fields say `1-based index`,
+    reserving `1-based indices` for the multivalued coordinate fields
+    (`parameter_index`, `score_index`).
+  - Redundant table notes cut or sharpened: `Stimulus` (first sentence restated the
+    description), `Instrument` (rewritten to carry only the parameterization point),
+    `Response` (the vague "should be sufficient for most analyses" note removed).
+  - Shared conventions are now stated once: the no-surrogate-primary-key rule moved into the
+    schema description, so the `TrialParameter`/`TaskParameter`/`Score` notes state only
+    their natural key; the ground-truth-parameters warning lives on `TrialParameter`
+    (rewritten without capitals), with `TaskParameter` referencing it.
+  - Deliberately left: 13 field descriptions still end with a colon leading into a prose
+    value list in `range`. Those value sets become machine-readable in the next,
+    separately-versioned change (the enum migration), which will restructure both sides of
+    that colon.
+
 ## [26.0801] - 2026-08-01
 
 ### Changed
