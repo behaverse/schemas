@@ -4,6 +4,10 @@ All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
 ## [26.0801] - 2026-08-01
 
+### Changed
+
+- **BDM deviation D2 is narrowed to activity-run scoring, and closed on that basis.** `Score` (v26.0731) requires both `runtime_id` and `instrument_id`, so it cannot express a composite spanning several runs or instruments within a session — which D2's wording, though not its motivating example (a PHQ-9 total, administered as one activity run), also asked for. `behaverse/data-model` was right to decline to record D2 as resolved while that gap was unstated. Rather than relax the scope keys, the boundary is now documented in the table itself: a session-spanning composite has a *different grain*, and mixing grains in one table is precisely what the `TrialParameter`/`TaskParameter` split exists to prevent. If a concrete cross-instrument case appears, it warrants its own table.
+
 ### Fixed
 
 - **`StimulusComponent.stimulus_id` was left string-only** while the key it references — `Stimulus.stimulus_id` — and every other reference to it (`Response`, `Input`, `Subtrial`) accept a string or an integer. A dataset using integer stimulus ids validated against four tables and then failed on the fifth, which is precisely the join that could not be expressed. This is the same defect v26.0730 set out to remove, relocated rather than fixed. Reported by `behaverse/data-model`, which audited the published artifact rather than trusting the release note.
