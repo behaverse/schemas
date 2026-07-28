@@ -2,6 +2,18 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0731] - 2026-07-31
+
+### Added
+
+- **`Score` table** (14 fields) — scores that summarise a whole activity run: questionnaire subscale totals, span thresholds, d-prime, staircase estimates. Long format, one row per score, so a scoring method that emits several scores writes several rows (the four BIS/BAS subscales share `method: sum`). Resolves BDM deviation **D2**, the last open one.
+  - Until now such values had nowhere to go: they were recomputed by each analyst (silently divergent when the recipe is not public), forced into `Response.score` on an arbitrary row (corrupting per-trial semantics), or kept outside BDM entirely.
+  - **Some of these scores cannot be recomputed from the trial tables at all.** An adaptive threshold is produced by the estimator built into the instrument, not by a formula over the recorded trials, so without this table those datasets are not reusable.
+  - `method` records *how* a value was produced and `method_version` its parameterisation (`1up-2down`), so a raw total and a fitted estimate are distinguishable rather than both being "a number".
+  - `classification` records the band a value falls into (`below_average`, `clinical`) and `classification_reference` the norms that produced it. The reference is what makes the band meaningful: two datasets applying different cutoffs would otherwise be indistinguishable.
+  - `score_dimensions` / `score_index` reuse the parameter tables' mechanism, so a per-block score needs no name mangling (`accuracy_block2`).
+  - Scoping note: this sits one level above `Response.accuracy`/`score`/`evaluation_label`, which remain per-response. It is deliberately *not* deferred to a future models layer — models means specifications, fits, and their provenance, which a subscale total is not.
+
 ## [26.0730] - 2026-07-30
 
 ### Breaking

@@ -1,6 +1,6 @@
 # Behaverse Trial Schema (WIP)
 
-**Version:** v26.0730
+**Version:** v26.0731
 **Namespace:** `https://behaverse.org/schemas/trial#`
 **Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) — edit it, then run `python scripts/generate.py`
 
@@ -25,6 +25,7 @@ A trial is a single instance of a participant interacting with a task. Trial inf
 | **Subtrial** | 20 | Per-stage detail for staged trials (e.g. the two-step); the trial row stays the unit. |
 | **TrialParameter** | 10 | Ground-truth generative parameters that vary trial to trial, long format. |
 | **TaskParameter** | 10 | Ground-truth generative parameters constant across an activity run, long format. |
+| **Score** | 14 | Scores summarising a whole activity run (subscale totals, thresholds), long format. |
 
 ## Conventions
 
