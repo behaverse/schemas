@@ -97,7 +97,7 @@ def _is_container(c, sv: SchemaView) -> bool:
     (TimeseriesMetadata) carries the sidecar's own fields, so it IS content and must be
     rendered. Distinguishing them by shape avoids a per-family flag.
     """
-    attrs = list((c.attributes or {}).values())
+    attrs = list((c.attributes or {}).values())  # container test looks at declared attrs only
     if not attrs:
         return True
     classes = set(sv.all_classes())
@@ -134,7 +134,10 @@ def build_trial(sv: SchemaView, meta: dict) -> dict:
         tnotes = _ann(c, "notes")
         if tnotes is not _MISSING:
             table["notes"] = tnotes
-        table["fields"] = [_field(a) for a in (c.attributes or {}).values()]
+        # Induced slots, not just inline `attributes`: a class may take its fields from a
+        # parent (`is_a`) or a mixin, as the studyflow family does throughout. Reading only
+        # `attributes` publishes those classes as empty sections.
+        table["fields"] = [_field(a) for a in sv.class_induced_slots(cname)]
         tables.append(table)
     return {
         "schema": meta["schema"],

@@ -52,9 +52,9 @@ Metadata schema for describing cognitive science datasets with comprehensive cov
 ### <img src="assets/img/schema_S.png" height="40" style="vertical-align: middle;"> studyflow
 Schema for defining the formal structure of studyflow diagrams - sequences of activities and resources designed to facilitate experimental research and data analysis. Used by the Studyflow Modeler app.
 
-- **Version**: v26.0728  ·  **Source**: [`studyflow/schema.linkml.yaml`](studyflow/schema.linkml.yaml)
+- **Version**: v26.0730  ·  **Source**: [`studyflow/schema.linkml.yaml`](studyflow/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/studyflow#`
-- **Docs**: [`studyflow/README.md`](studyflow/README.md)
+- **JSON Schema**: [`studyflow/schema.json`](studyflow/schema.json) · **Render artifact**: [`studyflow/field-definitions.json`](studyflow/field-definitions.json) · **Docs**: [`studyflow/README.md`](studyflow/README.md)
 
 **Related**: [Studyflow Modeler Documentation](https://behaverse.org/studyflow-modeler/docs)
 

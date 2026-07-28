@@ -1,6 +1,6 @@
 # WIP: Behaverse Studyflow Schema
 
-**Version:** v26.0728
+**Version:** v26.0730
 **Namespace:** `https://behaverse.org/schemas/studyflow#`
 
 ## Overview
@@ -17,3 +17,11 @@ For detailed documentation, visit the [Studyflow Documentation](https://behavers
 ## Files
 
 - `schema.linkml.yaml`: The main LinkML schema file defining the Studyflow structure. It is used by the Studyflow Modeler app to extend BPMN and validate studyflow diagrams.
+
+## Artifacts
+
+| File | Status | Purpose |
+|------|--------|---------|
+| [`schema.linkml.yaml`](schema.linkml.yaml) | ✅ | Source of truth (LinkML). Edit it, then run `python scripts/generate.py`. |
+| [`schema.json`](schema.json) | ✅ generated | JSON Schema validation contract for a studyflow document. |
+| [`field-definitions.json`](field-definitions.json) | ✅ generated | Render contract, so the documentation sites can generate this family's reference instead of describing it by hand. |

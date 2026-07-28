@@ -5,6 +5,23 @@ All notable changes to the Studyflow schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0730] - 2026-07-30
+
+### Added
+- **The family publishes artifacts for the first time**: a generated `schema.json`
+  (validation contract) and `field-definitions.json` (render contract). Until now this was
+  the only LinkML family emitting nothing, so the documentation site had to describe the
+  studyflow format by hand — prose that could drift from the schema with nothing to catch it.
+  - This required the render emitter to read a class's *induced* slots rather than only its
+    inline `attributes`: studyflow takes its fields from parents (`is_a`) and mixins
+    throughout, so reading `attributes` alone published most classes as empty sections.
+
+### Changed
+- The run-log table in the `trial` schema was renamed `Studyflow` → **`StudyflowLog`**
+  (trial v26.0730), and its file `studyflow.csv` → `studyflow_log.csv`, to end the collision
+  with this family's name. The relationship is unchanged and now reads plainly:
+  `studyflow.xml` is the plan, `studyflow_log.csv` is what happened.
+
 ## [26.0728] - 2026-07-28
 
 **First tagged release.** The schema had been sitting at `25.1217.dev2` with no published

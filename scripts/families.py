@@ -29,7 +29,7 @@ FAMILIES: List[Dict[str, Any]] = [
     {"name": "dataset", "source": "linkml", "emits_context": True,
      "emits_field_definitions": False, "has_schema_json": True},
     {"name": "studyflow", "source": "linkml", "emits_context": False,
-     "emits_field_definitions": False, "has_schema_json": False},
+     "emits_field_definitions": True, "has_schema_json": True},
     {"name": "trial", "source": "linkml", "emits_context": False,
      "emits_field_definitions": True, "has_schema_json": True},
     {"name": "event", "source": "linkml", "emits_context": True,
@@ -40,10 +40,10 @@ FAMILIES: List[Dict[str, Any]] = [
      "emits_field_definitions": False, "has_schema_json": False},
 ]
 
-# `studyflow` is LinkML but is consumed directly by the Studyflow Modeler and publishes no
-# generated artifact; `bcsv` is hand-maintained JSON; `vocabulary` is SKOS terms.yaml with
-# its own generator. All three are still deployed, linted, and version-checked.
-GENERATED = [f for f in FAMILIES if f["source"] == "linkml" and f["name"] != "studyflow"]
+# `bcsv` is hand-maintained JSON and `vocabulary` is SKOS terms.yaml with its own generator,
+# so neither is generated from LinkML here; both are still deployed, linted, and
+# version-checked. Every LinkML family publishes a schema.json.
+GENERATED = [f for f in FAMILIES if f["source"] == "linkml"]
 
 NAMES = [f["name"] for f in FAMILIES]
 SCHEMA_JSON = [f["name"] for f in FAMILIES if f["has_schema_json"]]
