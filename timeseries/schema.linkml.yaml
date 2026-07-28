@@ -11,7 +11,7 @@ id: https://behaverse.org/schemas/timeseries
 name: timeseries
 title: "Behaverse Timeseries Schema"
 description: "Sidecar metadata for continuous sampled signals (mouse trajectories, gaze, EEG). A small JSON document — named `<payload-filename>.timeseries.json`, stored beside its payload in the dataset's activity folder — declaring the payload's location, encoding, clock, sampling nature, and channels. Referenced from event streams via `attachments` (type `bdm:Timeseries`)."
-version: "26.0727"
+version: "26.0729"
 license: MIT
 
 prefixes:

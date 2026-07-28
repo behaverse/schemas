@@ -31,20 +31,11 @@ from linkml_postprocess import postprocess_context, postprocess_schema  # noqa: 
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# Per-schema artifact config. Every schema with a schema.linkml.yaml emits schema.json;
-# the flags below toggle the two optional render artifacts:
-#   emits_context           -> context.jsonld (JSON-LD discoverability)
-#   emits_field_definitions -> field-definitions.json (multi-table render artifact, via
-#                              scripts/emit_field_definitions.py)
-# trial carries no semantic mappings, so it deliberately emits NO context.jsonld.
-# Dirs lacking schema.linkml.yaml are skipped (migrated later). bcsv is excluded entirely.
-SCHEMAS: list[dict[str, Any]] = [
-    {"name": "catalog", "emits_context": True, "emits_field_definitions": False},
-    {"name": "dataset", "emits_context": True, "emits_field_definitions": False},
-    {"name": "trial", "emits_context": False, "emits_field_definitions": True},
-    {"name": "event", "emits_context": True, "emits_field_definitions": True},
-    {"name": "timeseries", "emits_context": False, "emits_field_definitions": False},
-]
+# The family manifest lives in scripts/families.py — the single list this repo publishes
+# from. `GENERATED` is the LinkML-sourced families that emit artifacts here; the flags on
+# each entry toggle context.jsonld and field-definitions.json. trial carries no semantic
+# mappings, so it deliberately emits no context.jsonld.
+from families import GENERATED as SCHEMAS  # noqa: E402
 
 LINKML_SRC = "schema.linkml.yaml"
 

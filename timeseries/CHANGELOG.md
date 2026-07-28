@@ -2,6 +2,13 @@
 
 All notable changes to the timeseries schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0729] - 2026-07-29
+
+### Added
+
+- **`field-definitions.json` is now published** for this family, so documentation sites can render a generated reference instead of hand-written prose that drifts. It carries two sections — `TimeseriesMetadata` (the sidecar's own fields) and `Channel` — plus each section's `slug` and `docs_url`.
+  - This required teaching the emitter that a `tree_root` class is only skipped when it is a *pure container* of other classes (as `trial`'s `TrialData` is). `TimeseriesMetadata` is the tree root **and** the content, so skipping it would have published a reference containing only `Channel`.
+
 ## [26.0727] - 2026-07-27
 
 ### Added

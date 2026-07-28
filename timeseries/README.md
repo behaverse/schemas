@@ -1,6 +1,6 @@
 # Behaverse Timeseries Schema
 
-**Version:** v26.0727
+**Version:** v26.0729
 **Namespace:** `https://behaverse.org/schemas/timeseries#`
 **Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) — edit it, then run `python scripts/generate.py`
 

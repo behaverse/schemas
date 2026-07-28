@@ -32,6 +32,7 @@ Usage: python scripts/emit_field_definitions.py SCHEMA_DIR   # e.g. trial  or  e
 """
 from __future__ import annotations
 
+import re
 import json
 import sys
 from pathlib import Path
@@ -88,14 +89,44 @@ def _field(slot) -> dict:
     return out
 
 
+def _is_container(c, sv: SchemaView) -> bool:
+    """True if a tree_root class is a pure container of other classes, not content itself.
+
+    `trial`'s root (TrialData) only holds one multivalued list per table, so it is a
+    container and must not be rendered as a table. `timeseries`'s root
+    (TimeseriesMetadata) carries the sidecar's own fields, so it IS content and must be
+    rendered. Distinguishing them by shape avoids a per-family flag.
+    """
+    attrs = list((c.attributes or {}).values())
+    if not attrs:
+        return True
+    classes = set(sv.all_classes())
+    return all(a.multivalued and str(a.range) in classes for a in attrs)
+
+
+def _slug(name: str) -> str:
+    """Path/URL-safe slug for a table name (CamelCase -> kebab-case).
+
+    Published per table in `field-definitions.json` so consumers do not have to
+    reimplement it. `behaverse/data-model` and the gh-pages docs generator each kept
+    their own copy of this function; if this repo's URL scheme ever changed, their
+    outbound links would 404 silently. Must stay identical to the docs generator's
+    `_slug()` while those copies still exist.
+    """
+    s = re.sub(r"(?<!^)(?=[A-Z])", "-", str(name))
+    s = re.sub(r"[^A-Za-z0-9]+", "-", s).strip("-").lower()
+    return s or "item"
+
+
 def build_trial(sv: SchemaView, meta: dict) -> dict:
     """Multi-table model: each non-root class -> a table; its attributes -> fields."""
     tables = []
     for cname in sv.all_classes():
         c = sv.get_class(cname)
-        if c.tree_root or c.abstract:
+        if c.abstract or (c.tree_root and _is_container(c, sv)):
             continue
-        table: dict = {"name": c.name}
+        table: dict = {"name": c.name, "slug": _slug(c.name)}
+        table["docs_url"] = f"https://behaverse.org/schemas/{meta['schema']}/{table['slug']}"
         if c.title:
             table["label"] = c.title
         if c.description:

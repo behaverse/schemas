@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events."
-version: "26.0728"
+version: "26.0729"
 license: MIT
 
 prefixes:
@@ -51,6 +51,11 @@ classes:
     description: Root container mapping each trial table to an array of its rows.
     tree_root: true
     attributes:
+      Studyflow:
+        multivalued: true
+        range: Studyflow
+        inlined_as_list: true
+        description: "Rows of the Studyflow table (the run log)."
       Response:
         multivalued: true
         range: Response
@@ -101,11 +106,182 @@ classes:
         range: TrialParameter
         inlined_as_list: true
         description: "Rows of the TrialParameter table."
-      Studyflow:
-        multivalued: true
-        range: Studyflow
-        inlined_as_list: true
-        description: "Rows of the Studyflow table (the run log)."
+
+  Studyflow:
+    description: "The run log: one row per activity run — a single execution of one activity by one agent, with restarts counted as separate runs. Shipped as `studyflow.csv` in the agent's folder. This is the REALIZED record of what an agent actually did; it is not the study-level plan (the BPMN studyflow diagram authored in the `studyflow` schema family), which describes what was designed to happen."
+    title: "Studyflow"
+    annotations:
+      notes:
+        value:
+        - "This table is what makes an activity run addressable: every other trial table carries its `runtime_id`, so files can be concatenated across agents, sessions, and attempts without losing scope."
+        - "A run that was started and abandoned before any trial finished produces no rows in the other tables; its row here is the only record that it happened."
+        - "Selecting the last complete attempt is a filter plus a join: keep rows with `status` = `completed`, take the largest `attempt` per (`agent_id`, `instrument_id`), then join `Response` on `runtime_id`."
+        - "The same run is identified in the event layer by `bdm:runtime_id`, so events and trials join directly."
+    attributes:
+      runtime_id:
+        required: true
+        description: "Primary key: a dataset-wide unique identifier for this activity run. A UUID is recommended so that runs stay distinguishable when datasets are pooled. Equals the event layer's `bdm:runtime_id` for the same run."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "PRIMARY KEY"
+          range_description:
+            value: "Unique across the whole dataset."
+      agent_id:
+        range: string
+        required: true
+        description: "The agent who performed this run. See `Agent` table."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`agent_id` in the `Response` table."
+      session_index:
+        range: integer
+        required: true
+        description: "The 1-based session, within this agent, that the run belongs to."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based index of session within agent."
+      session_uuid:
+        range: string
+        description: "Globally unique identifier (UUID, RFC 9562) of the session, when one was assigned. Matches `session_uuid` in the `Response` table."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "UUID string (RFC 9562)."
+      activity_index:
+        range: integer
+        required: true
+        description: "The 1-based order of this activity within the session."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based index of activity within the session."
+      instrument_id:
+        range: string
+        required: true
+        description: "The instrument (task) that ran."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`instrument_id` in the `Instrument` table."
+      timeline_id:
+        range: string
+        description: "The specific parameterization of the instrument that ran."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`timeline_id` in the `Instrument` table."
+      attempt:
+        range: integer
+        required: true
+        description: "The 1-based ordinal of this run of the activity within the session: the first run has `attempt` = 1, a restart after an interruption has `attempt` = 2, and so on. This is what identifies sessions that were interrupted and possibly restarted several times."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based index of the run within (agent, session, activity)."
+      instrument_repetition:
+        range: integer
+        description: "The number of times this instrument had already been completed by this agent earlier in the study (0 the first time). Counts one agent's own history across sessions — not completions across participants, and not restarts within a session (that is `attempt`)."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "integer"
+          range_description:
+            value: "0-based"
+      timeline_repetition:
+        range: integer
+        description: "The same count for this timeline: how many times this agent had already completed it earlier in the study."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "integer"
+          range_description:
+            value: "0-based"
+      status:
+        range: RunStatusEnum
+        required: true
+        description: "How far this run got: `initialized`, `in_progress`, `completed`, or `abandoned`. Derived from the lifecycle events where an event stream exists, and authored directly otherwise. This is the authoritative record of completion; `Response.status` is a copy of it."
+        annotations:
+          categories:
+            value:
+            - "Evaluation"
+          bdm_type:
+            value: "enum"
+      abandon_reason:
+        range: string
+        description: "Why the run ended without completion, when known (e.g. `timeout`, `withdrew`, `technical_failure`). Mirrors the event layer's `bdm:abandon_reason`. Empty unless `status` is `abandoned`."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+      start_datetime:
+        range: datetime
+        description: "When the run started — the moment the first content was shown to the agent (the event layer's `bdm:started`)."
+        annotations:
+          categories:
+            value:
+            - "When"
+          bdm_type:
+            value: "datetime"
+      end_datetime:
+        range: datetime
+        description: "When the run reached its terminal state, whether completed or abandoned."
+        annotations:
+          categories:
+            value:
+            - "When"
+          bdm_type:
+            value: "datetime"
+      anchor_datetime:
+        range: datetime
+        description: "The datetime (RFC 9557, with timezone offset) corresponding to zero on this run's monotonic clock — the bridge from engine seconds to wall-clock time. It belongs to the run rather than the session because a restart starts a new engine clock. Datetime columns in the trial tables are derived through it."
+        annotations:
+          categories:
+            value:
+            - "When"
+          bdm_type:
+            value: "datetime"
+          notes:
+            value:
+            - "See the `engine_seconds` and `anchor_datetime` terms in the Behaverse vocabulary."
 
   Response:
     description: "Main table where each row describes a response in a trial."
@@ -2290,182 +2466,6 @@ classes:
             - "Outcome"
           bdm_type:
             value: "float"
-  Studyflow:
-    description: "The run log: one row per activity run — a single execution of one activity by one agent, with restarts counted as separate runs. Shipped as `studyflow.csv` in the agent's folder. This is the REALIZED record of what an agent actually did; it is not the study-level plan (the BPMN studyflow diagram authored in the `studyflow` schema family), which describes what was designed to happen."
-    title: "Studyflow"
-    annotations:
-      notes:
-        value:
-        - "This table is what makes an activity run addressable: every other trial table carries its `runtime_id`, so files can be concatenated across agents, sessions, and attempts without losing scope."
-        - "A run that was started and abandoned before any trial finished produces no rows in the other tables; its row here is the only record that it happened."
-        - "Selecting the last complete attempt is a filter plus a join: keep rows with `status` = `completed`, take the largest `attempt` per (`agent_id`, `instrument_id`), then join `Response` on `runtime_id`."
-        - "The same run is identified in the event layer by `bdm:runtime_id`, so events and trials join directly."
-    attributes:
-      runtime_id:
-        required: true
-        description: "Primary key: a dataset-wide unique identifier for this activity run. A UUID is recommended so that runs stay distinguishable when datasets are pooled. Equals the event layer's `bdm:runtime_id` for the same run."
-        annotations:
-          categories:
-            value:
-            - "Key"
-          bdm_type:
-            value: "PRIMARY KEY"
-          range_description:
-            value: "Unique across the whole dataset."
-      agent_id:
-        range: string
-        required: true
-        description: "The agent who performed this run. See `Agent` table."
-        annotations:
-          categories:
-            value:
-            - "Context"
-          bdm_type:
-            value: "string"
-          range_description:
-            value: "`agent_id` in the `Response` table."
-      session_index:
-        range: integer
-        required: true
-        description: "The 1-based session, within this agent, that the run belongs to."
-        annotations:
-          categories:
-            value:
-            - "Context"
-          bdm_type:
-            value: "index"
-          range_description:
-            value: "1-based index of session within agent."
-      session_uuid:
-        range: string
-        description: "Globally unique identifier (UUID, RFC 9562) of the session, when one was assigned. Matches `session_uuid` in the `Response` table."
-        annotations:
-          categories:
-            value:
-            - "Context"
-          bdm_type:
-            value: "string"
-          range_description:
-            value: "UUID string (RFC 9562)."
-      activity_index:
-        range: integer
-        required: true
-        description: "The 1-based order of this activity within the session."
-        annotations:
-          categories:
-            value:
-            - "Context"
-          bdm_type:
-            value: "index"
-          range_description:
-            value: "1-based index of activity within the session."
-      instrument_id:
-        range: string
-        required: true
-        description: "The instrument (task) that ran."
-        annotations:
-          categories:
-            value:
-            - "Context"
-          bdm_type:
-            value: "string"
-          range_description:
-            value: "`instrument_id` in the `Instrument` table."
-      timeline_id:
-        range: string
-        description: "The specific parameterization of the instrument that ran."
-        annotations:
-          categories:
-            value:
-            - "Context"
-          bdm_type:
-            value: "string"
-          range_description:
-            value: "`timeline_id` in the `Instrument` table."
-      attempt:
-        range: integer
-        required: true
-        description: "The 1-based ordinal of this run of the activity within the session: the first run has `attempt` = 1, a restart after an interruption has `attempt` = 2, and so on. This is what identifies sessions that were interrupted and possibly restarted several times."
-        annotations:
-          categories:
-            value:
-            - "Context"
-          bdm_type:
-            value: "index"
-          range_description:
-            value: "1-based index of the run within (agent, session, activity)."
-      instrument_repetition:
-        range: integer
-        description: "The number of times this instrument had already been completed by this agent earlier in the study (0 the first time). Counts one agent's own history across sessions — not completions across participants, and not restarts within a session (that is `attempt`)."
-        annotations:
-          categories:
-            value:
-            - "Context"
-          bdm_type:
-            value: "integer"
-          range_description:
-            value: "0-based"
-      timeline_repetition:
-        range: integer
-        description: "The same count for this timeline: how many times this agent had already completed it earlier in the study."
-        annotations:
-          categories:
-            value:
-            - "Context"
-          bdm_type:
-            value: "integer"
-          range_description:
-            value: "0-based"
-      status:
-        range: RunStatusEnum
-        required: true
-        description: "How far this run got: `initialized`, `in_progress`, `completed`, or `abandoned`. Derived from the lifecycle events where an event stream exists, and authored directly otherwise. This is the authoritative record of completion; `Response.status` is a copy of it."
-        annotations:
-          categories:
-            value:
-            - "Evaluation"
-          bdm_type:
-            value: "enum"
-      abandon_reason:
-        range: string
-        description: "Why the run ended without completion, when known (e.g. `timeout`, `withdrew`, `technical_failure`). Mirrors the event layer's `bdm:abandon_reason`. Empty unless `status` is `abandoned`."
-        annotations:
-          categories:
-            value:
-            - "Context"
-          bdm_type:
-            value: "string"
-      start_datetime:
-        range: datetime
-        description: "When the run started — the moment the first content was shown to the agent (the event layer's `bdm:started`)."
-        annotations:
-          categories:
-            value:
-            - "When"
-          bdm_type:
-            value: "datetime"
-      end_datetime:
-        range: datetime
-        description: "When the run reached its terminal state, whether completed or abandoned."
-        annotations:
-          categories:
-            value:
-            - "When"
-          bdm_type:
-            value: "datetime"
-      anchor_datetime:
-        range: datetime
-        description: "The datetime (RFC 9557, with timezone offset) corresponding to zero on this run's monotonic clock — the bridge from engine seconds to wall-clock time. It belongs to the run rather than the session because a restart starts a new engine clock. Datetime columns in the trial tables are derived through it."
-        annotations:
-          categories:
-            value:
-            - "When"
-          bdm_type:
-            value: "datetime"
-          notes:
-            value:
-            - "See the `engine_seconds` and `anchor_datetime` terms in the Behaverse vocabulary."
-
   TrialParameter:
     description: "Per-trial (and per-subtrial) ground-truth GENERATIVE task parameters — latent task state, not behavior — in long format: one row per parameter, per grid cell, per trial. These are the values that vary from trial to trial within a run, such as a two-step task's drifting reward probabilities. Serves simulation, parameter recovery, and engine calibration."
     title: "TrialParameter"
