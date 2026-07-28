@@ -91,3 +91,8 @@ baselines/
 docs/superpowers/
 # Superseded working notes, kept for rationale/history (see _archive/README.md)
 _archive/
+# Working notes and hand-off briefs — never tracked (they are session state, not schema content)
+OPEN-ISSUES.md
+DESIGN-*.md
+*-agent-prompt.md
+*-brief.md
