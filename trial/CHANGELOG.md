@@ -2,6 +2,18 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0729] - 2026-07-29
+
+*(Dated 26.0729 because the 26.0728 slot was already published and snapshots are immutable.)*
+
+### Added
+
+- **Every table now publishes its documentation `slug` and `docs_url`** in `field-definitions.json`. Downstream renderers previously each reimplemented the CamelCase→kebab-case slug rule to build "Full reference →" links; the two copies (in `behaverse/data-model`'s `build_spec.py` and this repo's docs generator) were character-identical by luck, and a change to the URL scheme here would have 404'd every outbound link silently. The answer is now published rather than guessed.
+
+### Changed
+
+- **`Studyflow` is now the first table.** It is the run log every other table references through `runtime_id`, so it reads first — outermost scope inward — and no table is introduced before the entity it points at. Consumers render tables in the order this file lists them.
+
 ## [26.0728] - 2026-07-28
 
 *(Dated 26.0728 because the 26.0727 slot was published and snapshotted the same day, and

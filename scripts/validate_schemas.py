@@ -38,8 +38,8 @@ from pathlib import Path
 import jsonschema
 
 ROOT = Path(__file__).resolve().parent.parent
-SCHEMAS = ["bcsv", "catalog", "dataset", "trial", "event", "timeseries"]
-CONTEXT_SCHEMAS = ["bcsv", "catalog", "dataset", "event"]  # trial ships no context.jsonld
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from families import CONTEXTS as CONTEXT_SCHEMAS, NAMES as ALL_FAMILIES, SCHEMA_JSON as SCHEMAS  # noqa: E402
 
 
 def _validator_cls(schema: dict):
@@ -169,6 +169,32 @@ def check_linkml_enum_consistency(failures: list[str]) -> None:
                                     f"permissible value of enum {slot.range}")
 
 
+def check_family_manifest(failures: list[str]) -> None:
+    """The deploy workflow's SCHEMA_DIRS must list exactly the families in the manifest.
+
+    The workflow is YAML and cannot import Python, so its list is checked rather than
+    derived. Without this, a family can be deployed but never validated (or the reverse)
+    and nothing notices.
+    """
+    wf = ROOT / ".github" / "workflows" / "build-deploy-pages.yml"
+    if not wf.exists():
+        failures.append("build-deploy-pages.yml not found")
+        return
+    m = re.search(r"^\s*SCHEMA_DIRS:\s*(.+)$", wf.read_text(), re.M)
+    if not m:
+        failures.append("build-deploy-pages.yml: no SCHEMA_DIRS declared")
+        return
+    listed = sorted(m.group(1).split())
+    expected = sorted(ALL_FAMILIES)
+    if listed != expected:
+        missing = sorted(set(expected) - set(listed))
+        extra = sorted(set(listed) - set(expected))
+        failures.append(
+            f"build-deploy-pages.yml SCHEMA_DIRS disagrees with scripts/families.py"
+            + (f"; not deployed: {missing}" if missing else "")
+            + (f"; deployed but not in the manifest: {extra}" if extra else ""))
+
+
 def check_version_strings(failures: list[str]) -> None:
     """Every source's `version` must be a CalVer STRING, never a bare YAML number.
 
@@ -247,6 +273,7 @@ def main() -> int:
         (check_jsonld_contexts, "JSON-LD contexts expand"),
         (check_linkml_enum_consistency, "LinkML enum examples/defaults are permissible values"),
         (check_version_strings, "every source declares a CalVer version string"),
+        (check_family_manifest, "the deploy list matches the family manifest"),
     ]:
         before = len(failures)
         check(failures)
