@@ -19,6 +19,10 @@ Encoding (see trial/schema.linkml.yaml):
     requirement <- "required" if slot.required else "optional"
     description <- slot description (optional)
     range       <- annotations.range_description (free-text prose, optional)
+    values      <- the slot range's LinkML enum, as [{value, description?}, ...]
+                   (only when the range is an enum; description omitted when unset)
+    values_exhaustive <- false when the enum is annotated `exhaustive: false`
+                   (the values document the known set without closing it), else true
     notes       <- annotations.notes (list, optional)
 
 Top-level meta comes from the LinkML schema itself:
@@ -61,7 +65,7 @@ def _ann(obj, key, default=_MISSING):
     return a.value
 
 
-def _field(slot) -> dict:
+def _field(slot, sv: SchemaView, emit_values: bool = True) -> dict:
     """Rebuild one field object, with keys in baseline order and present only when set."""
     out: dict = {}
 
@@ -83,6 +87,18 @@ def _field(slot) -> dict:
     rng = _ann(slot, "range_description")
     if rng is not _MISSING:
         out["range"] = rng
+
+    enum_def = sv.all_enums().get(str(slot.range)) if (emit_values and slot.range) else None
+    if enum_def is not None:
+        values = []
+        for pv in (enum_def.permissible_values or {}).values():
+            v = {"value": str(pv.text)}
+            if pv.description:
+                v["description"] = pv.description
+            values.append(v)
+        out["values"] = values
+        exhaustive = _ann(enum_def, "exhaustive")
+        out["values_exhaustive"] = exhaustive is _MISSING or exhaustive not in (False, "false")
 
     notes = _ann(slot, "notes")
     if notes is not _MISSING:
@@ -139,7 +155,7 @@ def build_trial(sv: SchemaView, meta: dict) -> dict:
         # Induced slots, not just inline `attributes`: a class may take its fields from a
         # parent (`is_a`) or a mixin, as the studyflow family does throughout. Reading only
         # `attributes` publishes those classes as empty sections.
-        table["fields"] = [_field(a) for a in sv.class_induced_slots(cname)]
+        table["fields"] = [_field(a, sv) for a in sv.class_induced_slots(cname)]
         tables.append(table)
     return {
         "schema": meta["schema"],
@@ -170,7 +186,10 @@ def build_event(sv: SchemaView, meta: dict) -> dict:
     envelope = sv.get_class("Event")
     if envelope is None:
         raise SystemExit("event: no `Event` class found")
-    fields = [_field(a) for a in (envelope.attributes or {}).values()]
+    # No per-field `values` here: the event artifact documents its value sets in the
+    # top-level `vocabularies` key (richer than {value, description} — layers,
+    # object_types), and duplicating the verb list per field would drift from it.
+    fields = [_field(a, sv, emit_values=False) for a in (envelope.attributes or {}).values()]
     out: dict = {
         "schema": meta["schema"],
         "version": meta["version"],

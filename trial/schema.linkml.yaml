@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events. The component, parameter, and score tables are keyed by their natural keys and carry no surrogate primary key."
-version: "26.0802"
+version: "26.0803"
 license: MIT
 
 prefixes:
@@ -46,6 +46,213 @@ enums:
         description: "Generate mode: produce the content of the answer (typed text or numbers, drawings, spoken words). Validation: typically co-occurs with `option_count` empty/null."
       motor:
         description: "Generate mode: a continuous movement is itself the answer (e.g. reaching, tracing)."
+  # Enums annotated `exhaustive: false` document their known values but do not close the
+  # set: schema.json drops the enum constraint for them (see linkml_postprocess.py), and
+  # field-definitions.json publishes them with `values_exhaustive: false`.
+  MultitaskTypeEnum:
+    description: "The type of multitasking a trial requires. The field is left blank for plain single-tasking."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      concurrent:
+        description: "There are two independent tasks that need to be completed in parallel."
+      compound:
+        description: "The task requires multiple successive stages or involves tasks that are dependent/coupled."
+  JobRepeatEnum:
+    description: "Whether the trial's job is new, repeated, or switched-to, relative to the agent's history in this timeline."
+    permissible_values:
+      new:
+        description: "The job has never been seen before by this agent in the current study."
+      repeat:
+        description: "The job is the same as the previous trial."
+      switch:
+        description: "The job is different from the previous trial but has been seen prior in the timeline."
+  BlockTypeEnum:
+    description: "The experimental role a block plays within a timeline."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      tutorial:
+        description: "A simplified version of the test designed to teach agents how the test works."
+      practice:
+        description: "Typically identical to the main test blocks, but used to get agents accustomed to the task in a no-stakes environment."
+      test:
+        description: "Primary blocks used to measure the desired behaviors."
+      instruction:
+        description: "Presents written and/or visual instructions to the agent."
+  StimulusTypeEnum:
+    description: "The two stimulus types BDM distinguishes."
+    permissible_values:
+      message:
+        description: "The stimulus is a message shown to agents (e.g., task instructions)."
+      question:
+        description: "The stimulus may consist of text, images, and/or sounds; it requires agents to make a decision based on the content of the stimulus."
+  StimulusStructureEnum:
+    description: "The three stimulus structures BDM distinguishes."
+    permissible_values:
+      unitary:
+        description: "Only one stimulus is shown, alone."
+      set:
+        description: "Many stimuli are shown, either at the same time or not; order does not matter."
+      sequence:
+        description: "Multiple stimuli are shown, either at the same time or not; order does matter (order may be indicated by the order of presentation or by a digit, for example)."
+  StimulusStructureSourceEnum:
+    description: "How a trial's stimulus structure was produced."
+    permissible_values:
+      none:
+        description: "No structure to generate: `stimulus_structure` is `unitary`."
+      preset:
+        description: "The structure of stimuli is hard-coded in a file."
+      generator:
+        description: "A procedure was used to generate the stimulus structure."
+  SourceTypeEnum:
+    description: "How a stimulus or option was produced: sampled from a fixed set, or created by a procedure."
+    permissible_values:
+      set:
+        description: "Sampled from a fixed set."
+      generator:
+        description: "Created using a procedure/algorithm."
+  StimulusRoleEnum:
+    description: "Roles a stimulus can play within a trial. The list is not exhaustive; use a custom label when none applies."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      target:
+        description: "A stimulus the agent must process and which should trigger the completion of the response (e.g., classify, reach, memorize) if the agent is doing the task as intended. In some cases (e.g., in a go/no-go task) the correct response to a stimulus is to *not* click the button; the stimulus that triggered the decision not to click the button is still a *target*."
+      non_target:
+        description: "A stimulus the agent must process but which does not trigger the completion of the response (e.g., the first two stimuli in a 2-back test)."
+      distractor:
+        description: "A stimulus the agent should not process at all (i.e., ignore) and which is unrelated to the correct execution of the task."
+      location_cue:
+        description: "A stimulus giving spatial location information that agents could use to improve their performance."
+      job_specifier:
+        description: "A stimulus specifying which job the agent should perform."
+      stop_signal:
+        description: "A stimulus signaling the agent that they should abort the current action."
+      probe:
+        description: "A stimulus indicating which stimulus to respond about."
+  MeasurementLevelEnum:
+    description: "Level of measurement of a value, which has implications for how the data should be processed during analysis."
+    permissible_values:
+      nominal:
+        description: "A set of unordered labels (e.g., “Luxembourg”, “France”, “Germany”)."
+      ordinal:
+        description: "Ordered values without a clear distance (e.g., “a lot”, “a bit”, “not at all”)."
+      interval:
+        description: "Ordered values with clear distances but no absolute zero (e.g., 10 versus 20 degrees Celsius)."
+      ratio:
+        description: "Values with clear distance metrics and an absolute zero (e.g., length in cm)."
+  InputInterfaceTypeEnum:
+    description: "Interfaces agents use to input actions. The list is not exhaustive."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      keyboard:
+        description: "A keyboard is displayed on the screen."
+      buttons:
+        description: "Dedicated buttons on the screen."
+      stimulus-button:
+        description: "Stimuli serve as buttons."
+      text-field:
+        description: "A text field is displayed on the screen."
+      slider:
+        description: "A slider is displayed on the screen."
+  InputActionTypeEnum:
+    description: "Actions an agent can perform to give a response. The list is not exhaustive."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      mouse-click:
+      mouse-release:
+      key-press:
+      key-release:
+      mouse-drag:
+      touch:
+      swipe:
+  ResponseStructureEnum:
+    description: "The structure of the response required from the agent."
+    permissible_values:
+      unitary:
+        description: "The agent provides a single input (e.g., chooses option *same*)."
+      set:
+        description: "The agent provides a set of information, and the order does not matter (e.g., list words that start with the letter *A*)."
+      sequence:
+        description: "The agent provides a sequence of information, and the order matters (e.g., a sequence of memorized digits in their order of appearance)."
+  EvaluationLabelEnum:
+    description: "Commonly used evaluation labels. The list is not exhaustive; prefer the most specific applicable label."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      correct:
+        description: "The response is correct."
+      error:
+        description: "The response is incorrect."
+      hit:
+        description: "The stimulus was *present* and the agent correctly responded *present*."
+      miss:
+        description: "The stimulus was *present* and the agent incorrectly responded *absent*."
+      fa:
+        description: "The stimulus was *absent* and the agent incorrectly responded *present* (a false alarm)."
+      cr:
+        description: "The stimulus was *absent* and the agent correctly responded *absent* (a correct rejection)."
+  FeedbackTypeEnum:
+    description: "Kinds of feedback a trial can show. The list is not exhaustive."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      none:
+        description: "No feedback was shown."
+      expected_response:
+        description: "Feedback indicated what the correct response would have been."
+      explanation:
+        description: "Feedback explains *why* a certain option is the correct one."
+      correctness_on_option:
+        description: "Feedback indicates, on the option itself, whether the option chosen by the participant was the correct one (e.g., in green) or not (e.g., in red)."
+      correctness_on_screen:
+        description: "Feedback displayed at the screen center indicates whether the response to the current trial was correct (e.g., using a green check or a red cross)."
+  AdditionalMeasureEnum:
+    description: "Kinds of additional measures that may accompany trial data. The list is not exhaustive."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      mouse_trajectories:
+      fmri:
+      eye_tracking:
+      heart_rate:
+  SymbolLayoutEnum:
+    description: "Predefined symbol layouts. If none applies, the field is left empty or carries a custom, clearly documented label."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      vertical:
+        description: "Along the Y axis."
+      horizontal:
+        description: "Along the X axis."
+      diagonal_top_left:
+      diagonal_top_right:
+      square:
+      ring:
+      cross:
+      two_columns:
+  OrientationEnum:
+    description: "Predefined symbol orientations. If none applies, the field is left empty or carries a custom, clearly documented label."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      north:
+        description: "Bottom to top."
+      north_east:
+      east:
+        description: "Left to right."
+      south_east:
+      south:
+        description: "Top to bottom."
+      south_west:
+      west:
+        description: "Right to left."
+      north_west:
+      free:
+        description: "No specific orientation."
 
 classes:
   TrialData:
@@ -494,7 +701,7 @@ classes:
           range_description:
             value: "0-based"
       multitask_type:
-        range: string
+        range: MultitaskTypeEnum
         required: true
         description: "Agents may be required to perform multiple tasks at the same time. This variable indicates the type of multitasking required."
         annotations:
@@ -503,8 +710,6 @@ classes:
             - "Task"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- Empty: No multitasking, i.e., single-tasking. - `concurrent`: There are two independent tasks that need to be completed in parallel. - `compound`: The task requires multiple successive stages or involves tasks that are dependent/coupled."
           notes:
             value:
             - "If no multitasking was involved, leave this field blank."
@@ -551,7 +756,7 @@ classes:
           bdm_type:
             value: "string"
       job_repeat:
-        range: string
+        range: JobRepeatEnum
         description: "Whether this trial's job has not been seen before in this timeline (i.e., specific version of the instrument)."
         annotations:
           categories:
@@ -559,8 +764,6 @@ classes:
             - "Task"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `new`: The job has never been seen before by this agent in the current study. - `repeat`: The job is the same as the previous trial. - `switch`: The job is different from the previous trial but has been seen prior in the timeline."
       block_index:
         range: integer
         required: true
@@ -586,7 +789,7 @@ classes:
           bdm_type:
             value: "string"
       block_type:
-        range: string
+        range: BlockTypeEnum
         required: true
         description: "Specifies the experimental role of the block (e.g., tutorial, practice, test, instruction)."
         annotations:
@@ -595,8 +798,6 @@ classes:
             - "Task"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `tutorial`: A simplified version of the test designed to teach agents how the test works. - `practice`: Typically identical to the main test blocks but are used to get agents accustomed to the task in a no-stakes environment. - `test`: Primary blocks used to measure the desired behaviors. - `instruction`: Presents written and/or visual instructions to the agent."
       transformation_name:
         range: string
         required: true
@@ -685,17 +886,15 @@ classes:
           range_description:
             value: "`stimulus_id` in the `Stimulus` table, within the same `runtime_id`"
       stimulus_type:
-        range: string
+        range: StimulusTypeEnum
         required: true
-        description: "BDM distinguishes the following stimulus types: messages and questions"
+        description: "The kind of stimulus shown; BDM distinguishes messages and questions."
         annotations:
           categories:
             value:
             - "Stimulus"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `message`: The stimulus is a message shown to agents (e.g., task instructions). - `question`: The stimulus may consist of text, images and/or sounds; they require agents to make a decision based on the content of the stimulus."
       stimulus_onset:
         range: float
         description: "Duration between the start of the trial and the appearance of the stimulus, in seconds."
@@ -720,27 +919,23 @@ classes:
           bdm_type:
             value: "integer"
       stimulus_structure:
-        range: string
-        description: "We distinguish three stimulus structures: unitary, set, sequence"
+        range: StimulusStructureEnum
+        description: "The structure of the stimuli shown during the trial."
         annotations:
           categories:
             value:
             - "Stimulus"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `unitary`: Only one stimulus is shown, alone. - `set`: Many stimuli are shown, either at the same time or not; order does not matter. - `sequence`: Multiple stimuli are shown, either at the same time or not; order does matter (order may be indicated by the order of presentation or by a digit for example)."
       stimulus_structure_source_type:
-        range: string
-        description: "Indicates the type of method used to generate the stimulus_structure (this is relevant when a trial displays a sequence of or set of stimuli): none, preset, generator"
+        range: StimulusStructureSourceEnum
+        description: "Indicates the type of method used to generate the `stimulus_structure` (relevant when a trial displays a set or sequence of stimuli)."
         annotations:
           categories:
             value:
             - "Stimulus"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `none`: when stimulus_structure == unitary.\", - `preset`: The structure of stimuli is hard coded in a file. - `generator`: A procedure was used to generate the stimulus_structure."
       stimulus_structure_source:
         range: string
         description: "Refers to the specific generator used to produce the stimulus_structure (e.g., sequence of digits in a digit span test). When no generator was used, this variable has a value of none."
@@ -774,7 +969,7 @@ classes:
           range_description:
             value: "matches the number of stimuli in `stimulus_id`"
       stimulus_source_type:
-        range: string
+        range: SourceTypeEnum
         description: "A stimulus is typically created using a particular procedure/algorithm (\"generator\") or is sampled from a particular set (\"set\"). This variable indicates which of these two applies for the current stimulus."
         annotations:
           categories:
@@ -782,8 +977,6 @@ classes:
             - "Stimulus"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- \"set\":\"stimulus is sampled from a fixed set of stimuli.\" - \"generator\": \"stimulus is created using a procedure/algorithm.\""
       stimulus_source:
         range: string
         description: "Refers to the specific generator or set the stimulus belongs to. Stimuli that stem from the same source have the same data scheme and could thus be described in a table named after stimulus_source (i.e., stimulus_source indicates which table contains the full information about the stimulus; e.g., \"digit1to9\")."
@@ -828,18 +1021,16 @@ classes:
             - "In some cases, when stimuli are too complex or can't be precisely described, a summary of all stimuli is given instead."
             - "For questionnaires this holds the question text as presented, in English. When a question was shown in another language (recorded in `language`), the translations belong in the questionnaire's supplementary resources rather than in this column."
       stimulus_role:
-        range: string
-        description: "A stimulus may play different roles within a trial. Below is a list of some possible roles:"
+        range: StimulusRoleEnum
+        description: "The role the stimulus plays within the trial."
         annotations:
           categories:
             value:
             - "Stimulus"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- \"target\": \"A stimulus the agent must process and which should trigger the completion of the response (e.g., classify, reach, memorize) if the agent is doing the task as intended. Note that in some cases (e.g., in a go/no-go task) the correct response to a stimulus is to *not* click the button. In this case, the stimulus that triggered the decision not to click the button is still a *target*.\" - \"non_target\": \"A stimulus the agent must process but which does not trigger the completion of the response (e.g., the first two stimuli in a 2-back test).\" - \"distractor\": \"A stimulus the agent should not process at all (i.e., ignore) and which is unrelated to the correct execution of the task.\" - \"location_cue\": \"A stimulus giving a spatial location information that agents could use to improve their performance.\" - \"job_specifier\": \"A stimulus specifying which job the agent should perform.\" - \"stop_signal\": \"A stimulus signaling the agent that they should abort the current action.\" - \"probe\": \"A stimulus indicating about which stimulus to respond.\""
       option_source_type:
-        range: string
+        range: SourceTypeEnum
         description: "A set of options is typically created using a particular procedure/algorithm (“generator”) or is sampled from a particular set (“set”). This variable indicates which of these two applies for the current options."
         annotations:
           categories:
@@ -886,49 +1077,41 @@ classes:
             value:
             - "A question is often reused with different option sets (e.g. `agreement_7` vs `agreement_5`), and the resulting measures are not interchangeable. The combination of a question and its options is what the survey literature calls an *item*; BDM has no separate identifier for it — an item is `stimulus_id` together with `option_id`."
       option_data_type:
-        range: string
-        description: "Describes the type of data this option entails. Possible values include:"
+        range: MeasurementLevelEnum
+        description: "Describes the type of data this option entails."
         annotations:
           categories:
             value:
             - "Option"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- \"nominal\": Set of unordered labels (e.g., {“Luxembourg”, “France”, “Germany”}). - \"ordinal\": \"Ordered values without clear distance (e.g., {“a lot”, “a bit”, “not at all”}). - \"interval\": Ordered values with clear distances but no absolute zero (e.g., 10 versus 20 degrees Celsius). - \"ratio\": Values with clear distance metrics and absolute zero (e.g., length in cm)."
       measurement_type:
-        range: string
-        description: "Describes the type of measurement implied by Option which in turn has implications on how that data should be processed during analysis; takes a value in:"
+        range: MeasurementLevelEnum
+        description: "Describes the type of measurement implied by `Option`, which in turn has implications on how that data should be processed during analysis."
         annotations:
           categories:
             value:
             - "Option"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- \"nominal\": Set of unordered labels (e.g., {“Luxembourg”, “France”, “Germany”}). - \"ordinal\": \"Ordered values without clear distance (e.g., {“a lot”, “a bit”, “not at all”}). - \"interval\": Ordered values with clear distances but no absolute zero (e.g., 10 versus 20 degrees Celsius). - \"ratio\": Values with clear distance metrics and absolute zero (e.g., length in cm)."
       input_interface_type:
-        range: string
-        description: "Refers to the type of interface agents used to input actions. Possible values include (non-exhaustive):"
+        range: InputInterfaceTypeEnum
+        description: "Refers to the type of interface agents used to input actions."
         annotations:
           categories:
             value:
             - "Input"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `keyboard`: A keyboard is displayed on the screen. - `buttons`: Dedicated buttons on the screen. - `stimulus-button`: Stimuli serves as buttons. - `text-field`: A text field is displayed on the screen. - `slider`: A slider is displayed on the screen."
       input_action_type:
-        range: string
-        description: "Refers to the type of action the agent performs to give a response. Possible values include (non-exhaustive):"
+        range: InputActionTypeEnum
+        description: "Refers to the type of action the agent performs to give a response."
         annotations:
           categories:
             value:
             - "Input"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- \"mouse-click\" - \"mouse-release\" - \"key-press\" - \"key-release\" - \"mouse-drag\" - \"touch\" - \"swipe\""
           notes:
             value:
             - "The type of input_action determines the structure of detailed response data (i.e., mouse-click data is different from key-press data)."
@@ -967,16 +1150,14 @@ classes:
           bdm_type:
             value: "string"
       response_structure:
-        range: string
-        description: "The structure of the response required by the agent; can take values in:"
+        range: ResponseStructureEnum
+        description: "The structure of the response required by the agent."
         annotations:
           categories:
             value:
             - "Response"
           bdm_type:
             value: "string"
-          range_description:
-            value: "- `unitary`: The agent provides a single input (e.g., chooses option *same*). - `set`: The agent provides a set of information, and the order does not matter (e.g., list words that start with the letter *A*). - `sequence`: The agent provides a sequence of information, and the order matters (e.g., a sequence of memorized digits in their order of appearance)."
           notes:
             value:
             - "Note that the distinction between set and sequence refers to the importance of order information to evaluate if the response is correct or not; a response with a set structure may unfold over time (each piece of information is given in a particular temporal order) and it may be of scientific interest to take into account that order; however, the order itself is not important within the task itself. For example, in the [MOT task](https://en.wikipedia.org/wiki/Multiple_object_tracking) one may ask agents to point to all dots that hide a token. If agents point to all such dots they will be correct no matter in which order the dots were clicked in."
@@ -1134,27 +1315,23 @@ classes:
             - "For questionnaires, `score` is the value the experimenter assigns to an answer in this particular context. In the BIS/BAS questionnaire, answering \"very true for me\" yields a score of 1 for some items, 4 for reverse-coded items, and 0 for filler items; item scores are then aggregated into questionnaire-level scores."
             - ".warning `score` and `response_numeric` capture different things and must both be present: `response_numeric` is the raw answer, `score` is its interpretation in this context."
       evaluation_label:
-        range: string
-        description: "There are several labels that can be assigned to a given response to specify what that response means in terms of evaluation within a task. The most general terms are \"correct” and \"error\" (which are already given by the correct variable). There are however more specific sets of terms that may apply in different contexts. For example, in a signal detection task, it is common to use labels from the signal detection theory framework (i.e., “hit”, “miss”, “false alarm”, “correct rejection”). In other contexts, researchers might use terms like “omission” or “commission” errors or even things like “perseveration” error (e.g., in the Wisconsin Card Sorting Test). Note that these terms are not always well defined or exclusive. For example, a “hit” is also a “correct” response and a “false alarm” may be synonymous to “commission error”. Whenever possible use the more specific terms (i.e., always use “hit” rather than “correct” when applicable). Here are few evaluation labels that are commonly used:"
+        range: EvaluationLabelEnum
+        description: "There are several labels that can be assigned to a given response to specify what that response means in terms of evaluation within a task. The most general terms are \"correct” and \"error\" (which are already given by the correct variable). There are however more specific sets of terms that may apply in different contexts. For example, in a signal detection task, it is common to use labels from the signal detection theory framework (i.e., “hit”, “miss”, “false alarm”, “correct rejection”). In other contexts, researchers might use terms like “omission” or “commission” errors or even things like “perseveration” error (e.g., in the Wisconsin Card Sorting Test). Note that these terms are not always well defined or exclusive. For example, a “hit” is also a “correct” response and a “false alarm” may be synonymous to “commission error”. Whenever possible use the more specific terms (i.e., always use “hit” rather than “correct” when applicable)."
         annotations:
           categories:
             value:
             - "Evaluation"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `correct`: The response is correct. - `error`: The response is incorrect. - `hit`: The stimulus was *present* and the agent correctly responded *present*. - `miss`: The stimulus was *present* and the agent incorrectly responded *absent*. - `fa`: The stimulus was *absent* and the agent incorrectly responded *present*. - `cr`: The stimulus was *absent* and the agent correctly responded *absent*."
       feedback_description:
-        range: string
-        description: "Lists the different kinds of feedback that were shown on a given trial. When multiple types of feedback were used, feedback will list them using `;` as a separator. If a given type of feedback was shown multiple times during a trial, that feedback type is listed only once (i.e., feedback_description does *not* represent the sequence of feedbacks). The possible values for feedback are:"
+        range: FeedbackTypeEnum
+        description: "Lists the different kinds of feedback that were shown on a given trial. When multiple types of feedback were used, feedback will list them using `;` as a separator. If a given type of feedback was shown multiple times during a trial, that feedback type is listed only once (i.e., feedback_description does *not* represent the sequence of feedbacks)."
         annotations:
           categories:
             value:
             - "Feedback"
           bdm_type:
             value: "string"
-          range_description:
-            value: "- `none`: No feedback was shown. - `expected_response`: Feedback indicated what the correct response would have been. - `explanation`: Feedback explains *why* a certain option is the correct one. - `correctness_on_option`: \"Feedback indicates (on the option itself) if the option chosen by the participant was the correct one (e.g., in green), or not (e.g., in red). - `correctness_on_screen`: \"Feedback displayed on the screen center indicates if the response to the current trial was correct or not (e.g., using a green check or a red cross)."
           notes:
             value:
             - "This list is not exhaustive and characterizing feedback in the future will involve more variables (e.g., separating the type of information shown (e.g., correctness) and how it is shown (“on_option” versus “on_screen”)."
@@ -1178,16 +1355,14 @@ classes:
           bdm_type:
             value: "float"
       additional_measures:
-        range: string
-        description: "Indicates whether additional measures have been recorded during this trial and if so what kind of measures they are. Possible values include (non-exhaustive):"
+        range: AdditionalMeasureEnum
+        description: "Indicates whether additional measures have been recorded during this trial and, if so, what kind of measures they are."
         annotations:
           categories:
             value:
             - "Accessory"
           bdm_type:
             value: "string"
-          range_description:
-            value: "- `mouse_trajectories` - `fmri` - `eye_tracking` - `heart_rate`"
           notes:
             value:
             - "Leave this field empty if no additional measures were recorded for this specific response."
@@ -1442,7 +1617,7 @@ classes:
             - "Stimuli that come from the same source have the same data scheme and could thus be described in a table named after the `stimulus_source`. `stimulus_source` indicates which table contains the full information about the stimulus; e.g., \"digits1to9\"."
             - "One could include a `source_count` variable here that indicates how many different stimuli there are in the set; but it's better stored in the table that contains information about that stimulus source."
       source_type:
-        range: string
+        range: SourceTypeEnum
         description: "A stimulus is typically created using a particular procedure/algorithm (\"generator\") or is sampled from a particular set (\"set\"). This variable indicates which of these two applies for the current stimulus."
         annotations:
           categories:
@@ -1450,8 +1625,6 @@ classes:
             - "What"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `set`: stimulus is sampled from a fixed set of stimuli. - `generator`: \"stimulus is created using a procedure/algorithm."
       index_in_source:
         range: integer
         description: "When a stimulus is picked from a particular set (e.g., \"digits1to9\"), this index refers to the index within that set."
@@ -1465,17 +1638,15 @@ classes:
             value:
             - "In addition to `index_in_source`, `stimulus_id` can also be used to look up further information about the stimulus in the source."
       role:
-        range: string
+        range: StimulusRoleEnum
         required: true
-        description: "Describe the role that the stimulus plays in the trial, e.g., \"target\"."
+        description: "Describes the role the stimulus plays in the trial."
         annotations:
           categories:
             value:
             - "What"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `target`: A stimulus the agent must process and which should trigger the completion of the response (e.g., classify, reach, memorize) if the agent is doing the task as intended. In some cases (e.g., in a go/no-go task) the correct response to a stimulus is to *not* click the button. In this case, the stimulus that triggered the decision not to click the button is still a `target`. - `non_target`: A stimulus the agent must process but which does not trigger the completion of the response (e.g., the first two stimuli in a 2-back test). - `distractor`: \"A stimulus the agent should not process at all (i.e., ignore) and which is unrelated to the correct execution of the task. - `location_cue`: A stimulus giving a spatial location information that agents could use to improve their performance. - `job_specifier`: A stimulus specifying which job the agent should perform. - `stop_signal`: \"A stimulus signaling the agents that they should abort current action. - `probe`: A stimulus indicating about which stimulus to respond."
       animation:
         range: string
         description: "Describes the animation used to display a specific stimulus in a human-readable format. For example, \"fadeIn 3s\" indicates a 3-second fade-in animation."
@@ -1689,7 +1860,7 @@ classes:
             value:
             - "The `option_source` specifies the table or file that provides complete details about the option. For instance, `option_source=digit1to9` indicates a source containing information on digits 1 to 9."
       source_type:
-        range: string
+        range: SourceTypeEnum
         description: "An option is typically created using a particular procedure/algorithm or is sampled from a particular set. This variable indicates which of these two applies for the current option."
         annotations:
           categories:
@@ -1697,8 +1868,6 @@ classes:
             - "What"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `set`: option is sampled from a fixed set of options. - `generator`: option is created using a procedure/algorithm."
       index_in_source:
         range: integer
         description: "When an option is picked from a particular set (e.g., `digits1to9`), this index refers to the index within that set."
@@ -2030,7 +2199,7 @@ classes:
           bdm_type:
             value: "integer"
       symbol_layout:
-        range: string
+        range: SymbolLayoutEnum
         description: "How the symbols are laid out."
         annotations:
           categories:
@@ -2038,8 +2207,6 @@ classes:
             - "What"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `vertical`: along the Y axis. - `horizontal`: along the X axis. - `diagonal_top_left` - `diagonal_top_right` - `square` - `ring` - `cross` - `two_columns`"
           notes:
             value:
             - "If none of the predefined layouts apply, leave this field empty or use a custom human-readable label. Make sure custom labels are clearly defined in the codebook."
@@ -2067,7 +2234,7 @@ classes:
           range_description:
             value: "#000000 to #FFFFFF"
       orientation:
-        range: string
+        range: OrientationEnum
         description: "Indicates the symbol orientation."
         annotations:
           categories:
@@ -2075,8 +2242,6 @@ classes:
             - "What"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `north`: bottom to top. - `north_east` - `east`: left to right. - `south_east` - `south`: top to bottom. - `south_west` - `west`: right to left - `north_west` - `free`: no specific orientation."
           notes:
             value:
             - "If none of the predefined orientations apply, leave this field empty or use a custom human-readable label. Make sure custom labels are clearly defined in the codebook."
@@ -2209,7 +2374,7 @@ classes:
           bdm_type:
             value: "integer"
       symbol_layout:
-        range: string
+        range: SymbolLayoutEnum
         description: "How the symbols are laid out."
         annotations:
           categories:
@@ -2217,8 +2382,6 @@ classes:
             - "What"
           bdm_type:
             value: "enum"
-          range_description:
-            value: "- `vertical`: along the Y axis. - `horizontal`: along the X axis. - `diagonal_top_left` - `diagonal_top_right` - `square` - `ring` - `cross` - `two_columns`"
           notes:
             value:
             - "If none of the predefined layouts apply, leave this field empty or use a custom human-readable label. Make sure custom labels are clearly defined in the codebook."
@@ -2246,7 +2409,7 @@ classes:
           range_description:
             value: "#000000(00) to #FFFFFF(FF)"
       orientation:
-        range: string
+        range: OrientationEnum
         description: "Indicates the symbol orientation."
         annotations:
           categories:
@@ -2529,7 +2692,7 @@ classes:
           bdm_type:
             value: "float"
       evaluation_label:
-        range: string
+        range: EvaluationLabelEnum
         description: "Evaluation label for this stage's response (e.g., `correct`, `error`, `hit`, `miss`). Same conventions as the `Response` table's field of the same name."
         annotations:
           categories:

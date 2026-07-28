@@ -2,6 +2,48 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0803] - 2026-08-03
+
+### Changed
+
+- **The prose-only enums are now real LinkML enums with machine-readable value sets.** 25
+  slots across 6 tables previously carried their value set as a prose enumeration in
+  `range` (up to 173 words rendered inside a table cell downstream); each now ranges over
+  a named enum with per-value `description`s, and `field-definitions.json` publishes the
+  set as a new per-field key:
+  - `values`: a list of `{value, description?}` objects (description omitted where the
+    source never had one, e.g. the bare `input_action_type` items);
+  - `values_exhaustive`: `false` when the documentation itself says the list is open
+    ("non-exhaustive", "some possible roles", "commonly used", custom labels allowed) —
+    10 of the 16 new enums; `true` otherwise.
+  The prose `range` is gone from every migrated field; `range` is once again a short
+  constraint fragment or absent. The already-real enums (`status` ×2, `response_type`)
+  publish `values` the same way.
+- **Value sets shared by several fields are defined once.** `StimulusRoleEnum` serves
+  `Response.stimulus_role` and `Stimulus.role` (their two copies had drifted in wording
+  and quoting; the fuller wording won). `SourceTypeEnum` serves the four
+  `*source_type` fields, `MeasurementLevelEnum` serves `option_data_type` and
+  `measurement_type`, `EvaluationLabelEnum` serves `Response` and `Subtrial`,
+  `SymbolLayoutEnum`/`OrientationEnum` serve both component tables.
+  `Response.option_source_type`, `Subtrial.evaluation_label`, and
+  `OptionComponent.orientation`, which described a value set but never listed it, now
+  reference the shared definitions.
+- The 13 field descriptions that ended with a colon leading into the `range` cell are
+  rewritten as complete sentences; the value details live on the values themselves.
+- Not migrated (no defined value set to publish): `Response.adaptive_method_name` and
+  `Input.object_type` remain free strings.
+
+### Breaking
+
+- **Closed value sets now validate.** Fields whose documentation states a complete set —
+  `stimulus_type`, `stimulus_structure`, `stimulus_structure_source_type`, the four
+  `source_type` fields, `option_data_type`, `measurement_type`, `job_repeat`,
+  `response_structure` — are enum-constrained in `schema.json`; instances carrying other
+  values no longer validate. Open sets (`stimulus_role`/`role`, `evaluation_label`,
+  `block_type`, `multitask_type`, `input_*_type`, `feedback_description`,
+  `additional_measures`, `symbol_layout`, `orientation`) stay `type: string` in
+  `schema.json` — their `values` are documentation, not a constraint.
+
 ## [26.0802] - 2026-08-02
 
 ### Changed

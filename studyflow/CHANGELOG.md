@@ -5,6 +5,16 @@ All notable changes to the Studyflow schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0803] - 2026-08-03
+
+### Added
+- `field-definitions.json` now publishes each enum-ranged field's value set as `values`
+  (a list of `{value, description?}` objects) plus `values_exhaustive` — the
+  artifact-shape addition introduced with trial v26.0803, applied uniformly to every
+  family that ships `field-definitions.json`. Seven fields gain it (e.g.
+  `CognitiveTest.behaverseTask`, `RandomGateway.algorithm`, `Dataset.bidsDataType`).
+  `schema.json` validation is unchanged.
+
 ## [26.0730] - 2026-07-30
 
 ### Added
