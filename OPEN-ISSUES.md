@@ -10,14 +10,16 @@ working tree on **2026-07-27** unless marked otherwise; items inherited from the
 review that could not be re-verified are marked `[unverified]`.
 
 Live companion document at the repo root:
-- [`DESIGN-scoping-and-run-log.md`](DESIGN-scoping-and-run-log.md) — the active design for §0
-  (run log, two-tier scoping, parameter split). Awaiting answers to its §8 open questions.
+- [`bdm-data-model-agent-prompt.md`](bdm-data-model-agent-prompt.md) — the ready-to-run agent
+  brief for §5 (the `behaverse/data-model` site round), rewritten 2026-07-27 against schemas
+  v26.0728. Hand it to an agent in that repo verbatim.
+  (`DESIGN-scoping-and-run-log.md` is now implemented; kept as the record of the decisions.)
 
 ---
 
 ## 0. In flight
 
-- **Scoping redesign — run log + two-tier scoping.** `studyflow.csv` ships in every dataset's
+- ✅ **DONE (trial v26.0727).** **Scoping redesign — run log + two-tier scoping.** `studyflow.csv` ships in every dataset's
   agent folder and records each agent's activity runs (attempts), but **has no schema
   anywhere**: the `studyflow` family models the BPMN *plan* (Study/Activity/gateways), not
   execution. The trial schema already dangles a reference to a nonexistent "`Studyflow` table"
@@ -28,12 +30,14 @@ Live companion document at the repo root:
   scoping** — main files (`Response`) generously denormalized for standalone readability,
   detail tables lean. Detail tables join on `(runtime_id, response_id)` because `response_id`
   is only unique *within a file* (option (b), ratified 2026-07-27). Design doc pending.
-- **Generative-parameter grain split.** Rename the shipped trial-grained `TaskParameter` →
+- ✅ **DONE (trial v26.0727).** **Generative-parameter grain split.** Rename the shipped trial-grained `TaskParameter` →
   `TrialParameter` (+ required `response_id`, optional `subtrial_index`); add a new
   activity-run-grained `TaskParameter`. **Blocked on** the scoping redesign above, so the new
   table's scoping lands right the first time. Source proposal archived at
   `_archive/trial-PROPOSAL_task_vs_trial_parameters.md`.
-- **data-model site round.** Nothing done yet; the work is itemized in §5 below.
+- **data-model site round.** Not started; itemized in §5 and written up as a hand-off brief
+  ([`bdm-data-model-agent-prompt.md`](bdm-data-model-agent-prompt.md)). **This is the next
+  substantial piece of work**, and it lives in the other repository.
 
 ---
 
@@ -50,9 +54,9 @@ Live companion document at the repo root:
   bad cross-reference.
 - **`trial` has no semantic mappings**, so it deliberately emits no `context.jsonld`. Adding
   `slot_uri`/`exact_mappings` would unlock it.
-- **`studyflow` family looks abandoned**: version `25.1217.dev2` (only family not on CalVer),
-  **zero** `versions/` snapshots, CHANGELOG with an `## [Unreleased]` section only, and a block
-  of commented-out placeholder classes at the end of the source. Decide: revive, or archive it.
+- ✅ **RESOLVED (studyflow v26.0728).** The family was confirmed alive and given its first
+  tagged release: real CalVer, a written changelog entry, its first `versions/` snapshot, and
+  the commented-out placeholder classes removed.
 - **`dataset` semantic-mapping bugs** (2026-07-03 review, re-verified where noted):
   - `sample_size` → `ddiuniverse:Universe.html` — a documentation *page*, not a term URI. ✔confirmed
   - `study_design_type` → `sdo:MedicalStudy` — a schema.org *class* used as a slot URI. ✔confirmed
@@ -103,9 +107,9 @@ Live companion document at the repo root:
 
 - **No git tags** — zero tags in the repo despite 20+ published versions. Tagging releases
   would make `versions/` snapshots navigable from git history.
-- **Snapshot backfill:** `studyflow` (0 snapshots) and `vocabulary` (0 snapshots) have never
-  archived a release. Other families: bcsv 7, dataset 6, catalog 5, trial 4, event 3,
-  timeseries 1.
+- **Snapshot backfill — mostly closed.** `studyflow` and `vocabulary` published their first
+  snapshots in v26.0728/v26.0727. Remaining gaps are historical: `event` 26.0608 and `catalog`
+  25.1202 were released but never archived.
 - **No `versions/` immutability guard in CI.** The policy says snapshots are immutable; nothing
   enforces it. An add-only check (fail if a file under any `versions/` is modified or deleted)
   is cheap and directly protects the pinning promise.

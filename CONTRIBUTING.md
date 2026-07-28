@@ -116,6 +116,20 @@ This is deliberately a **prefix inside the string**, not a structured `{level, t
 by this repo's docs generator *and* by `behaverse/data-model`'s `build_spec.py` in another
 repository — never changes. The convention originated in `vocabulary/terms.yaml`.
 
+**Renderers legitimately differ.** This repo's docs site gives each field its own page, so a
+marked note becomes a Docusaurus admonition. The data-model site renders field notes *inside a
+table cell* of its reference table, where a Quarto callout block cannot go, so it strips the
+marker and emphasises the text inline instead. Both are correct: the requirement is that the
+marker never reaches the reader as literal text, not that every surface draws a box.
+
+### Versions are strings
+
+Always quote a `version:` in YAML — `version: "26.0728"`, never `version: 26.0728`. YAML reads
+an unquoted CalVer as a float, and the damage can be silent: `26.0100` becomes `26.01`, dropping
+the trailing zeros with no error, which would then propagate into `$id` and the snapshot path.
+`scripts/validate_schemas.py` enforces this (including for `vocabulary/terms.yaml`, which the
+LinkML lint never inspects).
+
 ### Other
 
 - **CalVer** `vYY.MMDD`; snapshots under `versions/` are immutable.
