@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate the JSON-Schema-based schemas and their bundled examples.
 
-Four check families, all run by CI (validate-schemas.yml):
+Five check families, all run by CI (validate-schemas.yml):
 
 1. Schemas + examples — assert every `schema.json` is a well-formed schema (draft
    chosen from its `$schema`), then validate every `examples/*.json` against it
@@ -19,6 +19,8 @@ Four check families, all run by CI (validate-schemas.yml):
 4. LinkML enum consistency — on every enum-ranged slot in */schema.linkml.yaml, the
    slot's examples and `ifabsent: string(...)` default must be permissible values
    (the metamodel lint does not enforce either).
+5. Version strings — every source's `version` must be a quoted CalVer string. An unquoted
+   CalVer is read by YAML as a float, and `26.0100` silently becomes `26.01`.
 
 Exit non-zero listing every problem found. studyflow has no schema.json (LinkML,
 consumed directly) so only checks 4 covers it.
@@ -167,6 +169,48 @@ def check_linkml_enum_consistency(failures: list[str]) -> None:
                                     f"permissible value of enum {slot.range}")
 
 
+def check_version_strings(failures: list[str]) -> None:
+    """Every source's `version` must be a CalVer STRING, never a bare YAML number.
+
+    YAML coerces an unquoted CalVer to a float, and the failure can be silent:
+    `version: 26.0728` parses as 26.0728 (loud — linkml-lint rejects a non-string), but
+    `version: 26.0100` parses as 26.01, dropping the trailing zeros with no error anywhere,
+    which would publish a truncated version into `$id` and every snapshot path. Quoting is
+    the fix; this check enforces it, including for the sources linkml-lint never sees
+    (vocabulary/terms.yaml) and where a bare value would still be a valid string
+    (studyflow's historical `25.1217.dev2`).
+    """
+    import yaml
+
+    calver = re.compile(r"^\d{2}\.\d{4}(\.[A-Za-z0-9]+)?$")
+
+    sources: list[tuple[Path, str]] = [(p, "version") for p in sorted(ROOT.glob("*/schema.linkml.yaml"))]
+    terms = ROOT / "vocabulary" / "terms.yaml"
+    if terms.exists():
+        sources.append((terms, "vocabulary_metadata.version"))
+
+    for path, key in sources:
+        doc = yaml.safe_load(path.read_text())
+        node = doc.get("vocabulary_metadata", {}) if key.startswith("vocabulary_metadata") else doc
+        value = node.get(key.rsplit(".", 1)[-1])
+        rel = path.relative_to(ROOT)
+        if value is None:
+            failures.append(f"{rel}: no `version` declared")
+        elif not isinstance(value, str):
+            failures.append(f"{rel}: `version` is {type(value).__name__} {value!r}, not a string — "
+                            f"quote it (an unquoted CalVer is read as a number, and trailing "
+                            f"zeros are silently lost)")
+        elif not calver.match(value):
+            failures.append(f"{rel}: `version` {value!r} is not CalVer `YY.MMDD[.suffix]`")
+
+    # bcsv is hand-maintained JSON, where a version is always a string; check the format only.
+    bcsv = ROOT / "bcsv" / "schema.json"
+    if bcsv.exists():
+        v = json.loads(bcsv.read_text()).get("version")
+        if not isinstance(v, str) or not calver.match(v):
+            failures.append(f"bcsv/schema.json: `version` {v!r} is not a CalVer string")
+
+
 def main() -> int:
     failures: list[str] = []
 
@@ -202,6 +246,7 @@ def main() -> int:
         (check_bcsv_conformance, "bcsv conformance fixtures agree with schema.json + expected.json"),
         (check_jsonld_contexts, "JSON-LD contexts expand"),
         (check_linkml_enum_consistency, "LinkML enum examples/defaults are permissible values"),
+        (check_version_strings, "every source declares a CalVer version string"),
     ]:
         before = len(failures)
         check(failures)
