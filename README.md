@@ -59,9 +59,9 @@ Schema for defining the formal structure of studyflow diagrams - sequences of ac
 **Related**: [Studyflow Modeler Documentation](https://behaverse.org/studyflow-modeler/docs)
 
 ### trial
-Tidy, multi-table schema describing trial-level behavioral data (responses, stimuli, instruments, generative parameters, …) for cognitive tests and questionnaires, derived from raw events. Includes the run log (`Studyflow`) that makes every activity run addressable.
+Tidy, multi-table schema describing trial-level behavioral data (responses, stimuli, instruments, generative parameters, …) for cognitive tests and questionnaires, derived from raw events. Includes the run log (`StudyflowLog`) that makes every activity run addressable.
 
-- **Version**: v26.0729  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
+- **Version**: v26.0730  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/trial#`
 - **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
 - _No `context.jsonld` (the trial fields carry no semantic mappings yet)._

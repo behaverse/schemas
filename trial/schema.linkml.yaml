@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events."
-version: "26.0729"
+version: "26.0730"
 license: MIT
 
 prefixes:
@@ -51,11 +51,11 @@ classes:
     description: Root container mapping each trial table to an array of its rows.
     tree_root: true
     attributes:
-      Studyflow:
+      StudyflowLog:
         multivalued: true
-        range: Studyflow
+        range: StudyflowLog
         inlined_as_list: true
-        description: "Rows of the Studyflow table (the run log)."
+        description: "Rows of the StudyflowLog table (the run log)."
       Response:
         multivalued: true
         range: Response
@@ -107,9 +107,9 @@ classes:
         inlined_as_list: true
         description: "Rows of the TrialParameter table."
 
-  Studyflow:
-    description: "The run log: one row per activity run — a single execution of one activity by one agent, with restarts counted as separate runs. Shipped as `studyflow.csv` in the agent's folder. This is the REALIZED record of what an agent actually did; it is not the study-level plan (the BPMN studyflow diagram authored in the `studyflow` schema family), which describes what was designed to happen."
-    title: "Studyflow"
+  StudyflowLog:
+    description: "The run log: one row per activity run — a single execution of one activity by one agent, with restarts counted as separate runs. Shipped as `studyflow_log.csv` in the agent's folder. This is the REALIZED record of what an agent actually did; it is not the study-level plan (the BPMN studyflow diagram authored in the `studyflow` schema family), which describes what was designed to happen."
+    title: "StudyflowLog"
     annotations:
       notes:
         value:
@@ -119,6 +119,9 @@ classes:
         - "The same run is identified in the event layer by `bdm:runtime_id`, so events and trials join directly."
     attributes:
       runtime_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Primary key: a dataset-wide unique identifier for this activity run. A UUID is recommended so that runs stay distinguishable when datasets are pooled. Equals the event layer's `bdm:runtime_id` for the same run."
         annotations:
@@ -292,8 +295,11 @@ classes:
         - "The information in this table should be sufficient for most analyses, but more detailed information may be linked from other tables via identifiers (`response_id` and `trial_index`)."
     attributes:
       runtime_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
-        description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this response belongs to. Unique dataset-wide, so rows from different agents, sessions, or attempts stay distinguishable when files are concatenated. Resolves in the `Studyflow` table, and equals the event layer's `bdm:runtime_id` for the same run."
+        description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this response belongs to. Unique dataset-wide, so rows from different agents, sessions, or attempts stay distinguishable when files are concatenated. Resolves in the `StudyflowLog` table, and equals the event layer's `bdm:runtime_id` for the same run."
         annotations:
           categories:
             value:
@@ -301,8 +307,11 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`runtime_id` in the `Studyflow` table."
+            value: "`runtime_id` in the `StudyflowLog` table."
       response_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "A unique identifier assigned to responses in temporal order, meaning that larger IDs correspond to more recent responses that occurred later in time. This ID is unique within one activity run; the dataset-wide key is the pair (`runtime_id`, `response_id`)."
         annotations:
@@ -385,7 +394,7 @@ classes:
             value: "1-based index of activity within the agent-level data."
           notes:
             value:
-            - "See `Studyflow` table for more details."
+            - "See `StudyflowLog` table for more details."
       response_index:
         range: integer
         description: "The 1-based ordinal position of this response within the agent's participation in the study. response_index is nested within agents — not within any lower-level construct (session, activity, block, or trial) — so the counter starts at the agent's first response and increments to their last without ever resetting. Its maximum value for a given agent equals the number of responses recorded from that agent in the study."
@@ -436,7 +445,7 @@ classes:
             value: "0-based"
           notes:
             value:
-            - "Distinct from `attempt`, which counts runs of the activity within the current session and is what identifies a session that was interrupted and restarted. See the `Studyflow` table."
+            - "Distinct from `attempt`, which counts runs of the activity within the current session and is what identifies a session that was interrupted and restarted. See the `StudyflowLog` table."
       attempt:
         range: integer
         required: true
@@ -448,10 +457,10 @@ classes:
           bdm_type:
             value: "index"
           range_description:
-            value: "1-based index of the run within (agent, session, activity). See `attempt` in the `Studyflow` table."
+            value: "1-based index of the run within (agent, session, activity). See `attempt` in the `StudyflowLog` table."
       status:
         range: RunStatusEnum
-        description: "How far this response's activity run got — copied from the run's row in the `Studyflow` table so that trials from abandoned runs can be filtered without a join. The `Studyflow` table is authoritative; a disagreement between the two is a dataset error."
+        description: "How far this response's activity run got — copied from the run's row in the `StudyflowLog` table so that trials from abandoned runs can be filtered without a join. The `StudyflowLog` table is authoritative; a disagreement between the two is a dataset error."
         annotations:
           categories:
             value:
@@ -599,6 +608,9 @@ classes:
             value:
             - "- The transformation/projection encapsulates the domain rules that define a \"trial\" for a given task. It defines what constitutes a \"trial\"."
       trial_index:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Sequential identifier representing number of times transformation rule to the events occurred. It increases with each re-computation of the trial based on updated or newly received events."
         annotations:
@@ -656,7 +668,9 @@ classes:
             - "Use semicolon-separated indices if more than one stimulus was presented, e.g., `1;2;3`."
             - "In a questionnaire this is the position of the question: `stimulus_index` = 1 is the first question presented, = 23 the twenty-third."
       stimulus_id:
-        range: integer
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Is a unique identifier for the (unitary, set or sequence of) stimuli presented during a trial; if those exact same stimuli are repeated in a different trial, that trial would have the same value for stimulus_id. stimulus_id may also be used to refer to a specific message or question in a questionnaire."
         annotations:
@@ -664,7 +678,9 @@ classes:
             value:
             - "Stimulus"
           bdm_type:
-            value: "integer"
+            value: "id"
+          range_description:
+            value: "`stimulus_id` in the `Stimulus` table, within the same `runtime_id`."
       stimulus_type:
         range: string
         required: true
@@ -851,14 +867,18 @@ classes:
           bdm_type:
             value: "integer"
       option_id:
-        range: integer
+        any_of:
+        - range: string
+        - range: integer
         description: "Is a unique identifier for the option (set or generator) used on a given trial."
         annotations:
           categories:
             value:
             - "Option"
           bdm_type:
-            value: "integer"
+            value: "id"
+          range_description:
+            value: "`option_id` in the `Option` table, within the same `runtime_id`."
           notes:
             value:
             - "A question is often reused with different option sets (e.g. `agreement_7` vs `agreement_5`), and the resulting measures are not interchangeable. The combination of a question and its options is what the survey literature calls an *item*; BDM has no separate identifier for it — an item is `stimulus_id` together with `option_id`."
@@ -1227,6 +1247,9 @@ classes:
         - "Each row of `Stimulus` table corresponds to a stimulus in a trial. Each trial can contain different number of stimuli."
     attributes:
       runtime_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this stimulus belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `stimulus_id` it forms this table's dataset-wide key."
         annotations:
@@ -1236,8 +1259,11 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`runtime_id` in the `Studyflow` table."
+            value: "`runtime_id` in the `StudyflowLog` table."
       stimulus_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Primary key of the `Stimulus` table. References to this identifier in other tables are thus named `stimulus_id`."
         annotations:
@@ -1253,6 +1279,9 @@ classes:
             - "If the same stimulus is shown at two different times in a trial, those two instances will have their own row in the `Stimulus` table, each with its own `id`."
             - "Make sure to refer to this field as `stimulus_id` rather than `id` When joining tables. This also applies to all the `id` fields; they are named `id` within their own context/table, but `<context/table>_id` when addressed from other tables. For example, `X_id` in a table refers (hence a foreign key) to the `id` column in the X table."
       trial_index:
+        any_of:
+        - range: string
+        - range: integer
         description: "Refers to the `trial_index` in the `Response` table and indicates in which trial this stimulus was shown."
         annotations:
           categories:
@@ -1263,6 +1292,9 @@ classes:
           range_description:
             value: "`trial_index` in the `Response` table, within the same `runtime_id`"
       response_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Refers to the `response_id` in the `Response` table and indicates for which response this stimulus was shown."
         annotations:
@@ -1462,6 +1494,9 @@ classes:
         - "Note that in some tasks, the options may change within a trial after each input (e.g., serial self-ordered search task); therefore the options are optionally indexed by `input_index`."
     attributes:
       runtime_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this option belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `option_id` it forms this table's dataset-wide key."
         annotations:
@@ -1471,8 +1506,11 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`runtime_id` in the `Studyflow` table."
+            value: "`runtime_id` in the `StudyflowLog` table."
       option_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Primary key of the `Option` table. References to this identifier in other tables are thus named `option_id`."
         annotations:
@@ -1487,6 +1525,9 @@ classes:
             value:
             - "If the same option is shown at two different times in a trial, those two instances will have their own row in the `Option` table, each with its own `id`."
       trial_index:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Refers to the `trial_index` in the `Response` table and indicates in which trial this option was shown."
         annotations:
@@ -1498,6 +1539,9 @@ classes:
           range_description:
             value: "`trial_index` in the `Response` table for the same agent/session/activity"
       response_id:
+        any_of:
+        - range: string
+        - range: integer
         description: "Refers to the `response_id` in the `Response` table and indicates for which response this option was shown."
         annotations:
           categories:
@@ -1678,6 +1722,9 @@ classes:
     title: "Input"
     attributes:
       runtime_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this input belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `input_id` it forms this table's dataset-wide key."
         annotations:
@@ -1687,8 +1734,11 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`runtime_id` in the `Studyflow` table."
+            value: "`runtime_id` in the `StudyflowLog` table."
       input_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Primary key; each input or click has its own identifier value that is unique within the table."
         annotations:
@@ -1698,6 +1748,9 @@ classes:
           bdm_type:
             value: "PRIMARY KEY"
       response_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Refers to the `response_id` in the `Response` table and indicates for which response this input was recorded."
         annotations:
@@ -1826,6 +1879,9 @@ classes:
           bdm_type:
             value: "string"
       option_id:
+        any_of:
+        - range: string
+        - range: integer
         description: "If the click is on an option, this variable indicates which option it was."
         annotations:
           categories:
@@ -1836,6 +1892,9 @@ classes:
           range_description:
             value: "Corresponding `option_id` in the `Option` table."
       stimulus_id:
+        any_of:
+        - range: string
+        - range: integer
         description: "If the click is on a stimulus, this variable indicates which stimulus it was."
         annotations:
           categories:
@@ -1850,6 +1909,9 @@ classes:
     title: "StimulusComponent"
     attributes:
       runtime_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this stimulus component belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with (`stimulus_id`, `index`) it forms this table's dataset-wide key."
         annotations:
@@ -1859,7 +1921,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`runtime_id` in the `Studyflow` table."
+            value: "`runtime_id` in the `StudyflowLog` table."
       stimulus_id:
         required: true
         description: "A reference to the primary key `id` of the `Stimulus` table."
@@ -2017,6 +2079,9 @@ classes:
     title: "OptionComponent"
     attributes:
       runtime_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this option component belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with (`option_id`, `index`) it forms this table's dataset-wide key."
         annotations:
@@ -2026,7 +2091,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`runtime_id` in the `Studyflow` table."
+            value: "`runtime_id` in the `StudyflowLog` table."
       index:
         range: integer
         required: true
@@ -2040,6 +2105,9 @@ classes:
           range_description:
             value: "1-based indices"
       option_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "A reference to the key `option_id` in the `Option` table."
         annotations:
@@ -2272,6 +2340,9 @@ classes:
         - "Do not confuse stages with the pieces of one response: a digit-span trial recalling \"3-5-7\" is ONE subtrial with `response_count` = 3 in the `Response` table; a two-step trial is TWO subtrials, each with its own stimulus and outcome."
     attributes:
       runtime_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this subtrial belongs to. Unique dataset-wide, so rows stay distinguishable when files from different agents, sessions, or attempts are concatenated. Together with `subtrial_id` it forms this table's dataset-wide key."
         annotations:
@@ -2281,8 +2352,11 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`runtime_id` in the `Studyflow` table."
+            value: "`runtime_id` in the `StudyflowLog` table."
       subtrial_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Primary key; each subtrial row has its own identifier, unique within the table."
         annotations:
@@ -2292,6 +2366,9 @@ classes:
           bdm_type:
             value: "PRIMARY KEY"
       trial_index:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Refers to the `trial_index` in the `Response` table and indicates which trial this stage belongs to."
         annotations:
@@ -2303,6 +2380,9 @@ classes:
           range_description:
             value: "`trial_index` in the `Response` table, within the same `runtime_id`."
       response_id:
+        any_of:
+        - range: string
+        - range: integer
         description: "Refers to the `response_id` in the `Response` table for the parent trial's response row."
         annotations:
           categories:
@@ -2358,6 +2438,9 @@ classes:
           range_description:
             value: "In seconds"
       stimulus_id:
+        any_of:
+        - range: string
+        - range: integer
         description: "The stimulus (or stimulus set/sequence) presented in this stage."
         annotations:
           categories:
@@ -2477,6 +2560,9 @@ classes:
         - "These values are legitimate inputs for simulation and recovery tooling and ILLEGITIMATE as predictors for models of behavior: analysis pipelines should refuse (or loudly flag) any model that consumes ground-truth task parameters when predicting the very responses those parameters generated."
     attributes:
       runtime_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Identifies the activity run this row's trial belongs to. Unique dataset-wide, so rows stay distinguishable when files are concatenated."
         annotations:
@@ -2486,8 +2572,11 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`runtime_id` in the `Studyflow` table."
+            value: "`runtime_id` in the `StudyflowLog` table."
       response_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Refers to the `response_id` in the `Response` table: the trial whose generative state this row records."
         annotations:
@@ -2499,6 +2588,9 @@ classes:
           range_description:
             value: "`response_id` in the `Response` table, within the same `runtime_id`."
       trial_index:
+        any_of:
+        - range: string
+        - range: integer
         description: "Refers to the `trial_index` in the `Response` table for the same trial. Redundant with `response_id`; kept because the sibling detail tables carry both."
         annotations:
           categories:
@@ -2600,6 +2692,9 @@ classes:
         - "These values are legitimate inputs for simulation and recovery tooling and ILLEGITIMATE as predictors for models of behavior: analysis pipelines should refuse (or loudly flag) any model that consumes ground-truth task parameters when predicting the very responses those parameters generated."
     attributes:
       runtime_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
         description: "Identifies the activity run these parameters describe. Unique dataset-wide, so rows stay distinguishable when files are concatenated."
         annotations:
@@ -2609,7 +2704,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`runtime_id` in the `Studyflow` table."
+            value: "`runtime_id` in the `StudyflowLog` table."
       agent_id:
         range: string
         required: true
