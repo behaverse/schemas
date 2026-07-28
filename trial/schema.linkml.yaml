@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events."
-version: "26.0730"
+version: "26.0731"
 license: MIT
 
 prefixes:
@@ -102,6 +102,11 @@ classes:
         range: TaskParameter
         inlined_as_list: true
         description: "Rows of the TaskParameter table."
+      Score:
+        multivalued: true
+        range: Score
+        inlined_as_list: true
+        description: "Rows of the Score table."
       TrialParameter:
         multivalued: true
         range: TrialParameter
@@ -2805,6 +2810,169 @@ classes:
       value_description:
         range: string
         description: "The parameter's value when it is textual or categorical (e.g. a named reward schedule), or a human-readable rendering of a numeric value."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "string"
+  Score:
+    description: "Scores summarising a whole activity run — a questionnaire subscale total, a span threshold, a d-prime, a staircase estimate. Long format: one row per score, so a single scoring method that produces several scores writes several rows. These are DERIVED values, computed from the trial tables (or, for fitted estimates, by the instrument itself); they are not raw measurements."
+    title: "Score"
+    annotations:
+      notes:
+        value:
+        - "Rows are keyed by the natural key (`runtime_id`, `score_name`, `score_index`); like the parameter and component tables, this table has no surrogate primary key."
+        - "Trial-level evaluation stays in the `Response` table (`accuracy`, `score`, `evaluation_label`). This table is one level up: it summarises the run, not a single response."
+        - "Some scores CANNOT be recomputed from the trial tables — an adaptive threshold is produced by the estimator built into the instrument, not by a formula over the recorded trials. Recording them here is what makes those datasets reusable."
+        - "`method` records how a value was produced and `classification` where that value falls against a stated reference; a classification without its `classification_reference` is uninterpretable, because two datasets applying different cutoffs would look identical."
+    attributes:
+      runtime_id:
+        any_of:
+        - range: string
+        - range: integer
+        required: true
+        description: "Identifies the activity run this score summarises. Unique dataset-wide, so rows stay distinguishable when files are concatenated."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`runtime_id` in the `StudyflowLog` table."
+      agent_id:
+        range: string
+        required: true
+        description: "The agent whose run this score summarises. Carried directly so the file can be read without resolving `runtime_id`."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`agent_id` in the `Response` table."
+      session_index:
+        range: integer
+        required: true
+        description: "The 1-based session, within the agent, that this run belongs to."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "`session_index` in the `Response` table."
+      instrument_id:
+        range: string
+        required: true
+        description: "The instrument (task) that was scored."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`instrument_id` in the `Instrument` table."
+      score_name:
+        range: string
+        required: true
+        description: "Which score this row holds (e.g. `bis`, `bas_drive`, `span`, `accuracy`). One scoring method may emit several named scores; each gets its own row."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "string"
+      score_dimensions:
+        range: string
+        multivalued: true
+        description: "Names of the score's coordinate axes, in order — e.g. `block` for a per-block score. Empty for a single score over the whole run."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "list[string]"
+          notes:
+            value:
+            - "Use semicolon-separated names on CSV export, e.g. `block;condition`. Same mechanism as `parameter_dimensions` in the parameter tables."
+      score_index:
+        range: integer
+        multivalued: true
+        description: "This row's coordinates, in the same order as `score_dimensions` — e.g. `2` for the second block. Lets a score be reported per block or per condition without mangling the name (`accuracy_block2`)."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "list[index]"
+          range_description:
+            value: "1-based indices."
+          notes:
+            value:
+            - "Use semicolon-separated indices on CSV export, e.g. `1;2`."
+      score_numeric:
+        range: float
+        description: "The score, when it is numeric."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "float"
+      score_description:
+        range: string
+        description: "The score, when it is textual or categorical (e.g. a screening outcome of `positive`), or a human-readable rendering of a numeric score."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "string"
+      method:
+        range: string
+        required: true
+        description: "How the score was produced: a summary operation (`sum`, `mean`, `proportion_correct`), a derived measure (`d_prime`), or a named estimator (`staircase_threshold`). Without it a number is uninterpretable — a raw total and a fitted estimate look identical."
+        annotations:
+          categories:
+            value:
+            - "How"
+          bdm_type:
+            value: "string"
+      method_version:
+        range: string
+        description: "Version or parameterisation of the scoring method, where the recipe can vary (e.g. `1up-2down` for a staircase, or a version tag for a revised scoring key)."
+        annotations:
+          categories:
+            value:
+            - "How"
+          bdm_type:
+            value: "string"
+      classification:
+        range: string
+        description: "The band this score falls into when compared against a stated reference (e.g. `below_average`, `clinical`, `underweight`). Distinct from the score itself: the value is what was measured, the classification is where it falls."
+        annotations:
+          categories:
+            value:
+            - "Evaluation"
+          bdm_type:
+            value: "string"
+      classification_reference:
+        range: string
+        description: "The norms, cutoffs, or published criteria the `classification` came from (e.g. `Carver & White (1994)`). Required in practice whenever `classification` is set: without it the band cannot be reproduced or compared across datasets."
+        annotations:
+          categories:
+            value:
+            - "Evaluation"
+          bdm_type:
+            value: "string"
+      unit:
+        range: string
+        description: "Unit of the numeric score where one applies (e.g. `items`, `ms`, `proportion`). Omit for unitless scores."
         annotations:
           categories:
             value:
