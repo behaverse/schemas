@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events."
-version: "26.0731"
+version: "26.0801"
 license: MIT
 
 prefixes:
@@ -1389,7 +1389,7 @@ classes:
             value: "integer"
           notes:
             value:
-            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/general/dataset-cards.html)."
+            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/dataset-cards.html)."
       y_screen:
         range: integer
         description: "Y coordinates of the stimulus on the screen in pixels."
@@ -1628,7 +1628,7 @@ classes:
             value: "float"
           notes:
             value:
-            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/general/dataset-cards.html)."
+            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/dataset-cards.html)."
       y_screen:
         range: float
         description: "Y coordinates of the option component on the screen in pixels."
@@ -1930,14 +1930,17 @@ classes:
           range_description:
             value: "`runtime_id` in the `StudyflowLog` table."
       stimulus_id:
+        any_of:
+        - range: string
+        - range: integer
         required: true
-        description: "A reference to the primary key `id` of the `Stimulus` table."
+        description: "A reference to the primary key `stimulus_id` of the `Stimulus` table."
         annotations:
           categories:
             value:
             - "Key"
           bdm_type:
-            value: null
+            value: "id"
           range_description:
             value: "`stimulus_id` in the corresponding `Stimulus` table (same agent/session/activity)."
       index:
@@ -1968,7 +1971,7 @@ classes:
             value: "pixels"
           notes:
             value:
-            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/general/dataset-cards.html)."
+            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/dataset-cards.html)."
       y_screen:
         range: integer
         description: "Y coordinates of the stimulus component relative to the top edge of the screen in pixels."
@@ -2147,7 +2150,7 @@ classes:
             value: "pixels"
           notes:
             value:
-            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/general/dataset-cards.html)."
+            - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/dataset-cards.html)."
       y_screen:
         range: integer
         description: "Y coordinates of the option component relative to the top edge of the screen in pixels."
