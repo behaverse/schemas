@@ -14,6 +14,7 @@ license: MIT
 prefixes:
   trial: https://behaverse.org/schemas/trial#
   behaverse: https://behaverse.org/schemas/trial#
+  sdo: https://schema.org/
   linkml: https://w3id.org/linkml/
 default_prefix: trial
 default_range: string
@@ -413,6 +414,7 @@ classes:
             - "Not to be confused with response_option_index (which option was chosen) or response_id (an identifier unique within this table, assigned in temporal order)."
       language:
         range: string
+        slot_uri: sdo:inLanguage
         description: "The language the task was completed in, expressed as a two-letter code within the [ISO_639-1 standard](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)."
         annotations:
           categories:

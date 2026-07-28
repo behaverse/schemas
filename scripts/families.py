@@ -30,7 +30,7 @@ FAMILIES: List[Dict[str, Any]] = [
      "emits_field_definitions": False, "has_schema_json": True},
     {"name": "studyflow", "source": "linkml", "emits_context": False,
      "emits_field_definitions": True, "has_schema_json": True},
-    {"name": "trial", "source": "linkml", "emits_context": False,
+    {"name": "trial", "source": "linkml", "emits_context": True,
      "emits_field_definitions": True, "has_schema_json": True},
     {"name": "event", "source": "linkml", "emits_context": True,
      "emits_field_definitions": True, "has_schema_json": True},

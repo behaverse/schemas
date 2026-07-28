@@ -9,6 +9,11 @@ All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 - **`Studyflow` table renamed to `StudyflowLog`**, and its file from `studyflow.csv` to `studyflow_log.csv`. "Studyflow" denoted two different things — the study *design* (the BPMN diagram in the `studyflow` schema family, saved as `studyflow.xml`) and this *run log* — and the downstream documentation project independently reported the collision as confusing. The stem is kept so the relationship to `studyflow.xml` stays obvious: `studyflow.xml` is the plan, `studyflow_log.csv` is what happened.
 - **Identifier slots accept a string or an integer** (`anyOf`), across all 31 primary- and foreign-key slots. This fixes a real defect rather than merely relaxing a type: `Response.stimulus_id` was typed `integer` while the primary key it references, `Stimulus.stimulus_id`, was a string — **a conforming document could not join them**. The same held for `option_id`. Datasets legitimately use both integer and string identifiers (and CSV erases the distinction entirely), so every key slot now accepts both and every foreign key agrees with its primary key. Resolves issue #10, which asked only for `Response.stimulus_id`; fixing that alone would have left the family half-typed.
 
+### Added
+
+- **`context.jsonld` is now published** for the trial family — the last generated family without one. Every field gets a stable, resolvable URI under the trial namespace (via `@vocab`) and typed literals are declared (`xsd:float`, `xsd:dateTime`, …), which is what the repo's stability promise ("property URIs remain stable across versions") had been asserting for trial without an artifact to back it. `language` is aligned to `schema:inLanguage`, matching the dataset family's precedent.
+  - Alignment to external vocabularies beyond that is deliberately *not* guessed at here: mapping behavioural-science fields to outside ontologies is a vocabulary exercise, and a wrong `slot_uri` is worse than none because it silently asserts an equivalence that is not true.
+
 ### Fixed
 
 - The generator emitted a redundant `type` beside `anyOf` for union-ranged slots. JSON Schema applies both, so `type: string` + `anyOf: [string, integer]` silently meant "string only" and the union never took effect; `scripts/linkml_postprocess.py` now drops the sibling.

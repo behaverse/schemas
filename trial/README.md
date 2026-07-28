@@ -46,7 +46,7 @@ Because it exists per run rather than per trial, it can represent a run that was
 | [`schema.linkml.yaml`](schema.linkml.yaml) | ✅ | Source of truth (LinkML). Edit it, then run `python scripts/generate.py`. |
 | [`field-definitions.json`](field-definitions.json) | ✅ generated | Render contract consumed by `behaverse/data-model` and the docs site. |
 | [`schema.json`](schema.json) | ✅ generated | JSON Schema (Draft-07): per-table definitions + a top-level table→rows object. Validates types + required fields (not enums/ranges/foreign keys — the source is coarse). |
-| `context.jsonld` | — | Not emitted (the trial fields carry no semantic `mappings`). |
+| [`context.jsonld`](context.jsonld) | ✅ generated | JSON-LD context: every field gets a stable, resolvable URI under the trial namespace (`@vocab`), with typed literals declared. |
 
 ## Status & follow-ups
 

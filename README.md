@@ -63,8 +63,7 @@ Tidy, multi-table schema describing trial-level behavioral data (responses, stim
 
 - **Version**: v26.0730  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/trial#`
-- **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
-- _No `context.jsonld` (the trial fields carry no semantic mappings yet)._
+- **Context**: [`trial/context.jsonld`](trial/context.jsonld) · **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
 
 ### event
 Raw experimental events — an xAPI-style envelope (actor / verb / object) carrying the canonical Behaverse `bdm:` vocabulary. Modeled as `EventDocument = Event | EventBatch`.

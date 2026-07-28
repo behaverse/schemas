@@ -53,7 +53,9 @@ def _ann(obj, key, default=_MISSING):
     detect genuine absence (some baseline fields carry an explicit ``"type": null``).
     """
     anns = obj.annotations or {}
-    a = anns.get(key)
+    # Induced slots (class_induced_slots) hand back a jsonasobj2 JsonObj rather than a
+    # plain dict, and that type has no .get(); fall back to attribute access.
+    a = anns.get(key) if hasattr(anns, "get") else getattr(anns, key, None)
     if a is None:
         return default
     return a.value
