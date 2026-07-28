@@ -52,19 +52,18 @@ Metadata schema for describing cognitive science datasets with comprehensive cov
 ### <img src="assets/img/schema_S.png" height="40" style="vertical-align: middle;"> studyflow
 Schema for defining the formal structure of studyflow diagrams - sequences of activities and resources designed to facilitate experimental research and data analysis. Used by the Studyflow Modeler app.
 
-- **Version**: v26.0728  ·  **Source**: [`studyflow/schema.linkml.yaml`](studyflow/schema.linkml.yaml)
+- **Version**: v26.0730  ·  **Source**: [`studyflow/schema.linkml.yaml`](studyflow/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/studyflow#`
-- **Docs**: [`studyflow/README.md`](studyflow/README.md)
+- **JSON Schema**: [`studyflow/schema.json`](studyflow/schema.json) · **Render artifact**: [`studyflow/field-definitions.json`](studyflow/field-definitions.json) · **Docs**: [`studyflow/README.md`](studyflow/README.md)
 
 **Related**: [Studyflow Modeler Documentation](https://behaverse.org/studyflow-modeler/docs)
 
 ### trial
-Tidy, multi-table schema describing trial-level behavioral data (responses, stimuli, instruments, generative parameters, …) for cognitive tests and questionnaires, derived from raw events. Includes the run log (`Studyflow`) that makes every activity run addressable.
+Tidy, multi-table schema describing trial-level behavioral data (responses, stimuli, instruments, generative parameters, …) for cognitive tests and questionnaires, derived from raw events. Includes the run log (`StudyflowLog`) that makes every activity run addressable.
 
-- **Version**: v26.0729  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
+- **Version**: v26.0730  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/trial#`
-- **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
-- _No `context.jsonld` (the trial fields carry no semantic mappings yet)._
+- **Context**: [`trial/context.jsonld`](trial/context.jsonld) · **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
 
 ### event
 Raw experimental events — an xAPI-style envelope (actor / verb / object) carrying the canonical Behaverse `bdm:` vocabulary. Modeled as `EventDocument = Event | EventBatch`.

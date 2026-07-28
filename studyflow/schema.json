@@ -1,0 +1,442 @@
+{
+  "$defs": {
+    "AssignmentAlgorithmEnum": {
+      "description": "The scheduling algorithm used for the assignment.",
+      "enum": [
+        "probabilistic",
+        "round-robin"
+      ],
+      "title": "AssignmentAlgorithmEnum",
+      "type": "string"
+    },
+    "BDMDataLevelEnum": {
+      "description": "BDM level of the data (events, trials, models).",
+      "enum": [
+        "events",
+        "trials",
+        "models"
+      ],
+      "title": "BDMDataLevelEnum",
+      "type": "string"
+    },
+    "BIDSDataTypeEnum": {
+      "description": "BIDS data type (e.g., anat, func, etc).",
+      "enum": [
+        "anat",
+        "beh",
+        "dwi",
+        "eeg",
+        "func",
+        "ieeg",
+        "meg",
+        "micr",
+        "motion",
+        "mrs",
+        "nirs",
+        "perf",
+        "pet"
+      ],
+      "title": "BIDSDataTypeEnum",
+      "type": "string"
+    },
+    "BehaverseTaskEnum": {
+      "description": "",
+      "enum": [
+        "BCS",
+        "BM",
+        "BSAC",
+        "DS",
+        "ML",
+        "MOT",
+        "NB",
+        "OC",
+        "OOO",
+        "PC",
+        "RE",
+        "SART",
+        "SMC",
+        "SOS",
+        "SRM",
+        "SRT",
+        "SS",
+        "TH",
+        "TOVA",
+        "UFOV",
+        "WO",
+        "undefined"
+      ],
+      "title": "BehaverseTaskEnum",
+      "type": "string"
+    },
+    "Checklist": {
+      "additionalProperties": false,
+      "description": "A checklist for the element.",
+      "properties": {
+        "checklist": {
+          "description": "Checklist for the element.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Checklist"
+        },
+        "id": {
+          "description": "Unique identifier for the element.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Id"
+        },
+        "items": {
+          "description": "Checklist items.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Items"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Checklist",
+      "type": "object"
+    },
+    "CognitiveTest": {
+      "additionalProperties": false,
+      "description": "",
+      "properties": {
+        "behaverseTask": {
+          "$ref": "#/$defs/BehaverseTaskEnum",
+          "description": "Behaverse instrument used for the test.",
+          "title": "Behaversetask"
+        },
+        "checklist": {
+          "description": "Checklist for the element.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Checklist"
+        },
+        "id": {
+          "description": "Unique identifier for the element.",
+          "type": "string",
+          "title": "Id"
+        },
+        "instrument": {
+          "$ref": "#/$defs/InstrumentEnum",
+          "description": "Instrument used for the test.",
+          "title": "Instrument"
+        },
+        "url": {
+          "description": "Link to the activity.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Url"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CognitiveTest",
+      "type": "object"
+    },
+    "Dataset": {
+      "additionalProperties": false,
+      "description": "Base class for all datasets in the Studyflow.",
+      "properties": {
+        "bdmDataLevel": {
+          "$ref": "#/$defs/BDMDataLevelEnum",
+          "description": "Level of the data (events, trials, models).",
+          "title": "Bdmdatalevel"
+        },
+        "bidsDataType": {
+          "$ref": "#/$defs/BIDSDataTypeEnum",
+          "description": "BIDS data type.",
+          "title": "Bidsdatatype"
+        },
+        "checklist": {
+          "description": "Checklist for the element.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Checklist"
+        },
+        "datasetFormat": {
+          "$ref": "#/$defs/DatasetFormatEnum",
+          "description": "Format of the dataset (BDM, BIDS, Psych-DS, etc).",
+          "title": "Datasetformat"
+        },
+        "id": {
+          "description": "Unique identifier for the element.",
+          "type": "string",
+          "title": "Id"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Dataset",
+      "type": "object"
+    },
+    "DatasetFormatEnum": {
+      "description": "Format of the dataset (BDM, BIDS, Psych-DS, etc).",
+      "enum": [
+        "bdm",
+        "bids",
+        "psych-ds",
+        "other"
+      ],
+      "title": "DatasetFormatEnum",
+      "type": "string"
+    },
+    "EndEvent": {
+      "additionalProperties": false,
+      "description": "",
+      "properties": {
+        "checklist": {
+          "description": "Checklist for the element.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Checklist"
+        },
+        "hasRedirectUrl": {
+          "description": "Redirect the user to the given URL after completion.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "title": "Hasredirecturl"
+        },
+        "id": {
+          "description": "Unique identifier for the element.",
+          "type": "string",
+          "title": "Id"
+        },
+        "redirectUrl": {
+          "description": "Link to redirect the user upon completion.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Redirecturl"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "EndEvent",
+      "type": "object"
+    },
+    "Instruction": {
+      "additionalProperties": false,
+      "description": "",
+      "properties": {
+        "checklist": {
+          "description": "Checklist for the element.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Checklist"
+        },
+        "id": {
+          "description": "Unique identifier for the element.",
+          "type": "string",
+          "title": "Id"
+        },
+        "text": {
+          "description": "Instruction text in markdown format.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Text"
+        },
+        "url": {
+          "description": "Link to the activity.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Url"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Instruction",
+      "type": "object"
+    },
+    "InstrumentEnum": {
+      "description": "The type of instrument used to measure cognitive performance.",
+      "enum": [
+        "behaverse",
+        "videoGame",
+        "rest",
+        "custom"
+      ],
+      "title": "InstrumentEnum",
+      "type": "string"
+    },
+    "ProbabilityDistributionEnum": {
+      "description": "The random statistical distribution used for the assignment.",
+      "enum": [
+        "uniform",
+        "normal",
+        "exponential",
+        "poisson",
+        "custom"
+      ],
+      "title": "ProbabilityDistributionEnum",
+      "type": "string"
+    },
+    "Questionnaire": {
+      "additionalProperties": false,
+      "description": "",
+      "properties": {
+        "checklist": {
+          "description": "Checklist for the element.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Checklist"
+        },
+        "id": {
+          "description": "Unique identifier for the element.",
+          "type": "string",
+          "title": "Id"
+        },
+        "url": {
+          "description": "Link to the activity.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Url"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Questionnaire",
+      "type": "object"
+    },
+    "RandomGateway": {
+      "additionalProperties": false,
+      "description": "",
+      "properties": {
+        "algorithm": {
+          "$ref": "#/$defs/AssignmentAlgorithmEnum",
+          "description": "Algorithm used for the assignment.",
+          "title": "Algorithm"
+        },
+        "checklist": {
+          "description": "Checklist for the element.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Checklist"
+        },
+        "id": {
+          "description": "Unique identifier for the element.",
+          "type": "string",
+          "title": "Id"
+        },
+        "probabilityFunction": {
+          "$ref": "#/$defs/ProbabilityDistributionEnum",
+          "description": "Probability mass function that defines the discrete distribution of the random assignment. Defaults to `uniform`.",
+          "title": "Probabilityfunction"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RandomGateway",
+      "type": "object"
+    },
+    "StartEvent": {
+      "additionalProperties": false,
+      "description": "",
+      "properties": {
+        "checklist": {
+          "description": "Checklist for the element.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Checklist"
+        },
+        "consentFormUrl": {
+          "description": "Link to the consent form. Leave empty if you want to use the default consent form.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Consentformurl"
+        },
+        "id": {
+          "description": "Unique identifier for the element.",
+          "type": "string",
+          "title": "Id"
+        },
+        "requiresConsent": {
+          "description": "User requires to give consent before participating.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "title": "Requiresconsent"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "StartEvent",
+      "type": "object"
+    },
+    "Study": {
+      "additionalProperties": false,
+      "description": "Process definition for a Studyflow study.",
+      "properties": {
+        "checklist": {
+          "description": "Checklist for the element.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Checklist"
+        },
+        "id": {
+          "description": "Unique identifier for the element.",
+          "type": "string",
+          "title": "Id"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Study",
+      "type": "object"
+    }
+  },
+  "$id": "http://behaverse.org/schemas/studyflow/v26.0730/schema.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "additionalProperties": true,
+  "metamodel_version": "1.7.0",
+  "title": "studyflow",
+  "type": "object",
+  "version": "26.0730"
+}

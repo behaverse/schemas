@@ -65,6 +65,15 @@ def postprocess_schema(schema: Dict[str, Any], sv: SchemaView) -> Dict[str, Any]
     if sv.schema.version:
         schema["$id"] = f"{schema_id}/v{sv.schema.version}/schema.json"
 
+    # (h) Union ranges: LinkML emits `anyOf` for an `any_of` slot but *also* leaves the
+    # default range's `type` beside it. JSON Schema applies both, so `type: string` +
+    # `anyOf: [string, integer]` silently means "string only" — the union never takes
+    # effect. Drop the redundant sibling so the artifact means what the source says.
+    for props in _iter_property_blocks(schema):
+        for pschema in props.values():
+            if isinstance(pschema, dict) and "anyOf" in pschema:
+                pschema.pop("type", None)
+
     # (f) Per-property titles on every `properties` block (top-level + $defs).
     for props in _iter_property_blocks(schema):
         for pname, pschema in props.items():

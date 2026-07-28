@@ -1,0 +1,506 @@
+{
+  "@context": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "behaverse": "https://behaverse.org/schemas/trial#",
+    "linkml": "https://w3id.org/linkml/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "trial": "https://behaverse.org/schemas/trial#",
+    "@vocab": "https://behaverse.org/schemas/trial#",
+    "duration": {
+      "@type": "xsd:float",
+      "@id": "duration"
+    },
+    "input_id": {
+      "@id": "input_id"
+    },
+    "is_object_enabled": {
+      "@type": "xsd:boolean",
+      "@id": "is_object_enabled"
+    },
+    "object_name": {
+      "@id": "object_name"
+    },
+    "object_state": {
+      "@id": "object_state"
+    },
+    "object_type": {
+      "@id": "object_type"
+    },
+    "onset": {
+      "@type": "xsd:float",
+      "@id": "onset"
+    },
+    "option_id": {
+      "@id": "option_id"
+    },
+    "response_element_index": {
+      "@type": "xsd:integer",
+      "@id": "response_element_index"
+    },
+    "response_id": {
+      "@id": "response_id"
+    },
+    "runtime_id": {
+      "@id": "runtime_id"
+    },
+    "stimulus_id": {
+      "@id": "stimulus_id"
+    },
+    "x_screen": {
+      "@type": "xsd:integer",
+      "@id": "x_screen"
+    },
+    "x_viewport": {
+      "@type": "xsd:float",
+      "@id": "x_viewport"
+    },
+    "y_screen": {
+      "@type": "xsd:integer",
+      "@id": "y_screen"
+    },
+    "y_viewport": {
+      "@type": "xsd:float",
+      "@id": "y_viewport"
+    },
+    "block_id": {
+      "@id": "block_id"
+    },
+    "description": {
+      "@id": "description"
+    },
+    "instrument_id": {
+      "@id": "instrument_id"
+    },
+    "link": {
+      "@type": "xsd:anyURI",
+      "@id": "link"
+    },
+    "name": {
+      "@id": "name"
+    },
+    "timeline_id": {
+      "@id": "timeline_id"
+    },
+    "version": {
+      "@id": "version"
+    },
+    "animation": {
+      "@id": "animation"
+    },
+    "index_in_source": {
+      "@type": "xsd:integer",
+      "@id": "index_in_source"
+    },
+    "index_in_trial": {
+      "@type": "xsd:integer",
+      "@id": "index_in_trial"
+    },
+    "object_id": {
+      "@id": "object_id"
+    },
+    "panel_id": {
+      "@id": "panel_id"
+    },
+    "source": {
+      "@id": "source"
+    },
+    "source_type": {
+      "@id": "source_type"
+    },
+    "trial_index": {
+      "@id": "trial_index"
+    },
+    "value": {
+      "@type": "xsd:float",
+      "@id": "value"
+    },
+    "color_hex": {
+      "@id": "color_hex"
+    },
+    "color_name": {
+      "@id": "color_name"
+    },
+    "index": {
+      "@type": "xsd:integer",
+      "@id": "index"
+    },
+    "orientation": {
+      "@id": "orientation"
+    },
+    "symbol_count": {
+      "@type": "xsd:integer",
+      "@id": "symbol_count"
+    },
+    "symbol_layout": {
+      "@id": "symbol_layout"
+    },
+    "symbol_name": {
+      "@id": "symbol_name"
+    },
+    "accuracy": {
+      "@type": "xsd:float",
+      "@id": "accuracy"
+    },
+    "activity_index": {
+      "@type": "xsd:integer",
+      "@id": "activity_index"
+    },
+    "adaptive_method_config": {
+      "@id": "adaptive_method_config"
+    },
+    "adaptive_method_name": {
+      "@id": "adaptive_method_name"
+    },
+    "adaptive_parameter_name": {
+      "@id": "adaptive_parameter_name"
+    },
+    "adaptive_parameter_value": {
+      "@id": "adaptive_parameter_value"
+    },
+    "adaptive_parameter_value_next": {
+      "@id": "adaptive_parameter_value_next"
+    },
+    "additional_measures": {
+      "@id": "additional_measures"
+    },
+    "agent_id": {
+      "@id": "agent_id"
+    },
+    "attempt": {
+      "@type": "xsd:integer",
+      "@id": "attempt"
+    },
+    "block_index": {
+      "@type": "xsd:integer",
+      "@id": "block_index"
+    },
+    "block_name": {
+      "@id": "block_name"
+    },
+    "block_type": {
+      "@id": "block_type"
+    },
+    "correct": {
+      "@type": "xsd:boolean",
+      "@id": "correct"
+    },
+    "episode_index": {
+      "@type": "xsd:integer",
+      "@id": "episode_index"
+    },
+    "evaluation_label": {
+      "@id": "evaluation_label"
+    },
+    "expected_response_description": {
+      "@id": "expected_response_description"
+    },
+    "expected_response_option_index": {
+      "@type": "xsd:integer",
+      "@id": "expected_response_option_index"
+    },
+    "feedback_description": {
+      "@id": "feedback_description"
+    },
+    "group_name": {
+      "@id": "group_name"
+    },
+    "input_action_type": {
+      "@id": "input_action_type"
+    },
+    "input_count": {
+      "@type": "xsd:integer",
+      "@id": "input_count"
+    },
+    "input_interface_type": {
+      "@id": "input_interface_type"
+    },
+    "instrument_repetition": {
+      "@type": "xsd:integer",
+      "@id": "instrument_repetition"
+    },
+    "job_description": {
+      "@id": "job_description"
+    },
+    "job_repeat": {
+      "@id": "job_repeat"
+    },
+    "job_type": {
+      "@id": "job_type"
+    },
+    "language": {
+      "@id": "schema:inLanguage"
+    },
+    "measurement_type": {
+      "@id": "measurement_type"
+    },
+    "multitask_type": {
+      "@id": "multitask_type"
+    },
+    "option_count": {
+      "@type": "xsd:integer",
+      "@id": "option_count"
+    },
+    "option_data_type": {
+      "@id": "option_data_type"
+    },
+    "option_source": {
+      "@id": "option_source"
+    },
+    "option_source_type": {
+      "@id": "option_source_type"
+    },
+    "outcome_description": {
+      "@id": "outcome_description"
+    },
+    "outcome_numeric": {
+      "@type": "xsd:float",
+      "@id": "outcome_numeric"
+    },
+    "response_count": {
+      "@type": "xsd:integer",
+      "@id": "response_count"
+    },
+    "response_datetime": {
+      "@type": "xsd:dateTime",
+      "@id": "response_datetime"
+    },
+    "response_description": {
+      "@id": "response_description"
+    },
+    "response_index": {
+      "@type": "xsd:integer",
+      "@id": "response_index"
+    },
+    "response_initiation_time": {
+      "@type": "xsd:float",
+      "@id": "response_initiation_time"
+    },
+    "response_numeric": {
+      "@type": "xsd:float",
+      "@id": "response_numeric"
+    },
+    "response_option_index": {
+      "@type": "xsd:integer",
+      "@id": "response_option_index"
+    },
+    "response_skipped": {
+      "@type": "xsd:boolean",
+      "@id": "response_skipped"
+    },
+    "response_structure": {
+      "@id": "response_structure"
+    },
+    "response_time": {
+      "@type": "xsd:float",
+      "@id": "response_time"
+    },
+    "response_type": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "response_type"
+    },
+    "response_validation_time": {
+      "@type": "xsd:float",
+      "@id": "response_validation_time"
+    },
+    "score": {
+      "@type": "xsd:float",
+      "@id": "score"
+    },
+    "session_index": {
+      "@type": "xsd:integer",
+      "@id": "session_index"
+    },
+    "session_uuid": {
+      "@id": "session_uuid"
+    },
+    "status": {
+      "@context": {
+        "text": "skos:notation",
+        "description": "skos:prefLabel",
+        "meaning": "@id"
+      },
+      "@id": "status"
+    },
+    "stimulus_count": {
+      "@type": "xsd:integer",
+      "@id": "stimulus_count"
+    },
+    "stimulus_description": {
+      "@id": "stimulus_description"
+    },
+    "stimulus_index": {
+      "@type": "xsd:integer",
+      "@id": "stimulus_index",
+      "@container": "@list"
+    },
+    "stimulus_index_in_source": {
+      "@type": "xsd:integer",
+      "@id": "stimulus_index_in_source"
+    },
+    "stimulus_onset": {
+      "@type": "xsd:float",
+      "@id": "stimulus_onset"
+    },
+    "stimulus_panel_count": {
+      "@type": "xsd:integer",
+      "@id": "stimulus_panel_count"
+    },
+    "stimulus_position_index": {
+      "@type": "xsd:integer",
+      "@id": "stimulus_position_index"
+    },
+    "stimulus_role": {
+      "@id": "stimulus_role"
+    },
+    "stimulus_set_size": {
+      "@type": "xsd:integer",
+      "@id": "stimulus_set_size"
+    },
+    "stimulus_source": {
+      "@id": "stimulus_source"
+    },
+    "stimulus_source_type": {
+      "@id": "stimulus_source_type"
+    },
+    "stimulus_structure": {
+      "@id": "stimulus_structure"
+    },
+    "stimulus_structure_source": {
+      "@id": "stimulus_structure_source"
+    },
+    "stimulus_structure_source_type": {
+      "@id": "stimulus_structure_source_type"
+    },
+    "stimulus_type": {
+      "@id": "stimulus_type"
+    },
+    "study_name": {
+      "@id": "study_name"
+    },
+    "subtrial_count": {
+      "@type": "xsd:integer",
+      "@id": "subtrial_count"
+    },
+    "task_index": {
+      "@type": "xsd:integer",
+      "@id": "task_index"
+    },
+    "timed_out": {
+      "@type": "xsd:boolean",
+      "@id": "timed_out"
+    },
+    "timeline_repetition": {
+      "@type": "xsd:integer",
+      "@id": "timeline_repetition"
+    },
+    "transformation_name": {
+      "@id": "transformation_name"
+    },
+    "trial_seed": {
+      "@id": "trial_seed"
+    },
+    "trial_start_datetime": {
+      "@type": "xsd:dateTime",
+      "@id": "trial_start_datetime"
+    },
+    "presentation_id": {
+      "@id": "presentation_id"
+    },
+    "role": {
+      "@id": "role"
+    },
+    "abandon_reason": {
+      "@id": "abandon_reason"
+    },
+    "anchor_datetime": {
+      "@type": "xsd:dateTime",
+      "@id": "anchor_datetime"
+    },
+    "end_datetime": {
+      "@type": "xsd:dateTime",
+      "@id": "end_datetime"
+    },
+    "start_datetime": {
+      "@type": "xsd:dateTime",
+      "@id": "start_datetime"
+    },
+    "subtrial_id": {
+      "@id": "subtrial_id"
+    },
+    "subtrial_index": {
+      "@type": "xsd:integer",
+      "@id": "subtrial_index"
+    },
+    "parameter": {
+      "@id": "parameter"
+    },
+    "parameter_dimensions": {
+      "@id": "parameter_dimensions",
+      "@container": "@set"
+    },
+    "parameter_index": {
+      "@type": "xsd:integer",
+      "@id": "parameter_index",
+      "@container": "@list"
+    },
+    "value_description": {
+      "@id": "value_description"
+    },
+    "value_numeric": {
+      "@type": "xsd:float",
+      "@id": "value_numeric"
+    },
+    "Input": {
+      "@id": "Input",
+      "@container": "@set"
+    },
+    "Instrument": {
+      "@id": "Instrument",
+      "@container": "@set"
+    },
+    "Option": {
+      "@id": "Option",
+      "@container": "@set"
+    },
+    "OptionComponent": {
+      "@id": "OptionComponent",
+      "@container": "@set"
+    },
+    "Response": {
+      "@id": "Response",
+      "@container": "@set"
+    },
+    "Stimulus": {
+      "@id": "Stimulus",
+      "@container": "@set"
+    },
+    "StimulusComponent": {
+      "@id": "StimulusComponent",
+      "@container": "@set"
+    },
+    "StudyflowLog": {
+      "@id": "StudyflowLog",
+      "@container": "@set"
+    },
+    "Subtrial": {
+      "@id": "Subtrial",
+      "@container": "@set"
+    },
+    "TaskParameter": {
+      "@id": "TaskParameter",
+      "@container": "@set"
+    },
+    "TrialParameter": {
+      "@id": "TrialParameter",
+      "@container": "@set"
+    },
+    "TrialData": {
+      "@id": "TrialData"
+    },
+    "schema": "https://schema.org/"
+  }
+}

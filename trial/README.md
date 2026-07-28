@@ -1,6 +1,6 @@
 # Behaverse Trial Schema (WIP)
 
-**Version:** v26.0729
+**Version:** v26.0730
 **Namespace:** `https://behaverse.org/schemas/trial#`
 **Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) — edit it, then run `python scripts/generate.py`
 
@@ -14,7 +14,7 @@ A trial is a single instance of a participant interacting with a task. Trial inf
 
 | Table | Fields | Description |
 |-------|-------:|-------------|
-| **Studyflow** | 15 | The run log: one row per activity run (`studyflow.csv`). |
+| **StudyflowLog** | 15 | The run log: one row per activity run (`studyflow_log.csv`). |
 | **Response** | 82 | Main table; one row per response in a trial. |
 | **Stimulus** | 20 | Each stimulus shown during a trial. |
 | **Option** | 19 | Each option an agent could choose from. |
@@ -35,7 +35,7 @@ A trial is a single instance of a participant interacting with a task. Trial inf
 
 ## The run log
 
-`Studyflow` (shipped as `studyflow.csv` in the agent's folder) records what an agent **actually did** — one row per activity run, with its scope, `attempt`, `status`, timing, and the `anchor_datetime` that bridges the monotonic recording clock to wall-clock time. It is distinct from the study-level *plan*: the BPMN studyflow diagram described by the [`studyflow`](../studyflow/) schema family, which says what was designed to happen.
+`StudyflowLog` (shipped as `studyflow_log.csv` in the agent's folder) records what an agent **actually did** — one row per activity run, with its scope, `attempt`, `status`, timing, and the `anchor_datetime` that bridges the monotonic recording clock to wall-clock time. It is distinct from the study-level *plan*: the BPMN studyflow diagram described by the [`studyflow`](../studyflow/) schema family, which says what was designed to happen.
 
 Because it exists per run rather than per trial, it can represent a run that was started and abandoned before any trial finished — such a run produces no rows in any other table. Selecting the last complete attempt is a filter plus a join: keep `status = completed`, take the largest `attempt` per (`agent_id`, `instrument_id`), then join `Response` on `runtime_id`.
 
@@ -46,7 +46,7 @@ Because it exists per run rather than per trial, it can represent a run that was
 | [`schema.linkml.yaml`](schema.linkml.yaml) | ✅ | Source of truth (LinkML). Edit it, then run `python scripts/generate.py`. |
 | [`field-definitions.json`](field-definitions.json) | ✅ generated | Render contract consumed by `behaverse/data-model` and the docs site. |
 | [`schema.json`](schema.json) | ✅ generated | JSON Schema (Draft-07): per-table definitions + a top-level table→rows object. Validates types + required fields (not enums/ranges/foreign keys — the source is coarse). |
-| `context.jsonld` | — | Not emitted (the trial fields carry no semantic `mappings`). |
+| [`context.jsonld`](context.jsonld) | ✅ generated | JSON-LD context: every field gets a stable, resolvable URI under the trial namespace (`@vocab`), with typed literals declared. |
 
 ## Status & follow-ups
 

@@ -1,0 +1,278 @@
+{
+  "schema": "studyflow",
+  "version": "26.0730",
+  "namespace": "http://behaverse.org/schemas/studyflow",
+  "description": "LinkML schema for Behaverse Studyflow",
+  "tables": [
+    {
+      "name": "Checklist",
+      "slug": "checklist",
+      "docs_url": "https://behaverse.org/schemas/studyflow/checklist",
+      "description": "A checklist for the element.",
+      "fields": [
+        {
+          "name": "items",
+          "type": null,
+          "requirement": "optional",
+          "description": "Checklist items."
+        },
+        {
+          "name": "id",
+          "type": null,
+          "requirement": "optional",
+          "description": "Unique identifier for the element."
+        },
+        {
+          "name": "checklist",
+          "type": null,
+          "requirement": "optional",
+          "description": "Checklist for the element."
+        }
+      ]
+    },
+    {
+      "name": "Study",
+      "slug": "study",
+      "docs_url": "https://behaverse.org/schemas/studyflow/study",
+      "description": "Process definition for a Studyflow study.",
+      "fields": [
+        {
+          "name": "id",
+          "type": null,
+          "requirement": "required",
+          "description": "Unique identifier for the element."
+        },
+        {
+          "name": "checklist",
+          "type": null,
+          "requirement": "optional",
+          "description": "Checklist for the element."
+        }
+      ]
+    },
+    {
+      "name": "StartEvent",
+      "slug": "start-event",
+      "docs_url": "https://behaverse.org/schemas/studyflow/start-event",
+      "fields": [
+        {
+          "name": "requiresConsent",
+          "type": null,
+          "requirement": "optional",
+          "description": "User requires to give consent before participating."
+        },
+        {
+          "name": "consentFormUrl",
+          "type": null,
+          "requirement": "optional",
+          "description": "Link to the consent form. Leave empty if you want to use the default consent form."
+        },
+        {
+          "name": "id",
+          "type": null,
+          "requirement": "required",
+          "description": "Unique identifier for the element."
+        },
+        {
+          "name": "checklist",
+          "type": null,
+          "requirement": "optional",
+          "description": "Checklist for the element."
+        }
+      ]
+    },
+    {
+      "name": "EndEvent",
+      "slug": "end-event",
+      "docs_url": "https://behaverse.org/schemas/studyflow/end-event",
+      "fields": [
+        {
+          "name": "hasRedirectUrl",
+          "type": null,
+          "requirement": "optional",
+          "description": "Redirect the user to the given URL after completion."
+        },
+        {
+          "name": "redirectUrl",
+          "type": null,
+          "requirement": "optional",
+          "description": "Link to redirect the user upon completion."
+        },
+        {
+          "name": "id",
+          "type": null,
+          "requirement": "required",
+          "description": "Unique identifier for the element."
+        },
+        {
+          "name": "checklist",
+          "type": null,
+          "requirement": "optional",
+          "description": "Checklist for the element."
+        }
+      ]
+    },
+    {
+      "name": "CognitiveTest",
+      "slug": "cognitive-test",
+      "docs_url": "https://behaverse.org/schemas/studyflow/cognitive-test",
+      "fields": [
+        {
+          "name": "instrument",
+          "type": null,
+          "requirement": "optional",
+          "description": "Instrument used for the test."
+        },
+        {
+          "name": "behaverseTask",
+          "type": null,
+          "requirement": "optional",
+          "description": "Behaverse instrument used for the test."
+        },
+        {
+          "name": "url",
+          "type": null,
+          "requirement": "optional",
+          "description": "Link to the activity."
+        },
+        {
+          "name": "id",
+          "type": null,
+          "requirement": "required",
+          "description": "Unique identifier for the element."
+        },
+        {
+          "name": "checklist",
+          "type": null,
+          "requirement": "optional",
+          "description": "Checklist for the element."
+        }
+      ]
+    },
+    {
+      "name": "Questionnaire",
+      "slug": "questionnaire",
+      "docs_url": "https://behaverse.org/schemas/studyflow/questionnaire",
+      "fields": [
+        {
+          "name": "url",
+          "type": null,
+          "requirement": "optional",
+          "description": "Link to the activity."
+        },
+        {
+          "name": "id",
+          "type": null,
+          "requirement": "required",
+          "description": "Unique identifier for the element."
+        },
+        {
+          "name": "checklist",
+          "type": null,
+          "requirement": "optional",
+          "description": "Checklist for the element."
+        }
+      ]
+    },
+    {
+      "name": "Instruction",
+      "slug": "instruction",
+      "docs_url": "https://behaverse.org/schemas/studyflow/instruction",
+      "fields": [
+        {
+          "name": "text",
+          "type": null,
+          "requirement": "optional",
+          "description": "Instruction text in markdown format."
+        },
+        {
+          "name": "url",
+          "type": null,
+          "requirement": "optional",
+          "description": "Link to the activity."
+        },
+        {
+          "name": "id",
+          "type": null,
+          "requirement": "required",
+          "description": "Unique identifier for the element."
+        },
+        {
+          "name": "checklist",
+          "type": null,
+          "requirement": "optional",
+          "description": "Checklist for the element."
+        }
+      ]
+    },
+    {
+      "name": "RandomGateway",
+      "slug": "random-gateway",
+      "docs_url": "https://behaverse.org/schemas/studyflow/random-gateway",
+      "fields": [
+        {
+          "name": "algorithm",
+          "type": null,
+          "requirement": "optional",
+          "description": "Algorithm used for the assignment."
+        },
+        {
+          "name": "probabilityFunction",
+          "type": null,
+          "requirement": "optional",
+          "description": "Probability mass function that defines the discrete distribution of the random assignment. Defaults to `uniform`."
+        },
+        {
+          "name": "id",
+          "type": null,
+          "requirement": "required",
+          "description": "Unique identifier for the element."
+        },
+        {
+          "name": "checklist",
+          "type": null,
+          "requirement": "optional",
+          "description": "Checklist for the element."
+        }
+      ]
+    },
+    {
+      "name": "Dataset",
+      "slug": "dataset",
+      "docs_url": "https://behaverse.org/schemas/studyflow/dataset",
+      "description": "Base class for all datasets in the Studyflow.",
+      "fields": [
+        {
+          "name": "datasetFormat",
+          "type": null,
+          "requirement": "optional",
+          "description": "Format of the dataset (BDM, BIDS, Psych-DS, etc)."
+        },
+        {
+          "name": "bdmDataLevel",
+          "type": null,
+          "requirement": "optional",
+          "description": "Level of the data (events, trials, models)."
+        },
+        {
+          "name": "bidsDataType",
+          "type": null,
+          "requirement": "optional",
+          "description": "BIDS data type."
+        },
+        {
+          "name": "id",
+          "type": null,
+          "requirement": "required",
+          "description": "Unique identifier for the element."
+        },
+        {
+          "name": "checklist",
+          "type": null,
+          "requirement": "optional",
+          "description": "Checklist for the element."
+        }
+      ]
+    }
+  ]
+}
