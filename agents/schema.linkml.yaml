@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=https://linkml.io/linkml-model/linkml_model/jsonschema/meta.schema.json
+# Behaverse Agents Schema — LinkML source of truth.
+# Single hand-edited source; run `python scripts/generate.py` to emit the artifacts.
+#
+# This schema specifies `agents.csv`, the agent roster at the root of every dataset —
+# the last dataset-level file to get a schema. It is deliberately small: identity (the
+# `agent_id` / `agent_index` pair) plus a core of optional per-agent attributes whose
+# dataset-level aggregates the dataset card already carries (age_mean/std/range,
+# sex_distribution, language). Per-agent data availability is NOT recorded here: it is
+# derivable from each agent's `studyflow_log.csv`, and duplicating it would invite drift.
+id: https://behaverse.org/schemas/agents
+name: agents
+title: "Behaverse Agents Schema"
+description: "The agent roster of a dataset: `agents.csv` at the dataset root, one row per agent, mapping the dataset-local `agent_index` to the global `agent_id` and carrying core per-agent attributes. Referenced by every table that carries an `agent_id` (e.g., `Response` and `StudyflowLog` in the trial family)."
+version: "26.0804"
+license: MIT
+
+prefixes:
+  agents: https://behaverse.org/schemas/agents#
+  behaverse: https://behaverse.org/schemas/agents#
+  bdm: https://behaverse.org/schemas/vocabulary/
+  linkml: https://w3id.org/linkml/
+default_prefix: agents
+default_range: string
+imports:
+  - linkml:types
+
+enums:
+  AgentTypeEnum:
+    description: "The kind of agent that generated the data."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      human:
+        description: "A human participant."
+      animal:
+        description: "A non-human animal (e.g., a mouse, a primate)."
+      artificial:
+        description: "An artificial agent (e.g., a computational model, an AI system)."
+
+  SexEnum:
+    description: "Sex of an agent, as recorded by the study."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      female:
+      male:
+      intersex:
+
+classes:
+  AgentsData:
+    description: "Root container mapping the Agent table to an array of its rows."
+    tree_root: true
+    attributes:
+      Agent:
+        multivalued: true
+        range: Agent
+        inlined_as_list: true
+        description: "Rows of the Agent table."
+
+  Agent:
+    description: "One agent in the dataset. Shipped as `agents.csv` at the dataset root, one row per agent: the mapping between the dataset-local `agent_index` and the global `agent_id`, plus core per-agent attributes."
+    annotations:
+      notes:
+        value:
+        - "Datasets may add custom columns for attributes not specified here (e.g., handedness, education, gender identity); the columns below are the shared core."
+        - "Per-agent data availability is deliberately not recorded here — it is derivable from each agent's `studyflow_log.csv`, which lists every run the agent began, with its status."
+    attributes:
+      agent_id:
+        identifier: true
+        required: true
+        description: "A unique identifier assigned to the agent (typically unique within a data collection institution or research group), used to determine whether the same agent participated in multiple studies. May be created using a custom procedure (e.g., a UUID)."
+      agent_index:
+        required: true
+        pattern: "^agent_[0-9]+$"
+        description: "The dataset-local label of the agent: the string `agent_` followed by a zero-padded ordinal (e.g., `agent_015`). It names the agent's data folder and is unique within the dataset."
+      agent_type:
+        range: AgentTypeEnum
+        description: "The kind of agent that generated the data."
+      age:
+        range: float
+        description: "Age of the agent at the start of the study, in years."
+        annotations:
+          range_description: "years"
+      sex:
+        range: SexEnum
+        description: "Sex of the agent, as recorded by the study."
+      language:
+        description: "Primary language of the agent, as a BCP-47 tag (e.g., `en`, `fr-BE`)."
