@@ -14,6 +14,10 @@ and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
   family that ships `field-definitions.json`. Seven fields gain it (e.g.
   `CognitiveTest.behaverseTask`, `RandomGateway.algorithm`, `Dataset.bidsDataType`).
   `schema.json` validation is unchanged.
+- Every field now publishes a non-null `type`, derived from its LinkML range (`enum`,
+  `string`, `boolean`, `Checklist`, …) when no explicit `bdm_type` annotation exists.
+  All 34 fields previously carried `type: null`, leaving the documentation site's Type
+  column empty. Requested by `behaverse/data-model`.
 
 ## [26.0730] - 2026-07-30
 

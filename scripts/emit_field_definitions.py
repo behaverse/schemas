@@ -15,7 +15,11 @@ Encoding (see trial/schema.linkml.yaml):
   field  -> attribute
     categories  <- annotations.categories (list, optional, emitted FIRST when present)
     name        <- slot name
-    type        <- annotations.bdm_type (verbatim original coarse type; may be null)
+    type        <- annotations.bdm_type (verbatim original coarse type; may be null);
+                   when the annotation is absent, derived from the LinkML range
+                   (enum -> "enum", otherwise the range name, "list of X" when
+                   multivalued) so families without bdm_type annotations still
+                   publish a usable Type column
     requirement <- "required" if slot.required else "optional"
     description <- slot description (optional)
     range       <- annotations.range_description (free-text prose, optional)
@@ -65,6 +69,29 @@ def _ann(obj, key, default=_MISSING):
     return a.value
 
 
+def _derived_type(slot, sv: SchemaView):
+    """Fallback `type` for slots without a `bdm_type` annotation, from the LinkML range.
+
+    enum -> "enum"; any other range (scalar type, custom type, class) -> its name;
+    `any_of` branches joined with " or "; "list of X" when multivalued. An explicit
+    `bdm_type` annotation always wins — this only fills the gap for families
+    (studyflow, timeseries) that never annotated their slots.
+    """
+    def base(rng):
+        if rng is None:
+            return None
+        rng = str(rng)
+        return "enum" if rng in sv.all_enums() else rng
+
+    if slot.any_of:
+        t = " or ".join(p for p in (base(a.range) for a in slot.any_of) if p)
+    else:
+        t = base(slot.range)
+    if t and slot.multivalued:
+        t = f"list of {t}"
+    return t or None
+
+
 def _field(slot, sv: SchemaView, emit_values: bool = True) -> dict:
     """Rebuild one field object, with keys in baseline order and present only when set."""
     out: dict = {}
@@ -75,9 +102,10 @@ def _field(slot, sv: SchemaView, emit_values: bool = True) -> dict:
 
     out["name"] = slot.name
 
-    # `type` is always present in the baseline (it may be JSON null for one field).
+    # `type` is always present in the baseline. An explicit annotation wins verbatim
+    # (including an authored null); an absent one falls back to the derived type.
     bdm_type = _ann(slot, "bdm_type")
-    out["type"] = None if bdm_type is _MISSING else bdm_type
+    out["type"] = _derived_type(slot, sv) if bdm_type is _MISSING else bdm_type
 
     out["requirement"] = "required" if slot.required else "optional"
 

@@ -12,67 +12,67 @@
       "fields": [
         {
           "name": "type",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "Discriminator for the document kind; always `bdm:Timeseries`."
         },
         {
           "name": "name",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Short machine-friendly name of the series (e.g. `mouse_trajectory`, `gaze`, `eeg`)."
         },
         {
           "name": "description",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Human-readable description of what was recorded and how."
         },
         {
           "name": "content_url",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "Where the payload file lives: a relative path resolved against this sidecar's own location (payload and sidecar normally sit side by side in the activity folder), or an absolute URL."
         },
         {
           "name": "content_type",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "MIME type of the payload (e.g. `application/x-ndjson`, `text/csv`, `application/x-edf`, `application/vnd.apache.parquet`)."
         },
         {
           "name": "content_encoding",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Optional transport encoding of the payload file, e.g. `gzip`. Absent means the payload is stored uncompressed."
         },
         {
           "name": "sha256",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "SHA-256 hash of the payload file's bytes (after any content_encoding), lowercase hex. Recommended for integrity checking."
         },
         {
           "name": "byte_length",
-          "type": null,
+          "type": "integer",
           "requirement": "optional",
           "description": "Size of the payload file in bytes (after any content_encoding)."
         },
         {
           "name": "clock",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "URI of the clock every `t` value is on. Defaults to the vocabulary `engine_seconds` term: a monotonic per-session clock counting seconds since engine start."
         },
         {
           "name": "anchor_datetime",
-          "type": null,
+          "type": "datetime",
           "requirement": "optional",
           "description": "The RFC 9557 datetime (with timezone offset) corresponding to `t` = 0 on the declared clock — the per-session bridge to wall-clock time. Optional here (the session-level record is the source of truth); duplicating it makes the sidecar standalone."
         },
         {
           "name": "sampling_nature",
-          "type": null,
+          "type": "enum",
           "requirement": "required",
           "description": "Whether samples are event-driven (irregular) or taken at a nominal fixed rate.",
           "values": [
@@ -89,31 +89,31 @@
         },
         {
           "name": "nominal_rate_hz",
-          "type": null,
+          "type": "float",
           "requirement": "optional",
           "description": "Nominal sampling rate in Hz. Required when `sampling_nature` is `sampled`; meaningless (omit) when `event_driven`."
         },
         {
           "name": "runtime_id",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Identifies the activity run (one specific execution of an activity by one agent, distinguishing restarts) this series was recorded during. Resolves in the trial schema's `Studyflow` table and equals the event layer's `bdm:runtime_id`, so a sidecar can be tied to its run without relying on where the file sits."
         },
         {
           "name": "session_uuid",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "UUID of the session this series was recorded in (see the trial schema's `session_uuid`). Lets a sidecar be interpreted standalone, outside the dataset folder hierarchy."
         },
         {
           "name": "attempt",
-          "type": null,
+          "type": "integer",
           "requirement": "optional",
           "description": "1-based ordinal of the activity run within the session (see `attempt` in the trial schema's `Studyflow` table). Timeseries payloads keep a per-run filename because, unlike the tidy tables and the event stream, binary recordings cannot be concatenated into a single file."
         },
         {
           "name": "channels",
-          "type": null,
+          "type": "list of Channel",
           "requirement": "required",
           "description": "Definitions of the payload's channels, in payload column order. For self-describing payloads (e.g. EDF) this list mirrors the labels/units consumers need without parsing the container format."
         }
@@ -127,13 +127,13 @@
       "fields": [
         {
           "name": "name",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "Channel name as it appears in the payload (e.g. `t`, `x`, `y`, `Fp1`)."
         },
         {
           "name": "datatype",
-          "type": null,
+          "type": "enum",
           "requirement": "required",
           "description": "Datatype of the channel's values.",
           "values": [
@@ -154,13 +154,13 @@
         },
         {
           "name": "unit",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Unit of the channel's values (e.g. `s`, `px`, `uV`). Omit for unitless channels."
         },
         {
           "name": "coordinate_frame",
-          "type": null,
+          "type": "enum",
           "requirement": "optional",
           "description": "For spatial channels: the coordinate frame the values are expressed in.",
           "values": [
@@ -177,7 +177,7 @@
         },
         {
           "name": "description",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Human-readable note about the channel."
         }

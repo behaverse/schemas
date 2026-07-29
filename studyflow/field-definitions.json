@@ -12,19 +12,19 @@
       "fields": [
         {
           "name": "items",
-          "type": null,
+          "type": "list of MarkdownString",
           "requirement": "optional",
           "description": "Checklist items."
         },
         {
           "name": "id",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Unique identifier for the element."
         },
         {
           "name": "checklist",
-          "type": null,
+          "type": "Checklist",
           "requirement": "optional",
           "description": "Checklist for the element."
         }
@@ -38,13 +38,13 @@
       "fields": [
         {
           "name": "id",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "Unique identifier for the element."
         },
         {
           "name": "checklist",
-          "type": null,
+          "type": "Checklist",
           "requirement": "optional",
           "description": "Checklist for the element."
         }
@@ -57,25 +57,25 @@
       "fields": [
         {
           "name": "requiresConsent",
-          "type": null,
+          "type": "boolean",
           "requirement": "optional",
           "description": "User requires to give consent before participating."
         },
         {
           "name": "consentFormUrl",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Link to the consent form. Leave empty if you want to use the default consent form."
         },
         {
           "name": "id",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "Unique identifier for the element."
         },
         {
           "name": "checklist",
-          "type": null,
+          "type": "Checklist",
           "requirement": "optional",
           "description": "Checklist for the element."
         }
@@ -88,25 +88,25 @@
       "fields": [
         {
           "name": "hasRedirectUrl",
-          "type": null,
+          "type": "boolean",
           "requirement": "optional",
           "description": "Redirect the user to the given URL after completion."
         },
         {
           "name": "redirectUrl",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Link to redirect the user upon completion."
         },
         {
           "name": "id",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "Unique identifier for the element."
         },
         {
           "name": "checklist",
-          "type": null,
+          "type": "Checklist",
           "requirement": "optional",
           "description": "Checklist for the element."
         }
@@ -119,7 +119,7 @@
       "fields": [
         {
           "name": "instrument",
-          "type": null,
+          "type": "enum",
           "requirement": "optional",
           "description": "Instrument used for the test.",
           "values": [
@@ -144,7 +144,7 @@
         },
         {
           "name": "behaverseTask",
-          "type": null,
+          "type": "enum",
           "requirement": "optional",
           "description": "Behaverse instrument used for the test.",
           "values": [
@@ -241,19 +241,19 @@
         },
         {
           "name": "url",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Link to the activity."
         },
         {
           "name": "id",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "Unique identifier for the element."
         },
         {
           "name": "checklist",
-          "type": null,
+          "type": "Checklist",
           "requirement": "optional",
           "description": "Checklist for the element."
         }
@@ -266,19 +266,19 @@
       "fields": [
         {
           "name": "url",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Link to the activity."
         },
         {
           "name": "id",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "Unique identifier for the element."
         },
         {
           "name": "checklist",
-          "type": null,
+          "type": "Checklist",
           "requirement": "optional",
           "description": "Checklist for the element."
         }
@@ -291,25 +291,25 @@
       "fields": [
         {
           "name": "text",
-          "type": null,
+          "type": "MarkdownString",
           "requirement": "optional",
           "description": "Instruction text in markdown format."
         },
         {
           "name": "url",
-          "type": null,
+          "type": "string",
           "requirement": "optional",
           "description": "Link to the activity."
         },
         {
           "name": "id",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "Unique identifier for the element."
         },
         {
           "name": "checklist",
-          "type": null,
+          "type": "Checklist",
           "requirement": "optional",
           "description": "Checklist for the element."
         }
@@ -322,7 +322,7 @@
       "fields": [
         {
           "name": "algorithm",
-          "type": null,
+          "type": "enum",
           "requirement": "optional",
           "description": "Algorithm used for the assignment.",
           "values": [
@@ -339,7 +339,7 @@
         },
         {
           "name": "probabilityFunction",
-          "type": null,
+          "type": "enum",
           "requirement": "optional",
           "description": "Probability mass function that defines the discrete distribution of the random assignment. Defaults to `uniform`.",
           "values": [
@@ -368,13 +368,13 @@
         },
         {
           "name": "id",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "Unique identifier for the element."
         },
         {
           "name": "checklist",
-          "type": null,
+          "type": "Checklist",
           "requirement": "optional",
           "description": "Checklist for the element."
         }
@@ -388,7 +388,7 @@
       "fields": [
         {
           "name": "datasetFormat",
-          "type": null,
+          "type": "enum",
           "requirement": "optional",
           "description": "Format of the dataset (BDM, BIDS, Psych-DS, etc).",
           "values": [
@@ -413,7 +413,7 @@
         },
         {
           "name": "bdmDataLevel",
-          "type": null,
+          "type": "enum",
           "requirement": "optional",
           "description": "Level of the data (events, trials, models).",
           "values": [
@@ -434,7 +434,7 @@
         },
         {
           "name": "bidsDataType",
-          "type": null,
+          "type": "enum",
           "requirement": "optional",
           "description": "BIDS data type.",
           "values": [
@@ -495,13 +495,13 @@
         },
         {
           "name": "id",
-          "type": null,
+          "type": "string",
           "requirement": "required",
           "description": "Unique identifier for the element."
         },
         {
           "name": "checklist",
-          "type": null,
+          "type": "Checklist",
           "requirement": "optional",
           "description": "Checklist for the element."
         }
