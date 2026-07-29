@@ -2,6 +2,17 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0806] - 2026-08-06
+
+### Changed
+
+- The last seven cross-reference `range` fragments that still described scope in folder
+  terms ("of the same agent/session/activity") or hedged with "corresponding" now state
+  the join identity the self-scoping design settled on: "within the same `runtime_id`".
+  With this, every cross-table reference in the family uses one wording. No structural
+  changes; the schema-wide self-scoping pass (runtime_id on every Tier B table) had
+  already shipped in v26.0727–v26.0801.
+
 ## [26.0804] - 2026-08-04
 
 ### Changed
