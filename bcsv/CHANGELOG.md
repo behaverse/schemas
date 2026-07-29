@@ -5,6 +5,12 @@ All notable changes to the BCSV schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0805] - 2026-08-05
+
+### Changed
+
+- Prose sweep of the published strings: 18 descriptions gained their terminal period (descriptions are sentences; fragments belong in `range`). No semantic changes.
+
 ## [26.0703] - 2026-07-03
 
 ### Fixed

@@ -1,0 +1,85 @@
+{
+  "@context": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "behaverse": "https://behaverse.org/schemas/catalog#",
+    "catalog": "https://behaverse.org/schemas/catalog#",
+    "dc": "http://purl.org/dc/terms/",
+    "dcat": "http://www.w3.org/ns/dcat#",
+    "linkml": "https://w3id.org/linkml/",
+    "@vocab": "https://behaverse.org/schemas/catalog#",
+    "catalogs": {
+      "@type": "xsd:anyURI",
+      "@id": "schema:hasPart",
+      "@container": "@set"
+    },
+    "curator": {
+      "@type": "@id",
+      "@id": "schema:curator",
+      "@container": "@set"
+    },
+    "dataset_count": {
+      "@type": "xsd:integer",
+      "@id": "behaverse:datasetCount"
+    },
+    "datasets": {
+      "@type": "xsd:anyURI",
+      "@id": "schema:dataset",
+      "@container": "@set"
+    },
+    "date_created": {
+      "@type": "xsd:date",
+      "@id": "schema:dateCreated"
+    },
+    "date_modified": {
+      "@type": "xsd:date",
+      "@id": "schema:dateModified"
+    },
+    "description": {
+      "@id": "schema:description"
+    },
+    "exclusion_criteria": {
+      "@id": "behaverse:exclusionCriteria",
+      "@container": "@set"
+    },
+    "inclusion_criteria": {
+      "@id": "behaverse:inclusionCriteria",
+      "@container": "@set"
+    },
+    "keywords": {
+      "@id": "schema:keywords",
+      "@container": "@set"
+    },
+    "name": {
+      "@id": "schema:name"
+    },
+    "pretty_name": {
+      "@id": "dc:title"
+    },
+    "related_catalogs": {
+      "@id": "behaverse:relatedCatalogs",
+      "@container": "@set"
+    },
+    "affiliation": {
+      "@id": "schema:affiliation"
+    },
+    "email": {
+      "@id": "schema:email"
+    },
+    "orcid": {
+      "@id": "schema:identifier"
+    },
+    "Catalog": {
+      "@id": "schema:DataCatalog"
+    },
+    "Curator": {
+      "@id": "Curator"
+    },
+    "schema": "https://schema.org/",
+    "dc:description": {
+      "@id": "dc:description"
+    },
+    "dcat:catalog": {
+      "@id": "dcat:catalog"
+    }
+  }
+}
