@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events. The component, parameter, and score tables are keyed by their natural keys and carry no surrogate primary key."
-version: "26.0803"
+version: "26.0804"
 license: MIT
 
 prefixes:
@@ -348,7 +348,7 @@ classes:
       agent_id:
         range: string
         required: true
-        description: "The agent who performed this run. See `Agent` table."
+        description: "The agent who performed this run. Resolves in the `Agent` table of the `agents` family, shipped as `agents.csv` at the dataset root."
         annotations:
           categories:
             value:
@@ -554,7 +554,7 @@ classes:
       agent_id:
         range: string
         required: true
-        description: "A unique identifier assigned to the agent (typically person) generating the responses. This ID tracks their participation and responses throughout the study. See `Agent` table."
+        description: "A unique identifier assigned to the agent (typically person) generating the responses. This ID tracks their participation and responses throughout the study. Resolves in the `Agent` table of the `agents` family, shipped as `agents.csv` at the dataset root."
         annotations:
           categories:
             value:

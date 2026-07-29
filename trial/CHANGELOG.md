@@ -2,6 +2,14 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0804] - 2026-08-04
+
+### Changed
+
+- The `agent_id` descriptions in `Response` and `StudyflowLog` no longer point at a
+  nonexistent table: they now resolve in the `Agent` table of the new `agents` family
+  (`agents.csv` at the dataset root), released as agents v26.0804 alongside this version.
+
 ## [26.0803] - 2026-08-03
 
 ### Changed
