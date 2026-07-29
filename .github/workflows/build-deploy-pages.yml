@@ -17,7 +17,7 @@ concurrency:
 env:
   # Every published schema family — the ONE place to add a new family to the deploy.
   # Used by both the "Checkout schemas from main" and "Copy raw schemas" steps.
-  SCHEMA_DIRS: bcsv catalog dataset studyflow trial event timeseries vocabulary
+  SCHEMA_DIRS: agents bcsv catalog dataset studyflow trial event timeseries vocabulary
 
 jobs:
   build:

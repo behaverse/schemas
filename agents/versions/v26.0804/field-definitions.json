@@ -1,0 +1,84 @@
+{
+  "schema": "agents",
+  "version": "26.0804",
+  "namespace": "https://behaverse.org/schemas/agents",
+  "description": "The agent roster of a dataset: `agents.csv` at the dataset root, one row per agent, mapping the dataset-local `agent_index` to the global `agent_id` and carrying core per-agent attributes. Referenced by every table that carries an `agent_id` (e.g., `Response` and `StudyflowLog` in the trial family).",
+  "tables": [
+    {
+      "name": "Agent",
+      "slug": "agent",
+      "docs_url": "https://behaverse.org/schemas/agents/agent",
+      "description": "One agent in the dataset. Shipped as `agents.csv` at the dataset root, one row per agent: the mapping between the dataset-local `agent_index` and the global `agent_id`, plus core per-agent attributes.",
+      "notes": [
+        "Datasets may add custom columns for attributes not specified here (e.g., handedness, education, gender identity); the columns below are the shared core.",
+        "Per-agent data availability is deliberately not recorded here — it is derivable from each agent's `studyflow_log.csv`, which lists every run the agent began, with its status."
+      ],
+      "fields": [
+        {
+          "name": "agent_id",
+          "type": "string",
+          "requirement": "required",
+          "description": "A unique identifier assigned to the agent (typically unique within a data collection institution or research group), used to determine whether the same agent participated in multiple studies. May be created using a custom procedure (e.g., a UUID)."
+        },
+        {
+          "name": "agent_index",
+          "type": "string",
+          "requirement": "required",
+          "description": "The dataset-local label of the agent: the string `agent_` followed by a zero-padded ordinal (e.g., `agent_015`). It names the agent's data folder and is unique within the dataset."
+        },
+        {
+          "name": "agent_type",
+          "type": "enum",
+          "requirement": "optional",
+          "description": "The kind of agent that generated the data.",
+          "values": [
+            {
+              "value": "human",
+              "description": "A human participant."
+            },
+            {
+              "value": "non_human_animal",
+              "description": "A non-human animal (e.g., a mouse, a primate)."
+            },
+            {
+              "value": "artificial",
+              "description": "An artificial agent (e.g., a computational model, an AI system)."
+            }
+          ],
+          "values_exhaustive": false
+        },
+        {
+          "name": "age",
+          "type": "float",
+          "requirement": "optional",
+          "description": "Age of the agent at the start of the study, in years.",
+          "range": "years"
+        },
+        {
+          "name": "sex",
+          "type": "enum",
+          "requirement": "optional",
+          "description": "Sex of the agent, as recorded by the study.",
+          "values": [
+            {
+              "value": "female"
+            },
+            {
+              "value": "male"
+            },
+            {
+              "value": "intersex"
+            }
+          ],
+          "values_exhaustive": false
+        },
+        {
+          "name": "language",
+          "type": "string",
+          "requirement": "optional",
+          "description": "Primary language of the agent, as a BCP-47 tag (e.g., `en`, `fr-BE`)."
+        }
+      ]
+    }
+  ]
+}

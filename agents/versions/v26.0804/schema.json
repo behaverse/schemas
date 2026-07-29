@@ -1,0 +1,108 @@
+{
+  "$defs": {
+    "Agent": {
+      "additionalProperties": false,
+      "description": "One agent in the dataset. Shipped as `agents.csv` at the dataset root, one row per agent: the mapping between the dataset-local `agent_index` and the global `agent_id`, plus core per-agent attributes.",
+      "properties": {
+        "age": {
+          "description": "Age of the agent at the start of the study, in years.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Age"
+        },
+        "agent_id": {
+          "description": "A unique identifier assigned to the agent (typically unique within a data collection institution or research group), used to determine whether the same agent participated in multiple studies. May be created using a custom procedure (e.g., a UUID).",
+          "type": "string",
+          "title": "Agent Id"
+        },
+        "agent_index": {
+          "description": "The dataset-local label of the agent: the string `agent_` followed by a zero-padded ordinal (e.g., `agent_015`). It names the agent's data folder and is unique within the dataset.",
+          "pattern": "^agent_[0-9]+$",
+          "type": "string",
+          "title": "Agent Index"
+        },
+        "agent_type": {
+          "$ref": "#/$defs/AgentTypeEnum",
+          "description": "The kind of agent that generated the data.",
+          "title": "Agent Type"
+        },
+        "language": {
+          "description": "Primary language of the agent, as a BCP-47 tag (e.g., `en`, `fr-BE`).",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Language"
+        },
+        "sex": {
+          "$ref": "#/$defs/SexEnum",
+          "description": "Sex of the agent, as recorded by the study.",
+          "title": "Sex"
+        }
+      },
+      "required": [
+        "agent_id",
+        "agent_index"
+      ],
+      "title": "Agent",
+      "type": "object"
+    },
+    "AgentTypeEnum": {
+      "description": "The kind of agent that generated the data.",
+      "title": "AgentTypeEnum",
+      "type": "string"
+    },
+    "AgentsData": {
+      "additionalProperties": false,
+      "description": "Root container mapping the Agent table to an array of its rows.",
+      "properties": {
+        "Agent": {
+          "description": "Rows of the Agent table.",
+          "items": {
+            "$ref": "#/$defs/Agent"
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Agent"
+        }
+      },
+      "title": "AgentsData",
+      "type": "object"
+    },
+    "SexEnum": {
+      "description": "Sex of an agent, as recorded by the study.",
+      "title": "SexEnum",
+      "type": "string"
+    }
+  },
+  "$id": "https://behaverse.org/schemas/agents/v26.0804/schema.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "additionalProperties": true,
+  "description": "Root container mapping the Agent table to an array of its rows.",
+  "metamodel_version": "1.7.0",
+  "properties": {
+    "@type": {
+      "const": "agents:AgentsData",
+      "title": "Type",
+      "description": "JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverability."
+    },
+    "Agent": {
+      "description": "Rows of the Agent table.",
+      "items": {
+        "$ref": "#/$defs/Agent"
+      },
+      "type": [
+        "array",
+        "null"
+      ],
+      "title": "Agent"
+    }
+  },
+  "title": "agents",
+  "type": "object",
+  "version": "26.0804"
+}
