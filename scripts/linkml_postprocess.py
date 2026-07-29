@@ -74,6 +74,20 @@ def postprocess_schema(schema: Dict[str, Any], sv: SchemaView) -> Dict[str, Any]
             if isinstance(pschema, dict) and "anyOf" in pschema:
                 pschema.pop("type", None)
 
+    # (i) Open value sets: an enum annotated `exhaustive: false` documents its known
+    # values without closing the set (custom labels are allowed by the field's own
+    # documentation). Strip the JSON-Schema `enum` constraint from its $def so such
+    # values stay valid; the $def keeps its title/description/`type: string`.
+    defs = schema.get("$defs")
+    if isinstance(defs, dict):
+        for ename, edef in sv.all_enums().items():
+            ann = (edef.annotations or {})
+            a = ann.get("exhaustive") if hasattr(ann, "get") else getattr(ann, "exhaustive", None)
+            if a is not None and a.value in (False, "false"):
+                d = defs.get(str(ename))
+                if isinstance(d, dict):
+                    d.pop("enum", None)
+
     # (f) Per-property titles on every `properties` block (top-level + $defs).
     for props in _iter_property_blocks(schema):
         for pname, pschema in props.items():

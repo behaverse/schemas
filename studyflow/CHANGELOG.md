@@ -5,6 +5,20 @@ All notable changes to the Studyflow schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0803] - 2026-08-03
+
+### Added
+- `field-definitions.json` now publishes each enum-ranged field's value set as `values`
+  (a list of `{value, description?}` objects) plus `values_exhaustive` — the
+  artifact-shape addition introduced with trial v26.0803, applied uniformly to every
+  family that ships `field-definitions.json`. Seven fields gain it (e.g.
+  `CognitiveTest.behaverseTask`, `RandomGateway.algorithm`, `Dataset.bidsDataType`).
+  `schema.json` validation is unchanged.
+- Every field now publishes a non-null `type`, derived from its LinkML range (`enum`,
+  `string`, `boolean`, `Checklist`, …) when no explicit `bdm_type` annotation exists.
+  All 34 fields previously carried `type: null`, leaving the documentation site's Type
+  column empty. Requested by `behaverse/data-model`.
+
 ## [26.0730] - 2026-07-30
 
 ### Added

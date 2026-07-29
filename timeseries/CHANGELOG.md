@@ -2,6 +2,21 @@
 
 All notable changes to the timeseries schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0803] - 2026-08-03
+
+### Added
+
+- `field-definitions.json` now publishes each enum-ranged field's value set as
+  `values` (a list of `{value, description?}` objects) plus `values_exhaustive` —
+  the artifact-shape addition introduced with trial v26.0803, applied uniformly to
+  every family that ships `field-definitions.json`. Three fields gain it
+  (`sampling_nature`, channel `datatype`, `coordinate_frame`). `schema.json`
+  validation is unchanged.
+- Every field now publishes a non-null `type`, derived from its LinkML range (`enum`,
+  `string`, `integer`, `datetime`, `list of Channel`, …) when no explicit `bdm_type`
+  annotation exists. All 21 fields previously carried `type: null`, leaving the
+  documentation site's Type column empty. Requested by `behaverse/data-model`.
+
 ## [26.0729] - 2026-07-29
 
 ### Added
