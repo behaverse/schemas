@@ -33,7 +33,7 @@ enums:
     permissible_values:
       human:
         description: "A human participant."
-      non_human_animal:
+      animal:
         description: "A non-human animal (e.g., a mouse, a primate)."
       artificial:
         description: "An artificial agent (e.g., a computational model, an AI system)."

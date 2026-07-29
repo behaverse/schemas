@@ -37,7 +37,7 @@
               "description": "A human participant."
             },
             {
-              "value": "non_human_animal",
+              "value": "animal",
               "description": "A non-human animal (e.g., a mouse, a primate)."
             },
             {
