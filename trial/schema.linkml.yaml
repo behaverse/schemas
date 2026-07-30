@@ -8,12 +8,11 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events. The component, parameter, and score tables are keyed by their natural keys and carry no surrogate primary key."
-version: "26.0807"
+version: "26.0808"
 license: MIT
 
 prefixes:
   trial: https://behaverse.org/schemas/trial#
-  behaverse: https://behaverse.org/schemas/trial#
   sdo: https://schema.org/
   linkml: https://w3id.org/linkml/
 default_prefix: trial

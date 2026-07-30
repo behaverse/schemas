@@ -2,6 +2,12 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0808] - 2026-08-08
+
+### Changed
+
+- The divergent `behaverse:` prefix (bound per family to that family's own namespace, and unused here) is removed from the source and the published `context.jsonld`. No term URIs changed; `trial:` and `bdm:` remain.
+
 ## [26.0807] - 2026-08-07
 
 ### Added

@@ -2,6 +2,13 @@
 
 All notable changes to the Catalog schema will be documented in this file.
 
+## [26.0808] - 2026-08-08
+
+### Changed
+
+- **Shared common module.** `Curator` is now `is_a` the shared `Person` class from `common/common.linkml.yaml` — identical shape and patterns, one definition instead of a drifting copy (`Person` consequently appears in `schema.json` `$defs`).
+- The `behaverse:` prefix — an alias of `catalog:` — is removed from the source and the published context; the four slots that used it now write `catalog:` directly. No URI changed.
+
 ## [26.0805] - 2026-08-05
 
 ### Changed

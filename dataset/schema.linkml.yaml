@@ -3,26 +3,24 @@ id: https://behaverse.org/schemas/dataset
 name: dataset
 title: Behaverse Dataset Schema
 description: A metadata schema for cognitive science and neuroscience datasets with mappings to Schema.org, DataCite, BIDS, and other standards.
-version: "26.0805"
+version: "26.0808"
 license: MIT
 
 prefixes:
   dataset: https://behaverse.org/schemas/dataset#
-  behaverse: https://behaverse.org/schemas/dataset#
   sdo: https://schema.org/
   dc: http://purl.org/dc/terms/
   hf: https://huggingface.co/docs/hub/datasets-cards#
-  cdisc: https://www.cdisc.org/standards/foundational/sdtm#
   ct: https://clinicaltrials.gov/data-api/about-api/schema#
   cogatlas: http://www.cognitiveatlas.org/
   bidssession: https://bids-specification.readthedocs.io/en/stable/common-principles.html#
   bidsparticipants: https://bids-specification.readthedocs.io/en/stable/modality-agnostic-files.html#
-  ddiuniverse: https://ddialliance.org/Specification/DDI-Lifecycle/3.3/XMLSchema/FieldLevelDocumentation/schemas/datacollection_xsd/elements/
   linkml: https://w3id.org/linkml/
 default_prefix: dataset
 default_range: string
 imports:
   - linkml:types
+  - ../common/common.linkml
 
 # Docs-only metadata: the dataset Overview groups fields into these categories (in this
 # order). Consumed by gh-pages:scripts/generate_docs.py; ignored by the JSON Schema /
@@ -248,9 +246,9 @@ classes:
         examples: [{value: https://example.org/datasets/axon-game}]
       doi:
         recommended: true
+        range: DoiString
         slot_uri: sdo:identifier
         exact_mappings: [dc:identifier]
-        pattern: "^10\\.\\d{4,}/[-._;()/:A-Za-z0-9]+$"
         description: Digital Object Identifier.
         examples: [{value: 10.1234/example.2024}]
       keywords:
@@ -266,9 +264,9 @@ classes:
         multivalued: true
         range: string
         slot_uri: sdo:inLanguage
-        pattern: "^[a-z]{2}$"
-        description: ISO 639-1 language codes.
-        examples: [{value: en}, {value: de}]
+        pattern: "^[A-Za-z]{2,3}(-[A-Za-z0-9]{1,8})*$"
+        description: Languages of the dataset content, as BCP-47 tags.
+        examples: [{value: en}, {value: fr-BE}]
       date_created:
         recommended: true
         range: date
@@ -289,12 +287,12 @@ classes:
       date_added:
         required: true
         range: date
-        slot_uri: behaverse:dateAdded
+        slot_uri: dataset:dateAdded
         description: Date added to catalog (ISO 8601, internal)
         examples: [{value: "2024-07-01"}]
       last_verified:
         range: date
-        slot_uri: behaverse:lastVerified
+        slot_uri: dataset:lastVerified
         description: Date metadata was last verified (ISO 8601, internal)
         examples: [{value: "2024-11-15"}]
       creator:
@@ -319,7 +317,6 @@ classes:
       sample_size:
         required: true
         range: integer
-        slot_uri: ddiuniverse:Universe.html
         exact_mappings: [bidsparticipants:participants-file, ct:enrollment]
         minimum_value: 1
         description: Total number of participants.
@@ -330,12 +327,10 @@ classes:
         range: float
         minimum_cardinality: 2
         maximum_cardinality: 2
-        slot_uri: cdisc:AGE
         description: "[min, max] age in years."
         examples: [{value: "18"}, {value: "35"}]
       age_mean:
         range: float
-        slot_uri: cdisc:AGE
         minimum_value: 0
         description: Mean participant age.
         examples: [{value: "23.5"}, {value: "45.2"}]
@@ -347,13 +342,12 @@ classes:
       sex_distribution:
         recommended: true
         range: SexDistribution
-        slot_uri: cdisc:SEX
         description: Participant counts by sex.
         examples: [{value: '{"female": 52, "male": 45, "other": 2, "not_reported": 1}'}]
       age_category:
         multivalued: true
         range: AgeCategory
-        slot_uri: behaverse:ageCategory
+        slot_uri: dataset:ageCategory
         description: Age group classification.
         examples: [{value: adult}]
       population_category:
@@ -408,7 +402,6 @@ classes:
       study_design_type:
         recommended: true
         range: StudyDesignType
-        slot_uri: sdo:MedicalStudy
         description: Study design category.
         examples: [{value: cross-sectional}, {value: longitudinal}]
       intervention_type:
@@ -424,7 +417,7 @@ classes:
         description: Number of experimental sessions per participant.
         examples: [{value: "1"}, {value: "3"}]
       session_description:
-        slot_uri: behaverse:session_description
+        slot_uri: dataset:session_description
         description: Brief description of session structure (if multi-session)
         examples: [{value: "Single session with EEG and behavioral tasks"}]
       data_formats:
@@ -441,7 +434,7 @@ classes:
         description: Total dataset size (GB)
         examples: [{value: "2.5"}, {value: "150"}]
       data_structure:
-        slot_uri: behaverse:dataStructure
+        slot_uri: dataset:dataStructure
         description: Organization of data files.
         examples: [{value: BIDS-compliant}, {value: One CSV per participant}]
       download_url:
@@ -463,7 +456,7 @@ classes:
           - value: '{"is_free": false, "requirements": "Requires institutional login and signed DUA"}'
       ethical_approval:
         range: EthicalApproval
-        slot_uri: behaverse:ethical_approval
+        slot_uri: dataset:ethical_approval
         description: Ethical approval and IRB information.
         examples:
           - value: '{"obtained": true, "institution": "University IRB", "protocol": "IRB-2024-001"}'
@@ -479,24 +472,6 @@ classes:
         slot_uri: hf:task_categories
         description: ML task types.
         examples: [{value: '["time-series-forecasting", "reinforcement-learning"]'}]
-
-  Person:
-    description: A person (creator or curator) associated with a dataset.
-    attributes:
-      name:
-        required: true
-        description: Full name of the person.
-      email:
-        slot_uri: sdo:email
-        pattern: "^\\S+@\\S+\\.\\S+$"
-        description: Email address
-      orcid:
-        slot_uri: sdo:identifier
-        pattern: "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
-        description: ORCID identifier
-      affiliation:
-        slot_uri: sdo:affiliation
-        description: Institutional affiliation
 
   Citation:
     description: A published paper or reference associated with a dataset.

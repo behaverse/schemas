@@ -34,7 +34,7 @@ Extension of W3C CSVW with support for R/Python data types including categorical
 ### <img src="assets/img/schema_C.png" height="40" style="vertical-align: middle;"> catalog 
 Metadata schema for describing thematic catalogs of datasets that share specific characteristics or serve particular research applications. Extends schema.org/DataCatalog. Supports hierarchical organization through nested catalogs.
 
-- **Version**: v26.0805  ·  **Source**: [`catalog/schema.linkml.yaml`](catalog/schema.linkml.yaml)
+- **Version**: v26.0808  ·  **Source**: [`catalog/schema.linkml.yaml`](catalog/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/catalog#`
 - **Context**: [`catalog/context.jsonld`](catalog/context.jsonld) · **JSON Schema**: [`catalog/schema.json`](catalog/schema.json) · **Docs**: [`catalog/README.md`](catalog/README.md)
 
@@ -43,7 +43,7 @@ Metadata schema for describing thematic catalogs of datasets that share specific
 ### <img src="assets/img/schema_D.png" height="40" style="vertical-align: middle;"> dataset
 Metadata schema for describing cognitive science datasets with comprehensive coverage of participant demographics, measurement techniques, cognitive tasks, and data access information.
 
-- **Version**: v26.0805  ·  **Source**: [`dataset/schema.linkml.yaml`](dataset/schema.linkml.yaml)
+- **Version**: v26.0808  ·  **Source**: [`dataset/schema.linkml.yaml`](dataset/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/dataset#`
 - **Context**: [`dataset/context.jsonld`](dataset/context.jsonld) · **JSON Schema**: [`dataset/schema.json`](dataset/schema.json) · **Docs**: [`dataset/README.md`](dataset/README.md)
 
@@ -68,14 +68,14 @@ Schema for defining the formal structure of studyflow diagrams - sequences of ac
 ### trial
 Tidy, multi-table schema describing trial-level behavioral data (responses, stimuli, instruments, generative parameters, …) for cognitive tests and questionnaires, derived from raw events. Includes the run log (`StudyflowLog`) that makes every activity run addressable.
 
-- **Version**: v26.0807  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
+- **Version**: v26.0808  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/trial#`
 - **Context**: [`trial/context.jsonld`](trial/context.jsonld) · **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
 
 ### event
 Raw experimental events — an xAPI-style envelope (actor / verb / object) carrying the canonical Behaverse `bdm:` vocabulary. Modeled as `EventDocument = Event | EventBatch`.
 
-- **Version**: v26.0805  ·  **Source**: [`event/schema.linkml.yaml`](event/schema.linkml.yaml)
+- **Version**: v26.0808  ·  **Source**: [`event/schema.linkml.yaml`](event/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/event#`
 - **Context**: [`event/context.jsonld`](event/context.jsonld) · **JSON Schema**: [`event/schema.json`](event/schema.json) · **Render artifact**: [`event/field-definitions.json`](event/field-definitions.json) · **Docs**: [`event/README.md`](event/README.md)
 
@@ -89,7 +89,7 @@ Sidecar metadata for continuous sampled signals (mouse trajectories, gaze, EEG):
 ### vocabulary
 Cross-cutting controlled terminology (SKOS concept schemes + concepts): general terms, demographics, clock/timing terms, and the suffix conventions used in variable names — the terms no single schema owns.
 
-- **Version**: v26.0727  ·  **Source**: `vocabulary/terms.yaml` (SKOS; not LinkML)
+- **Version**: v26.0808  ·  **Source**: `vocabulary/terms.yaml` (SKOS; not LinkML)
 - **Namespace**: `https://behaverse.org/schemas/vocabulary`
 - **SKOS JSON-LD**: [`vocabulary/terms.jsonld`](vocabulary/terms.jsonld) · **Docs**: [`vocabulary/README.md`](vocabulary/README.md)
 

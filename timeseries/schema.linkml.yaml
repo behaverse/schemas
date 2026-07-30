@@ -16,7 +16,6 @@ license: MIT
 
 prefixes:
   timeseries: https://behaverse.org/schemas/timeseries#
-  behaverse: https://behaverse.org/schemas/timeseries#
   bdm: https://behaverse.org/schemas/vocabulary/
   linkml: https://w3id.org/linkml/
 default_prefix: timeseries

@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=https://linkml.io/linkml-model/linkml_model/jsonschema/meta.schema.json
+# Behaverse Common Definitions — shared LinkML building blocks.
+#
+# NOT a published family: nothing here is deployed or versioned on its own. Families import
+# this module (`imports: [../common/common]`) and their generated artifacts inline whatever
+# they use, so consumers never see this file. It exists to remove drift: the person shape
+# and the identifier patterns used to be duplicated per family and had already diverged in
+# wording. One definition, imported everywhere it is needed.
+id: https://behaverse.org/schemas/common
+name: common
+title: "Behaverse Common Definitions"
+description: "Shared building blocks imported by the Behaverse schema families: pattern-carrying identifier types and the person shape. Internal source only — not a published artifact."
+version: "26.0808"
+license: MIT
+
+prefixes:
+  common: https://behaverse.org/schemas/common#
+  sdo: https://schema.org/
+  linkml: https://w3id.org/linkml/
+default_prefix: common
+default_range: string
+
+imports:
+  - linkml:types
+
+types:
+  EmailString:
+    typeof: string
+    pattern: "^\\S+@\\S+\\.\\S+$"
+    description: "An email address."
+  OrcidString:
+    typeof: string
+    pattern: "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
+    description: "An ORCID identifier: four groups of four digits, the last character possibly `X`."
+  DoiString:
+    typeof: string
+    pattern: "^10\\.\\d{4,}/[-._;()/:A-Za-z0-9]+$"
+    description: "A Digital Object Identifier (DOI), e.g. `10.1234/example.2024`."
+
+classes:
+  Person:
+    class_uri: sdo:Person
+    description: "A person associated with an artifact — a creator, curator, or contributor."
+    attributes:
+      name:
+        required: true
+        description: "Full name of the person."
+      email:
+        range: EmailString
+        slot_uri: sdo:email
+        description: "Email address."
+      orcid:
+        range: OrcidString
+        slot_uri: sdo:identifier
+        description: "ORCID identifier."
+      affiliation:
+        slot_uri: sdo:affiliation
+        description: "Institutional affiliation."
