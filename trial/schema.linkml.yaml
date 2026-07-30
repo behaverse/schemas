@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events. The component, parameter, and score tables are keyed by their natural keys and carry no surrogate primary key."
-version: "26.0806"
+version: "26.0807"
 license: MIT
 
 prefixes:
@@ -502,6 +502,13 @@ classes:
   Response:
     description: "Main table where each row describes a response in a trial."
     title: "Response"
+    annotations:
+      notes:
+        value:
+        - "`decided_by` and `executed_by` share one value set: the reserved strings `self` · `task` · `other_agent`, or an `agent_id`. Any value that is not one of the three reserved strings must resolve to an agent in the dataset's `Agent` table (`agents` family)."
+        - "`self` is defined relative to the row's *own* `agent_id`, so yoked datasets can swap perspectives without rewriting values. `task` is a reserved token, not an `Agent` table entry."
+        - "When `decided_by` and `executed_by` are absent, the response is an ordinary free response (`self`/`self`). An omission or timeout is not an agency fact — the absence of a decision is recorded by `response_skipped` and `timed_out`, not here."
+        - "Dataset-level summaries such as \"has instructed trials\" are derived from these per-trial fields, never separately declared."
     attributes:
       runtime_id:
         any_of:
@@ -1283,6 +1290,28 @@ classes:
             - "Response"
           bdm_type:
             value: "boolean"
+      decided_by:
+        range: string
+        description: "Who chose this response's action: `self` (the row's own agent—the default), `task` (an instructed/forced trial: the task dictated the action), or the `agent_id` of another agent whose earlier or concurrent choice this row replays/observes (`other_agent` when that agent's identity is unknown)."
+        annotations:
+          categories:
+            value:
+            - "Response"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`self` · `task` · `other_agent` · an `agent_id` resolvable in the dataset"
+      executed_by:
+        range: string
+        description: "Who physically performed the action: `self` (the row's own agent pressed/clicked—the default), `task` (the task executed it while the agent observed), or the `agent_id` of another agent who executed it on the deciding agent's behalf (`other_agent` when unknown)."
+        annotations:
+          categories:
+            value:
+            - "Response"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`self` · `task` · `other_agent` · an `agent_id` resolvable in the dataset"
       accuracy:
         range: float
         description: "A task-dependent accuracy measure ranging from 0 to 1 (inclusive)."
@@ -2507,6 +2536,7 @@ classes:
         - "Simple single-stage trials need no rows here (`subtrial_count` = 1 in the `Response` table)."
         - "The stage count of a trial is derived: `subtrial_count` = max `subtrial_index` among the trial's rows."
         - "Do not confuse stages with the pieces of one response: a digit-span trial recalling \"3-5-7\" is *one* subtrial with `response_count` = 3 in the `Response` table; a two-step trial is *two* subtrials, each with its own stimulus and outcome."
+        - "Per-stage agency (`decided_by`/`executed_by`) can differ from the trial-level values; the shared value rules are stated on the `Response` table."
     attributes:
       runtime_id:
         any_of:
@@ -2664,6 +2694,28 @@ classes:
             - "Response"
           bdm_type:
             value: "float"
+      decided_by:
+        range: string
+        description: "Who chose this stage's action: `self` (the row's own agent—the default), `task` (an instructed/forced stage: the task dictated the action), or the `agent_id` of another agent whose earlier or concurrent choice this stage replays/observes (`other_agent` when that agent's identity is unknown)."
+        annotations:
+          categories:
+            value:
+            - "Response"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`self` · `task` · `other_agent` · an `agent_id` resolvable in the dataset"
+      executed_by:
+        range: string
+        description: "Who physically performed this stage's action: `self` (the row's own agent pressed/clicked—the default), `task` (the task executed it while the agent observed), or the `agent_id` of another agent who executed it on the deciding agent's behalf (`other_agent` when unknown)."
+        annotations:
+          categories:
+            value:
+            - "Response"
+          bdm_type:
+            value: "string"
+          range_description:
+            value: "`self` · `task` · `other_agent` · an `agent_id` resolvable in the dataset"
       correct:
         range: boolean
         description: "Whether this stage's response matches the expected response."
