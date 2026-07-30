@@ -2,6 +2,19 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0807] - 2026-08-07
+
+### Added
+
+- **`Response.decided_by` / `Response.executed_by`, mirrored on `Subtrial`**: who *decided*
+  an action vs who *executed* it. One shared value set — the reserved strings `self` ·
+  `task` · `other_agent`, or an `agent_id` resolving in the `agents` family's `Agent`
+  table. Both optional; absent means an ordinary free response (`self`/`self`), so existing
+  datasets remain valid unchanged. Covers instructed/forced trials, task-executed
+  observation, replay/yoked designs, and confederate execution. Omissions and timeouts are
+  not agency facts and stay with `response_skipped`/`timed_out`. The value rules are
+  recorded in the `Response` table notes; `self` is relative to the row's own `agent_id`.
+
 ## [26.0806] - 2026-08-06
 
 ### Changed

@@ -1,6 +1,6 @@
 # Behaverse Trial Schema (WIP)
 
-**Version:** v26.0801
+**Version:** v26.0807
 **Namespace:** `https://behaverse.org/schemas/trial#`
 **Source of truth:** [`schema.linkml.yaml`](schema.linkml.yaml) — edit it, then run `python scripts/generate.py`
 
