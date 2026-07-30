@@ -2,6 +2,12 @@
 
 All notable changes to the event schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0805] - 2026-08-05
+
+### Changed
+
+- Prose sweep: `finalised` corrected to `finalized` in a verb description (US spelling, the corpus-wide convention).
+
 ## [26.0721] - 2026-07-21
 
 ### Breaking

@@ -2,6 +2,12 @@
 
 All notable changes to the Catalog schema will be documented in this file.
 
+## [26.0805] - 2026-08-05
+
+### Changed
+
+- Prose sweep of the published strings: 15 descriptions gained their terminal period (descriptions are sentences; fragments belong in `range`). No semantic changes.
+
 ## [26.0703] - 2026-07-03
 
 ### Fixed
