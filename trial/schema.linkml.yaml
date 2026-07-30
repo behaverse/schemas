@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events. The component, parameter, and score tables are keyed by their natural keys and carry no surrogate primary key."
-version: "26.0804"
+version: "26.0806"
 license: MIT
 
 prefixes:
@@ -1711,7 +1711,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`trial_index` in the `Response` table for the same agent/session/activity"
+            value: "`trial_index` in the `Response` table, within the same `runtime_id`"
       response_id:
         any_of:
         - range: string
@@ -1724,7 +1724,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`response_id` in the `Response` table of the same agent/activity"
+            value: "`response_id` in the `Response` table, within the same `runtime_id`"
       index_in_trial:
         range: integer
         description: "Indexing each of the options within the set of options that were available to agents on a given trial."
@@ -2062,7 +2062,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "corresponding `option_id` in the `Option` table"
+            value: "`option_id` in the `Option` table, within the same `runtime_id`"
       stimulus_id:
         any_of:
         - range: string
@@ -2075,7 +2075,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "corresponding `stimulus_id` in the `Stimulus` table"
+            value: "`stimulus_id` in the `Stimulus` table, within the same `runtime_id`"
   StimulusComponent:
     description: "Stimuli can comprise multiple components. This table describes each component of a stimulus."
     title: "StimulusComponent"
@@ -2107,7 +2107,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`stimulus_id` in the corresponding `Stimulus` table (same agent/session/activity)"
+            value: "`stimulus_id` in the `Stimulus` table, within the same `runtime_id`"
       index:
         range: integer
         required: true
@@ -2288,7 +2288,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`option_id` in the corresponding `Option` table (same agent/session/activity)"
+            value: "`option_id` in the `Option` table, within the same `runtime_id`"
       panel_id:
         range: string
         description: "Identifier of the panel this option is displayed over."
@@ -2618,7 +2618,7 @@ classes:
           bdm_type:
             value: "id"
           range_description:
-            value: "`stimulus_id` in the `Stimulus` table"
+            value: "`stimulus_id` in the `Stimulus` table, within the same `runtime_id`"
       expected_response_option_index:
         range: integer
         description: "The index of the option the agent is expected to choose in this stage. Same conventions as the `Response` table's field of the same name."
