@@ -17,7 +17,6 @@ license: MIT
 
 prefixes:
   agents: https://behaverse.org/schemas/agents#
-  behaverse: https://behaverse.org/schemas/agents#
   bdm: https://behaverse.org/schemas/vocabulary/
   linkml: https://w3id.org/linkml/
 default_prefix: agents

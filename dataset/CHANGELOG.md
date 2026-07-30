@@ -5,6 +5,19 @@ All notable changes to the Dataset schema will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0808] - 2026-08-08
+
+### Changed
+
+- **Shared common module.** `Person` is now the shared class from `common/common.linkml.yaml` (identical shape; its canonical URI is now `schema:Person`), and the `doi` fields range over the shared `DoiString` type. The duplicated person shape and identifier patterns that had drifted between `dataset` and `catalog` now have one definition.
+- **`language` accepts BCP-47 tags** (e.g. `fr-BE`, `zh-Hans`), not only bare ISO 639-1 two-letter codes; existing two-letter values remain valid.
+- **Wrong semantic mappings removed rather than guessed at:** `sample_size`'s `slot_uri` pointed at a DDI documentation *page* (`Universe.html`), `study_design_type`'s at the schema.org *class* `MedicalStudy`, and `age_range`/`age_mean` both claimed identity with `cdisc:AGE` (as `sex_distribution` did with `cdisc:SEX`) — aggregate statistics are not the per-participant variable. These slots now carry their own `dataset:` URIs; `exact_mappings` are untouched.
+- The `behaverse:` prefix — an alias of `dataset:` — is removed from the source and the published context; the six slots that used it now write `dataset:` directly. No URI changed.
+
+### Breaking
+
+- `Citation.doi` now validates against the DOI pattern (previously any string).
+
 ## [26.0805] - 2026-08-05
 
 ### Changed

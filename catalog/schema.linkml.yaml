@@ -3,12 +3,11 @@ id: https://behaverse.org/schemas/catalog
 name: catalog
 title: Behaverse Catalog Schema
 description: A metadata schema for thematic catalogs of cognitive science and neuroscience datasets.
-version: "26.0805"
+version: "26.0808"
 license: MIT
 
 prefixes:
   catalog: https://behaverse.org/schemas/catalog#
-  behaverse: https://behaverse.org/schemas/catalog#
   sdo: https://schema.org/
   dc: http://purl.org/dc/terms/
   dcat: http://www.w3.org/ns/dcat#
@@ -17,6 +16,7 @@ default_prefix: catalog
 default_range: string
 imports:
   - linkml:types
+  - ../common/common.linkml
 
 # Docs-only metadata: the catalog Overview groups fields into these categories (in this
 # order). Consumed by gh-pages:scripts/generate_docs.py; ignored by the JSON Schema /
@@ -75,13 +75,13 @@ classes:
         required: true
         multivalued: true
         range: string
-        slot_uri: behaverse:inclusionCriteria
+        slot_uri: catalog:inclusionCriteria
         description: Specific rules a dataset must meet to be included in this catalog (all criteria must be met)
         examples: [{value: '["Participants must have completed 2 or more distinct cognitive tasks", "Tasks must measure different cognitive constructs", "All tasks must be from the same participants (within-subject design)"]'}]
       exclusion_criteria:
         multivalued: true
         range: string
-        slot_uri: behaverse:exclusionCriteria
+        slot_uri: catalog:exclusionCriteria
         description: Criteria that would exclude a dataset from this catalog.
         examples: [{value: '["Single-task studies", "Between-subject designs only", "Non-human subjects"]'}]
       datasets:
@@ -99,13 +99,13 @@ classes:
         examples: [{value: '["https://behaverse.org/catalogs/neuroimaging-mental-health", "https://behaverse.org/catalogs/behavioral-adhd"]'}]
       dataset_count:
         range: integer
-        slot_uri: behaverse:datasetCount
+        slot_uri: catalog:datasetCount
         description: Number of datasets currently in this catalog.
         examples: [{value: "15"}]
       related_catalogs:
         multivalued: true
         range: string
-        slot_uri: behaverse:relatedCatalogs
+        slot_uri: catalog:relatedCatalogs
         description: Names of other catalogs that frequently overlap with this one.
         examples: [{value: '["multimodal", "longitudinal"]'}]
       date_created:
@@ -128,19 +128,5 @@ classes:
         examples: [{value: '[{"name": "Curator Name", "email": "curator@institution.edu", "orcid": "0000-0001-2345-6789"}]'}]
 
   Curator:
-    description: A person or organization that curates a catalog.
-    attributes:
-      name:
-        required: true
-        description: Curator full name.
-      email:
-        slot_uri: sdo:email
-        pattern: "^\\S+@\\S+\\.\\S+$"
-        description: Curator email address.
-      orcid:
-        slot_uri: sdo:identifier
-        pattern: "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"
-        description: ORCID identifier
-      affiliation:
-        slot_uri: sdo:affiliation
-        description: Institutional affiliation
+    is_a: Person
+    description: A person or organization that curates a catalog. The shape is the shared `Person` class from the common module.

@@ -6,6 +6,12 @@ documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0808] - 2026-08-08
+
+### Changed
+
+- The `*_hash` term's note now states the corpus default: SHA-256, lowercase hexadecimal (64 characters), matching `bcsv.file_hash` and the `sha256` fields of the timeseries sidecar and event attachments. The previous note was internally wrong: its "CRC32" example was 32 hex characters (MD5 length; CRC32 is 8) and its "SHA256 (base64)" example was a 56-character hex string (SHA-224 length).
+
 ## [26.0727] - 2026-07-27
 
 ### Changed

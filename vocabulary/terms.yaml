@@ -6,7 +6,7 @@
 
 vocabulary_metadata:
   name: Behaverse Vocabulary
-  version: '26.0727'
+  version: '26.0808'
   namespace: https://behaverse.org/schemas/vocabulary
   description: 'Cross-cutting controlled terminology for behaverse data: general terms, demographics,
     and the suffix conventions used in variable names. Terms that one schema owns (e.g. trial table fields)
@@ -340,11 +340,10 @@ concepts:
     is not strictly necessary as it can be recreated using different data but it can be convenient for
     data processing.
   notes:
-  - There is no single widespread standard for hashing; rather there are multiple algorithms that can
-    be used depending on the use case. You can use either CRC32 (32 hexadecimal characters; e.g., "098f6bcd4621d373cade4e832627b4f6")
-    or SHA256 (base64 characters, e.g., "d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f") depending
-    on the probability of collision (i.e., two hashes for different data being identical). When that collision
-    probability is deemed high, use SHA256.
+  - Unless a field's documentation states otherwise, `*_hash` values are SHA-256, lowercase
+    hexadecimal (64 characters) — the algorithm the schemas already mandate where they are
+    specific (`bcsv.file_hash`, the `sha256` fields of the timeseries sidecar and the event
+    attachments). Other algorithms may be used only where the field's documentation says so.
 - id: index
   label: '*_index'
   scheme: referencing-suffixes
