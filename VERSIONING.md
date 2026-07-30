@@ -98,6 +98,20 @@ that version in the changelog.
 Because CalVer does not telegraph breaking changes, the changelog's `### Breaking`
 callouts are the authoritative signal that a new version is incompatible.
 
+### What consumers may rely on
+
+- **Snapshot immutability is CI-enforced**: a pull request that modifies or deletes any
+  file under a `versions/` directory fails the `versions-immutable` check. Snapshots are
+  add-only.
+- **A pinned snapshot never changes meaning**: validation behavior against
+  `versions/v<V>/schema.json` is fixed forever.
+- **Unversioned URLs track `main`** and may change on any release, including
+  incompatibly; the family's `CHANGELOG.md` (its `### Breaking` headings in particular)
+  is the complete record of what changed between any two versions. There is no
+  compatibility contract between versions beyond what the changelog states.
+- **Releases are tagged** `<family>-v<VERSION>` in git, so every snapshot is navigable to
+  the exact commit that published it.
+
 ## Directory Structure
 
 A generated LinkML-sourced schema (`catalog`, `dataset`, `trial`, `event`) has:

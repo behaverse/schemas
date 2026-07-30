@@ -20,6 +20,27 @@ on:
   workflow_dispatch:
 
 jobs:
+  # versions/ snapshots are immutable by policy (VERSIONING.md); this makes the policy
+  # mechanical: a PR may ADD snapshot files but never modify or delete one. Runs only on
+  # pull_request — on a workflow_call from deploy-on-main there is no base to diff against.
+  versions-immutable:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Snapshots are add-only
+        run: |
+          changed=$(git diff --name-status --diff-filter=MDRT \
+            "origin/${{ github.base_ref }}...HEAD" -- '*/versions/*')
+          if [ -n "$changed" ]; then
+            echo "::error::versions/ snapshots are immutable — add-only. Offending changes:"
+            echo "$changed"
+            exit 1
+          fi
+          echo "versions/ snapshots untouched or add-only"
+
   validate:
     runs-on: ubuntu-latest
     steps:
