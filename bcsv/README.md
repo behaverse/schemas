@@ -298,3 +298,16 @@ This schema is licensed under [Creative Commons Attribution 4.0 International (C
 ## AI Usage Disclosure 
 
 This document was created with assistance from AI tools.
+
+## Validating a document
+
+`schema.json` is a standard JSON Schema; any validator works. From a repo checkout
+(requires `pip install jsonschema`), validating the shipped example:
+
+```bash
+python3 -c "import json, jsonschema; jsonschema.validate(json.load(open('bcsv/examples/measurements.json')), json.load(open('bcsv/schema.json')))"
+```
+
+Substitute your own document for the example to validate real data. The published
+schema is at `https://behaverse.org/schemas/bcsv/schema.json` (pin a
+`versions/v<VERSION>/` URL for production use — see [`../VERSIONING.md`](../VERSIONING.md)).

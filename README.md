@@ -141,7 +141,7 @@ behaverse/schemas/                 # (main branch)
 
 ## License
 
-These schemas are licensed under [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+The schema content is licensed under [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/). The tooling under [`scripts/`](scripts/) is licensed under [MIT](scripts/LICENSE), matching the `license: MIT` the LinkML sources declare.
 
 You are free to:
 - **Share**: Copy and redistribute the schemas
