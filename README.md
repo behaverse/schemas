@@ -25,7 +25,7 @@ better-fit native formats: **bcsv** (hand-maintained CSVW-based `schema.json`) a
 ### <img src="assets/img/schema_B.png" height="40" style="vertical-align: middle;"> bcsv (Better CSV)
 Extension of W3C CSVW with support for R/Python data types including categorical and ordered factors, missing value codes, units of measurement, and file integrity verification.
 
-- **Version**: v26.0703  ·  **Source**: hand-maintained `schema.json` (not LinkML)
+- **Version**: v26.0805  ·  **Source**: hand-maintained `schema.json` (not LinkML)
 - **Namespace**: `https://behaverse.org/schemas/bcsv#`
 - **Context**: [`bcsv/context.jsonld`](bcsv/context.jsonld) · **JSON Schema**: [`bcsv/schema.json`](bcsv/schema.json) · **Docs**: [`bcsv/README.md`](bcsv/README.md)
 
@@ -34,7 +34,7 @@ Extension of W3C CSVW with support for R/Python data types including categorical
 ### <img src="assets/img/schema_C.png" height="40" style="vertical-align: middle;"> catalog 
 Metadata schema for describing thematic catalogs of datasets that share specific characteristics or serve particular research applications. Extends schema.org/DataCatalog. Supports hierarchical organization through nested catalogs.
 
-- **Version**: v26.0703  ·  **Source**: [`catalog/schema.linkml.yaml`](catalog/schema.linkml.yaml)
+- **Version**: v26.0805  ·  **Source**: [`catalog/schema.linkml.yaml`](catalog/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/catalog#`
 - **Context**: [`catalog/context.jsonld`](catalog/context.jsonld) · **JSON Schema**: [`catalog/schema.json`](catalog/schema.json) · **Docs**: [`catalog/README.md`](catalog/README.md)
 
@@ -43,16 +43,23 @@ Metadata schema for describing thematic catalogs of datasets that share specific
 ### <img src="assets/img/schema_D.png" height="40" style="vertical-align: middle;"> dataset
 Metadata schema for describing cognitive science datasets with comprehensive coverage of participant demographics, measurement techniques, cognitive tasks, and data access information.
 
-- **Version**: v26.0721  ·  **Source**: [`dataset/schema.linkml.yaml`](dataset/schema.linkml.yaml)
+- **Version**: v26.0805  ·  **Source**: [`dataset/schema.linkml.yaml`](dataset/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/dataset#`
 - **Context**: [`dataset/context.jsonld`](dataset/context.jsonld) · **JSON Schema**: [`dataset/schema.json`](dataset/schema.json) · **Docs**: [`dataset/README.md`](dataset/README.md)
 
 **Example property reference**: `https://behaverse.org/schemas/dataset#sample_size`
 
+### agents
+The agent roster of a dataset: `agents.csv` at the dataset root, one row per agent, mapping the dataset-local `agent_index` to the global `agent_id` and carrying core per-agent attributes (type, age, sex, language).
+
+- **Version**: v26.0804  ·  **Source**: [`agents/schema.linkml.yaml`](agents/schema.linkml.yaml)
+- **Namespace**: `https://behaverse.org/schemas/agents#`
+- **JSON Schema**: [`agents/schema.json`](agents/schema.json) · **Render artifact**: [`agents/field-definitions.json`](agents/field-definitions.json) · **Docs**: [`agents/README.md`](agents/README.md)
+
 ### <img src="assets/img/schema_S.png" height="40" style="vertical-align: middle;"> studyflow
 Schema for defining the formal structure of studyflow diagrams - sequences of activities and resources designed to facilitate experimental research and data analysis. Used by the Studyflow Modeler app.
 
-- **Version**: v26.0730  ·  **Source**: [`studyflow/schema.linkml.yaml`](studyflow/schema.linkml.yaml)
+- **Version**: v26.0803  ·  **Source**: [`studyflow/schema.linkml.yaml`](studyflow/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/studyflow#`
 - **JSON Schema**: [`studyflow/schema.json`](studyflow/schema.json) · **Render artifact**: [`studyflow/field-definitions.json`](studyflow/field-definitions.json) · **Docs**: [`studyflow/README.md`](studyflow/README.md)
 
@@ -61,21 +68,21 @@ Schema for defining the formal structure of studyflow diagrams - sequences of ac
 ### trial
 Tidy, multi-table schema describing trial-level behavioral data (responses, stimuli, instruments, generative parameters, …) for cognitive tests and questionnaires, derived from raw events. Includes the run log (`StudyflowLog`) that makes every activity run addressable.
 
-- **Version**: v26.0801  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
+- **Version**: v26.0807  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/trial#`
 - **Context**: [`trial/context.jsonld`](trial/context.jsonld) · **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
 
 ### event
 Raw experimental events — an xAPI-style envelope (actor / verb / object) carrying the canonical Behaverse `bdm:` vocabulary. Modeled as `EventDocument = Event | EventBatch`.
 
-- **Version**: v26.0721  ·  **Source**: [`event/schema.linkml.yaml`](event/schema.linkml.yaml)
+- **Version**: v26.0805  ·  **Source**: [`event/schema.linkml.yaml`](event/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/event#`
 - **Context**: [`event/context.jsonld`](event/context.jsonld) · **JSON Schema**: [`event/schema.json`](event/schema.json) · **Render artifact**: [`event/field-definitions.json`](event/field-definitions.json) · **Docs**: [`event/README.md`](event/README.md)
 
 ### timeseries
 Sidecar metadata for continuous sampled signals (mouse trajectories, gaze, EEG): a small JSON document beside each payload file declaring its location, clock, sampling nature, and channels. Referenced from event streams via `attachments`.
 
-- **Version**: v26.0729  ·  **Source**: [`timeseries/schema.linkml.yaml`](timeseries/schema.linkml.yaml)
+- **Version**: v26.0803  ·  **Source**: [`timeseries/schema.linkml.yaml`](timeseries/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/timeseries#`
 - **JSON Schema**: [`timeseries/schema.json`](timeseries/schema.json) · **Render artifact**: [`timeseries/field-definitions.json`](timeseries/field-definitions.json) · **Docs**: [`timeseries/README.md`](timeseries/README.md)
 
