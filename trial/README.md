@@ -61,3 +61,15 @@ Relocated from `behaverse/data-model` (where it was generated from a Google Shee
 ## Versioning
 
 CalVer `vYY.MMDD`. See the repo-wide [`VERSIONING.md`](../VERSIONING.md).
+
+## Validating a document
+
+`schema.json` is a standard JSON Schema validating a JSON document mapping table names to arrays of row objects (e.g. `{"Response": [...]}`); any validator works
+(requires `pip install jsonschema`):
+
+```bash
+python3 -c "import json, jsonschema; jsonschema.validate(json.load(open('YOUR_DOCUMENT.json')), json.load(open('trial/schema.json')))"
+```
+
+The published schema is at `https://behaverse.org/schemas/trial/schema.json` (pin a
+`versions/v<VERSION>/` URL for production use — see [`../VERSIONING.md`](../VERSIONING.md)).

@@ -46,3 +46,16 @@ Channels `t` (float, `s`) + `x` + `y` (float, one `coordinate_frame` ∈ `screen
 ## Versioning
 
 CalVer `vYY.MMDD`. See the repo-wide [`VERSIONING.md`](../VERSIONING.md).
+
+## Validating a document
+
+`schema.json` is a standard JSON Schema; any validator works. From a repo checkout
+(requires `pip install jsonschema`), validating the shipped example:
+
+```bash
+python3 -c "import json, jsonschema; jsonschema.validate(json.load(open('timeseries/examples/mouse_1.ndjson.gz.timeseries.json')), json.load(open('timeseries/schema.json')))"
+```
+
+Substitute your own document for the example to validate real data. The published
+schema is at `https://behaverse.org/schemas/timeseries/schema.json` (pin a
+`versions/v<VERSION>/` URL for production use — see [`../VERSIONING.md`](../VERSIONING.md)).

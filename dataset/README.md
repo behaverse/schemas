@@ -304,3 +304,16 @@ This schema and documentation were developed with the assistance of AI tools (Gi
 **License**: CC-BY-4.0  
 **Maintainer**: Behaverse Project  
 **Repository**: https://github.com/behaverse/schemas
+
+## Validating a document
+
+`schema.json` is a standard JSON Schema; any validator works. From a repo checkout
+(requires `pip install jsonschema`), validating the shipped example:
+
+```bash
+python3 -c "import json, jsonschema; jsonschema.validate(json.load(open('dataset/examples/demo-dataset.json')), json.load(open('dataset/schema.json')))"
+```
+
+Substitute your own document for the example to validate real data. The published
+schema is at `https://behaverse.org/schemas/dataset/schema.json` (pin a
+`versions/v<VERSION>/` URL for production use — see [`../VERSIONING.md`](../VERSIONING.md)).

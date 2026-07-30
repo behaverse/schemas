@@ -25,3 +25,15 @@ For detailed documentation, visit the [Studyflow Documentation](https://behavers
 | [`schema.linkml.yaml`](schema.linkml.yaml) | ✅ | Source of truth (LinkML). Edit it, then run `python scripts/generate.py`. |
 | [`schema.json`](schema.json) | ✅ generated | JSON Schema validation contract for a studyflow document. |
 | [`field-definitions.json`](field-definitions.json) | ✅ generated | Render contract, so the documentation sites can generate this family's reference instead of describing it by hand. |
+
+## Validating a document
+
+`schema.json` is a standard JSON Schema validating a JSON studyflow document; any validator works
+(requires `pip install jsonschema`):
+
+```bash
+python3 -c "import json, jsonschema; jsonschema.validate(json.load(open('YOUR_DOCUMENT.json')), json.load(open('studyflow/schema.json')))"
+```
+
+The published schema is at `https://behaverse.org/schemas/studyflow/schema.json` (pin a
+`versions/v<VERSION>/` URL for production use — see [`../VERSIONING.md`](../VERSIONING.md)).

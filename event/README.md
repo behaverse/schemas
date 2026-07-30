@@ -55,3 +55,16 @@ Relocated from the Behaverse questionnaire project (`schemas/events`, v26.0605),
 ## Versioning
 
 CalVer `vYY.MMDD`. See the repo-wide [`VERSIONING.md`](../VERSIONING.md).
+
+## Validating a document
+
+`schema.json` is a standard JSON Schema; any validator works. From a repo checkout
+(requires `pip install jsonschema`), validating the shipped example:
+
+```bash
+python3 -c "import json, jsonschema; jsonschema.validate(json.load(open('event/examples/minimal_event.json')), json.load(open('event/schema.json')))"
+```
+
+Substitute your own document for the example to validate real data. The published
+schema is at `https://behaverse.org/schemas/event/schema.json` (pin a
+`versions/v<VERSION>/` URL for production use — see [`../VERSIONING.md`](../VERSIONING.md)).

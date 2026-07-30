@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use the Behaverse schemas, please cite the paper in 'preferred-citation'."
+title: "Behaverse Schemas"
+abstract: "Machine-readable schemas for the Behaverse Data Model: trial, event, timeseries, studyflow, agents, dataset, catalog, bcsv, and the shared vocabulary."
+type: software
+url: "https://behaverse.org/schemas"
+repository-code: "https://github.com/behaverse/schemas"
+license: CC-BY-4.0
+authors:
+  - family-names: Cardoso-Leite
+    given-names: Pedro
+  - family-names: Ansarinia
+    given-names: Morteza
+preferred-citation:
+  type: article
+  title: "The structure of behavioral data"
+  year: 2020
+  url: "https://arxiv.org/abs/2012.12583"
+  identifiers:
+    - type: other
+      value: "arXiv:2012.12583"
+  authors:
+    - family-names: Defossez
+      given-names: Aurélien
+    - family-names: Ansarinia
+      given-names: Morteza
+    - family-names: Clocher
+      given-names: Brice
+    - family-names: Schmück
+      given-names: Emmanuel
+    - family-names: Schrater
+      given-names: Paul
+    - family-names: Cardoso-Leite
+      given-names: Pedro
