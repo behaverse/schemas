@@ -68,7 +68,7 @@ Schema for defining the formal structure of studyflow diagrams - sequences of ac
 ### trial
 Tidy, multi-table schema describing trial-level behavioral data (responses, stimuli, instruments, generative parameters, …) for cognitive tests and questionnaires, derived from raw events. Includes the run log (`StudyflowLog`) that makes every activity run addressable.
 
-- **Version**: v26.0808  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
+- **Version**: v26.0809  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/trial#`
 - **Context**: [`trial/context.jsonld`](trial/context.jsonld) · **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
 
@@ -82,14 +82,14 @@ Raw experimental events — an xAPI-style envelope (actor / verb / object) carry
 ### timeseries
 Sidecar metadata for continuous sampled signals (mouse trajectories, gaze, EEG): a small JSON document beside each payload file declaring its location, clock, sampling nature, and channels. Referenced from event streams via `attachments`.
 
-- **Version**: v26.0803  ·  **Source**: [`timeseries/schema.linkml.yaml`](timeseries/schema.linkml.yaml)
+- **Version**: v26.0809  ·  **Source**: [`timeseries/schema.linkml.yaml`](timeseries/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/timeseries#`
 - **JSON Schema**: [`timeseries/schema.json`](timeseries/schema.json) · **Render artifact**: [`timeseries/field-definitions.json`](timeseries/field-definitions.json) · **Docs**: [`timeseries/README.md`](timeseries/README.md)
 
 ### vocabulary
 Cross-cutting controlled terminology (SKOS concept schemes + concepts): general terms, demographics, clock/timing terms, and the suffix conventions used in variable names — the terms no single schema owns.
 
-- **Version**: v26.0808  ·  **Source**: `vocabulary/terms.yaml` (SKOS; not LinkML)
+- **Version**: v26.0809  ·  **Source**: `vocabulary/terms.yaml` (SKOS; not LinkML)
 - **Namespace**: `https://behaverse.org/schemas/vocabulary`
 - **SKOS JSON-LD**: [`vocabulary/terms.jsonld`](vocabulary/terms.jsonld) · **Docs**: [`vocabulary/README.md`](vocabulary/README.md)
 

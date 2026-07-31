@@ -6,7 +6,7 @@
 
 vocabulary_metadata:
   name: Behaverse Vocabulary
-  version: '26.0808'
+  version: '26.0809'
   namespace: https://behaverse.org/schemas/vocabulary
   description: 'Cross-cutting controlled terminology for behaverse data: general terms, demographics,
     and the suffix conventions used in variable names. Terms that one schema owns (e.g. trial table fields)
@@ -64,6 +64,14 @@ concepts:
     (0-100%) or fraction (0-1) of correct responses. Always use *accuracy* to refer to a performance measure
     that is a real number (float) and bounded to the [0-1] range.
   range: 0 to 1 (inclusive)
+- id: source
+  label: source
+  scheme: general
+  data_type: string
+  definition: Identifier of the physical device or stream that produced a piece of data (e.g., `mouse0`,
+    `eyetracker_left`). The join key linking data of the same device across layers — carried by recording
+    events (`bdm:recording_started`), permissible on any discrete event from the same device, and matched
+    by the `source` field of the timeseries sidecar. Two identical devices in one rig get distinct values.
 - id: correct
   label: correct
   scheme: general

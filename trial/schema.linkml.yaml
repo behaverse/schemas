@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events. The component, parameter, and score tables are keyed by their natural keys and carry no surrogate primary key."
-version: "26.0808"
+version: "26.0809"
 license: MIT
 
 prefixes:
@@ -494,6 +494,24 @@ classes:
             - "When"
           bdm_type:
             value: "datetime"
+      engine_name:
+        range: string
+        description: "Name of the recording software (the engine) that produced this run (e.g., `task_builder`). Provenance of the recording process itself, distinct from the instrument: `Instrument.version` states which test was run, `engine_name`/`engine_version` state which software recorded it."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+      engine_version:
+        range: string
+        description: "Version of the recording engine, free-form (e.g., `1.4.0 (godot 4.7-stable)`)."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
           notes:
             value:
             - "See the `engine_seconds` and `anchor_datetime` terms in the Behaverse vocabulary."

@@ -6,6 +6,15 @@ documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses [Calendar Versioning](https://calver.org/) (YY.MMDD).
 
+## [26.0809] - 2026-08-09
+
+### Added
+
+- **`source`** (general scheme): the device/stream identifier the event layer already
+  carried on `bdm:recording_started` but the vocabulary never defined. Documented as the
+  join key across layers: recording events, discrete events of the same device, and the
+  timeseries sidecar's `source` field.
+
 ## [26.0808] - 2026-08-08
 
 ### Changed

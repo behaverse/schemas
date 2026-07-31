@@ -2,6 +2,16 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0809] - 2026-08-09
+
+### Added
+
+- **`StudyflowLog.engine_name` / `engine_version`** (optional): provenance of the recording
+  software itself — which engine produced the run — distinct from the instrument
+  (`Instrument.version` states which test was run). Prompted by the task_builder exchange:
+  its acquisition-side `identity.json` had no BDM home for the engine block; the run log is
+  that home on the dataset side.
+
 ## [26.0808] - 2026-08-08
 
 ### Changed
