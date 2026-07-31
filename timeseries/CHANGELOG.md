@@ -2,6 +2,20 @@
 
 All notable changes to the timeseries schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0809] - 2026-08-09
+
+### Added
+
+- **`TimeseriesMetadata.source`** (optional): identifier of the physical device or stream
+  that produced the series, matching the `bdm:source` carried by recording events and by
+  any discrete events of the same device — the machine-readable join key stating that (for
+  example) a run's click events and its position trace describe the same mouse.
+
+### Fixed
+
+- The `runtime_id` and `attempt` descriptions referenced the pre-rename "`Studyflow`
+  table"; they now say `StudyflowLog`.
+
 ## [26.0803] - 2026-08-03
 
 ### Added
