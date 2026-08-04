@@ -2,6 +2,37 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0810] - 2026-08-10
+
+### Added
+
+- **`StudyflowLog` display-geometry context** (all optional): `device_id` (resolves in the
+  new `devices` family), `screen_distance` (centimetres; per run — posture is a property of
+  the sitting, not the hardware) with `screen_distance_method` (open enum: `blindspot` ·
+  `webcam` · `arms_length` · `height_devicetype` · `assumed` · `declined`) and
+  `screen_distance_uncertainty`, plus the frame declaration `screen_origin` (two keywords
+  from `top`/`bottom`/`left`/`right`/`center`) and `y_sign` (`-1`/`1`) governing the
+  recorded pixel pairs. Existing data is `top`,`left` with `y_sign` `-1`.
+- **`x_stage`/`y_stage`** on all five coordinate-carrying tables (`Stimulus`, `Option`,
+  `Input`, `StimulusComponent`, `OptionComponent`): the analysis frame — center origin,
+  y up, both axes in percent of content height, so the pair is isotropic and Euclidean
+  quantities are valid. Derivable from the viewport pair and the run's geometry.
+
+### Breaking
+
+- **`x_viewport`/`y_viewport` are redefined** on all five coordinate tables: previously a
+  fraction of screen width (x) and height (y) — two axes in *different units*, so any
+  Euclidean operation on the pair was silently wrong — they are now the *measured* pair:
+  device pixels in the viewport frame (top-left of the drawable area, directions per the
+  new declaration). Old fractional values do not validate the same way; datasets pinned to
+  earlier snapshots are unaffected.
+- **`x_screen`/`y_screen` are redefined as derived display-frame positions**: device pixels
+  on the physical display the window occupied (equal to the viewport pair plus the window
+  origin; identical under fullscreen), unclamped across spanned displays, and omitted —
+  never approximated — where the platform cannot supply window placement (e.g., a browser
+  tab). Previously their definitions promised the display while practice recorded the
+  window; definition and practice now match, without a rename.
+
 ## [26.0809] - 2026-08-09
 
 ### Added

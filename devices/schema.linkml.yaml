@@ -1,0 +1,149 @@
+# yaml-language-server: $schema=https://linkml.io/linkml-model/linkml_model/jsonschema/meta.schema.json
+# Behaverse Devices Schema — LinkML source of truth.
+# Single hand-edited source; run `python scripts/generate.py` to emit the artifacts.
+#
+# This schema specifies `devices.csv`, the device roster at the dataset root: one row per
+# recording device, holding device-lifetime facts — platform, display geometry, calibration
+# and its provenance, capabilities. Run-lifetime facts stay on the trial family's
+# `StudyflowLog` (`engine_name`/`engine_version`, `screen_distance`): a device is reused
+# across runs, sessions, and agents, and a calibration belongs to the device, which is what
+# lets a participant calibrate once rather than at every session.
+id: https://behaverse.org/schemas/devices
+name: devices
+title: "Behaverse Devices Schema"
+description: "The device roster of a dataset: `devices.csv` at the dataset root, one row per recording device, holding device-lifetime facts — platform, display geometry, calibration and its provenance, capabilities. Referenced by the trial family's `StudyflowLog.device_id`. Run-lifetime facts (recording engine, viewing distance) stay on the run log."
+version: "26.0810"
+license: MIT
+
+prefixes:
+  devices: https://behaverse.org/schemas/devices#
+  bdm: https://behaverse.org/schemas/vocabulary/
+  linkml: https://w3id.org/linkml/
+default_prefix: devices
+default_range: string
+imports:
+  - linkml:types
+
+enums:
+  CalibrationSourceEnum:
+    description: "Provenance class of a device-record value: how much trust the value carries and why. Refusal is a first-class outcome, distinct from absence."
+    permissible_values:
+      auto:
+        description: "Read automatically from the platform (e.g., EDID); plausibility-gated but unconfirmed."
+      confirmed:
+        description: "An automatic value cross-validated by an independent estimate (e.g., the self-reported diagonal)."
+      calibrated:
+        description: "Measured by a calibration task (e.g., the ruler task)."
+      declined:
+        description: "The participant declined to supply or verify the value. Recorded, not left absent: \"did not answer\" is a different fact from \"unknown\"."
+
+  PxPerCmMethodEnum:
+    description: "How a `px_per_cm` value was obtained."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      edid:
+        description: "Computed from the display's EDID physical size, plausibility-gated."
+      diagonal_selfreport:
+        description: "Derived from a self-reported screen diagonal plus the auto-read resolution."
+      ruler:
+        description: "The ruler calibration task (participant measures displayed lines; verified)."
+      card:
+        description: "The card-matching task (on-screen image matched to an ISO/IEC 7810 ID-1 card; unverified)."
+      assumed:
+        description: "A population prior; no measurement for this device."
+
+classes:
+  DevicesData:
+    description: "Root container mapping the Device table to an array of its rows."
+    tree_root: true
+    attributes:
+      Device:
+        multivalued: true
+        range: Device
+        inlined_as_list: true
+        description: "Rows of the Device table."
+
+  Device:
+    description: "One recording device in the dataset. Shipped as `devices.csv` at the dataset root, one row per device: identity, display geometry, calibration with provenance, and capabilities. Referenced by `StudyflowLog.device_id` in the trial family."
+    annotations:
+      notes:
+        value:
+        - "A device is reused across runs, sessions, and agents; a calibration belongs to the device. Run-lifetime facts — the recording engine (`engine_name`/`engine_version`) and the viewing distance (`screen_distance`) — live on the trial family's `StudyflowLog`, not here."
+        - "Physical lengths are centimetres (BIDS' `ScreenSize`/`ScreenDistance` use metres; divide by 100 to map)."
+        - "Every participant-supplied value is optional, and refusal is recorded (`declined`), distinct from absence."
+    attributes:
+      device_id:
+        identifier: true
+        required: true
+        description: "A unique identifier assigned to the device, used to link runs (`StudyflowLog.device_id`) to the device that recorded them."
+      platform:
+        description: "Operating platform of the device (e.g., `windows`, `macos`, `linux`, `web`, `android`, `ios`)."
+      os_version:
+        description: "Version of the operating system, free-form."
+      screen_size_cm:
+        range: float
+        multivalued: true
+        minimum_cardinality: 2
+        maximum_cardinality: 2
+        description: "Physical size of the display as [width, height], in centimetres. BIDS `ScreenSize` uses metres; divide by 100 to map."
+        annotations:
+          range_description:
+            value: "[width, height], centimetres"
+      screen_resolution:
+        range: integer
+        multivalued: true
+        minimum_cardinality: 2
+        maximum_cardinality: 2
+        description: "Resolution of the display as [width, height], in device pixels (the native raster)."
+        annotations:
+          range_description:
+            value: "[width, height], device pixels"
+      screen_refresh_rate:
+        range: float
+        description: "Refresh rate of the display, in hertz."
+        annotations:
+          range_description:
+            value: "Hz"
+      device_pixel_ratio:
+        range: float
+        description: "Ratio of device pixels to OS-scaled logical pixels (e.g., 2.0 on a Retina display)."
+      screen_count:
+        range: integer
+        description: "Number of displays attached to the device during the study."
+      px_per_cm:
+        range: float
+        description: "Pixel density of the display: device pixels per centimetre, as calibrated or derived. The bridge from pixel geometry to physical size."
+        annotations:
+          range_description:
+            value: "device pixels per centimetre"
+      px_per_cm_method:
+        range: PxPerCmMethodEnum
+        description: "How the `px_per_cm` value was obtained."
+      px_per_cm_measured_at:
+        range: datetime
+        description: "When the `px_per_cm` value was measured or derived."
+      pixel_aspect_verified:
+        range: boolean
+        description: "Whether pixel squareness was verified (e.g., by asking which of several ellipses looks round). A horizontal-only calibration assumes square pixels."
+      screen_size_source:
+        range: CalibrationSourceEnum
+        description: "Provenance class of the `screen_size_cm` value."
+      px_per_cm_source:
+        range: CalibrationSourceEnum
+        description: "Provenance class of the `px_per_cm` value."
+      dpi_raw:
+        range: float
+        description: "The raw pixel-density value the platform reported, before any plausibility gating — kept for audit, since platform values are wrong in known ways (e.g., Windows reports the user's scaling setting, not panel density)."
+      camera_present:
+        range: boolean
+        description: "Whether a camera was available to the session."
+      microphone_present:
+        range: boolean
+        description: "Whether a microphone was available to the session."
+      touch_capable:
+        range: boolean
+        description: "Whether the display accepts touch input."
+      input_devices:
+        multivalued: true
+        description: "Input devices available to the session (e.g., `mouse`, `trackpad`, `keyboard`, `touchscreen`, `eyetracker`). Individual devices producing data streams are identified per stream by `source` (see the vocabulary term)."

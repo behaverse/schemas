@@ -1,0 +1,200 @@
+{
+  "schema": "devices",
+  "version": "26.0810",
+  "namespace": "https://behaverse.org/schemas/devices",
+  "description": "The device roster of a dataset: `devices.csv` at the dataset root, one row per recording device, holding device-lifetime facts — platform, display geometry, calibration and its provenance, capabilities. Referenced by the trial family's `StudyflowLog.device_id`. Run-lifetime facts (recording engine, viewing distance) stay on the run log.",
+  "tables": [
+    {
+      "name": "Device",
+      "slug": "device",
+      "docs_url": "https://behaverse.org/schemas/devices/device",
+      "description": "One recording device in the dataset. Shipped as `devices.csv` at the dataset root, one row per device: identity, display geometry, calibration with provenance, and capabilities. Referenced by `StudyflowLog.device_id` in the trial family.",
+      "notes": [
+        "A device is reused across runs, sessions, and agents; a calibration belongs to the device. Run-lifetime facts — the recording engine (`engine_name`/`engine_version`) and the viewing distance (`screen_distance`) — live on the trial family's `StudyflowLog`, not here.",
+        "Physical lengths are centimetres (BIDS' `ScreenSize`/`ScreenDistance` use metres; divide by 100 to map).",
+        "Every participant-supplied value is optional, and refusal is recorded (`declined`), distinct from absence."
+      ],
+      "fields": [
+        {
+          "name": "device_id",
+          "type": "string",
+          "requirement": "required",
+          "description": "A unique identifier assigned to the device, used to link runs (`StudyflowLog.device_id`) to the device that recorded them."
+        },
+        {
+          "name": "platform",
+          "type": "string",
+          "requirement": "optional",
+          "description": "Operating platform of the device (e.g., `windows`, `macos`, `linux`, `web`, `android`, `ios`)."
+        },
+        {
+          "name": "os_version",
+          "type": "string",
+          "requirement": "optional",
+          "description": "Version of the operating system, free-form."
+        },
+        {
+          "name": "screen_size_cm",
+          "type": "list of float",
+          "requirement": "optional",
+          "description": "Physical size of the display as [width, height], in centimetres. BIDS `ScreenSize` uses metres; divide by 100 to map.",
+          "range": "[width, height], centimetres"
+        },
+        {
+          "name": "screen_resolution",
+          "type": "list of integer",
+          "requirement": "optional",
+          "description": "Resolution of the display as [width, height], in device pixels (the native raster).",
+          "range": "[width, height], device pixels"
+        },
+        {
+          "name": "screen_refresh_rate",
+          "type": "float",
+          "requirement": "optional",
+          "description": "Refresh rate of the display, in hertz.",
+          "range": "Hz"
+        },
+        {
+          "name": "device_pixel_ratio",
+          "type": "float",
+          "requirement": "optional",
+          "description": "Ratio of device pixels to OS-scaled logical pixels (e.g., 2.0 on a Retina display)."
+        },
+        {
+          "name": "screen_count",
+          "type": "integer",
+          "requirement": "optional",
+          "description": "Number of displays attached to the device during the study."
+        },
+        {
+          "name": "px_per_cm",
+          "type": "float",
+          "requirement": "optional",
+          "description": "Pixel density of the display: device pixels per centimetre, as calibrated or derived. The bridge from pixel geometry to physical size.",
+          "range": "device pixels per centimetre"
+        },
+        {
+          "name": "px_per_cm_method",
+          "type": "enum",
+          "requirement": "optional",
+          "description": "How the `px_per_cm` value was obtained.",
+          "values": [
+            {
+              "value": "edid",
+              "description": "Computed from the display's EDID physical size, plausibility-gated."
+            },
+            {
+              "value": "diagonal_selfreport",
+              "description": "Derived from a self-reported screen diagonal plus the auto-read resolution."
+            },
+            {
+              "value": "ruler",
+              "description": "The ruler calibration task (participant measures displayed lines; verified)."
+            },
+            {
+              "value": "card",
+              "description": "The card-matching task (on-screen image matched to an ISO/IEC 7810 ID-1 card; unverified)."
+            },
+            {
+              "value": "assumed",
+              "description": "A population prior; no measurement for this device."
+            }
+          ],
+          "values_exhaustive": false
+        },
+        {
+          "name": "px_per_cm_measured_at",
+          "type": "datetime",
+          "requirement": "optional",
+          "description": "When the `px_per_cm` value was measured or derived."
+        },
+        {
+          "name": "pixel_aspect_verified",
+          "type": "boolean",
+          "requirement": "optional",
+          "description": "Whether pixel squareness was verified (e.g., by asking which of several ellipses looks round). A horizontal-only calibration assumes square pixels."
+        },
+        {
+          "name": "screen_size_source",
+          "type": "enum",
+          "requirement": "optional",
+          "description": "Provenance class of the `screen_size_cm` value.",
+          "values": [
+            {
+              "value": "auto",
+              "description": "Read automatically from the platform (e.g., EDID); plausibility-gated but unconfirmed."
+            },
+            {
+              "value": "confirmed",
+              "description": "An automatic value cross-validated by an independent estimate (e.g., the self-reported diagonal)."
+            },
+            {
+              "value": "calibrated",
+              "description": "Measured by a calibration task (e.g., the ruler task)."
+            },
+            {
+              "value": "declined",
+              "description": "The participant declined to supply or verify the value. Recorded, not left absent: \"did not answer\" is a different fact from \"unknown\"."
+            }
+          ],
+          "values_exhaustive": true
+        },
+        {
+          "name": "px_per_cm_source",
+          "type": "enum",
+          "requirement": "optional",
+          "description": "Provenance class of the `px_per_cm` value.",
+          "values": [
+            {
+              "value": "auto",
+              "description": "Read automatically from the platform (e.g., EDID); plausibility-gated but unconfirmed."
+            },
+            {
+              "value": "confirmed",
+              "description": "An automatic value cross-validated by an independent estimate (e.g., the self-reported diagonal)."
+            },
+            {
+              "value": "calibrated",
+              "description": "Measured by a calibration task (e.g., the ruler task)."
+            },
+            {
+              "value": "declined",
+              "description": "The participant declined to supply or verify the value. Recorded, not left absent: \"did not answer\" is a different fact from \"unknown\"."
+            }
+          ],
+          "values_exhaustive": true
+        },
+        {
+          "name": "dpi_raw",
+          "type": "float",
+          "requirement": "optional",
+          "description": "The raw pixel-density value the platform reported, before any plausibility gating — kept for audit, since platform values are wrong in known ways (e.g., Windows reports the user's scaling setting, not panel density)."
+        },
+        {
+          "name": "camera_present",
+          "type": "boolean",
+          "requirement": "optional",
+          "description": "Whether a camera was available to the session."
+        },
+        {
+          "name": "microphone_present",
+          "type": "boolean",
+          "requirement": "optional",
+          "description": "Whether a microphone was available to the session."
+        },
+        {
+          "name": "touch_capable",
+          "type": "boolean",
+          "requirement": "optional",
+          "description": "Whether the display accepts touch input."
+        },
+        {
+          "name": "input_devices",
+          "type": "list of string",
+          "requirement": "optional",
+          "description": "Input devices available to the session (e.g., `mouse`, `trackpad`, `keyboard`, `touchscreen`, `eyetracker`). Individual devices producing data streams are identified per stream by `source` (see the vocabulary term)."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "$defs": {
+    "CalibrationSourceEnum": {
+      "description": "Provenance class of a device-record value: how much trust the value carries and why. Refusal is a first-class outcome, distinct from absence.",
+      "enum": [
+        "auto",
+        "confirmed",
+        "calibrated",
+        "declined"
+      ],
+      "title": "CalibrationSourceEnum",
+      "type": "string"
+    },
+    "Device": {
+      "additionalProperties": false,
+      "description": "One recording device in the dataset. Shipped as `devices.csv` at the dataset root, one row per device: identity, display geometry, calibration with provenance, and capabilities. Referenced by `StudyflowLog.device_id` in the trial family.",
+      "properties": {
+        "camera_present": {
+          "description": "Whether a camera was available to the session.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "title": "Camera Present"
+        },
+        "device_id": {
+          "description": "A unique identifier assigned to the device, used to link runs (`StudyflowLog.device_id`) to the device that recorded them.",
+          "type": "string",
+          "title": "Device Id"
+        },
+        "device_pixel_ratio": {
+          "description": "Ratio of device pixels to OS-scaled logical pixels (e.g., 2.0 on a Retina display).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Device Pixel Ratio"
+        },
+        "dpi_raw": {
+          "description": "The raw pixel-density value the platform reported, before any plausibility gating — kept for audit, since platform values are wrong in known ways (e.g., Windows reports the user's scaling setting, not panel density).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Dpi Raw"
+        },
+        "input_devices": {
+          "description": "Input devices available to the session (e.g., `mouse`, `trackpad`, `keyboard`, `touchscreen`, `eyetracker`). Individual devices producing data streams are identified per stream by `source` (see the vocabulary term).",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Input Devices"
+        },
+        "microphone_present": {
+          "description": "Whether a microphone was available to the session.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "title": "Microphone Present"
+        },
+        "os_version": {
+          "description": "Version of the operating system, free-form.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Os Version"
+        },
+        "pixel_aspect_verified": {
+          "description": "Whether pixel squareness was verified (e.g., by asking which of several ellipses looks round). A horizontal-only calibration assumes square pixels.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "title": "Pixel Aspect Verified"
+        },
+        "platform": {
+          "description": "Operating platform of the device (e.g., `windows`, `macos`, `linux`, `web`, `android`, `ios`).",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Platform"
+        },
+        "px_per_cm": {
+          "description": "Pixel density of the display: device pixels per centimetre, as calibrated or derived. The bridge from pixel geometry to physical size.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Px Per Cm"
+        },
+        "px_per_cm_measured_at": {
+          "description": "When the `px_per_cm` value was measured or derived.",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Px Per Cm Measured At"
+        },
+        "px_per_cm_method": {
+          "$ref": "#/$defs/PxPerCmMethodEnum",
+          "description": "How the `px_per_cm` value was obtained.",
+          "title": "Px Per Cm Method"
+        },
+        "px_per_cm_source": {
+          "$ref": "#/$defs/CalibrationSourceEnum",
+          "description": "Provenance class of the `px_per_cm` value.",
+          "title": "Px Per Cm Source"
+        },
+        "screen_count": {
+          "description": "Number of displays attached to the device during the study.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Screen Count"
+        },
+        "screen_refresh_rate": {
+          "description": "Refresh rate of the display, in hertz.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "title": "Screen Refresh Rate"
+        },
+        "screen_resolution": {
+          "description": "Resolution of the display as [width, height], in device pixels (the native raster).",
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Screen Resolution"
+        },
+        "screen_size_cm": {
+          "description": "Physical size of the display as [width, height], in centimetres. BIDS `ScreenSize` uses metres; divide by 100 to map.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Screen Size Cm"
+        },
+        "screen_size_source": {
+          "$ref": "#/$defs/CalibrationSourceEnum",
+          "description": "Provenance class of the `screen_size_cm` value.",
+          "title": "Screen Size Source"
+        },
+        "touch_capable": {
+          "description": "Whether the display accepts touch input.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "title": "Touch Capable"
+        }
+      },
+      "required": [
+        "device_id"
+      ],
+      "title": "Device",
+      "type": "object"
+    },
+    "DevicesData": {
+      "additionalProperties": false,
+      "description": "Root container mapping the Device table to an array of its rows.",
+      "properties": {
+        "Device": {
+          "description": "Rows of the Device table.",
+          "items": {
+            "$ref": "#/$defs/Device"
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "title": "Device"
+        }
+      },
+      "title": "DevicesData",
+      "type": "object"
+    },
+    "PxPerCmMethodEnum": {
+      "description": "How a `px_per_cm` value was obtained.",
+      "title": "PxPerCmMethodEnum",
+      "type": "string"
+    }
+  },
+  "$id": "https://behaverse.org/schemas/devices/v26.0810/schema.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "additionalProperties": true,
+  "description": "Root container mapping the Device table to an array of its rows.",
+  "metamodel_version": "1.7.0",
+  "properties": {
+    "@type": {
+      "const": "devices:DevicesData",
+      "title": "Type",
+      "description": "JSON-LD node type (rdf:type) for schema.org / Google Dataset Search discoverability."
+    },
+    "Device": {
+      "description": "Rows of the Device table.",
+      "items": {
+        "$ref": "#/$defs/Device"
+      },
+      "type": [
+        "array",
+        "null"
+      ],
+      "title": "Device"
+    }
+  },
+  "title": "devices",
+  "type": "object",
+  "version": "26.0810"
+}
