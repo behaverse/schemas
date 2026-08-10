@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events. The component, parameter, and score tables are keyed by their natural keys and carry no surrogate primary key."
-version: "26.0810"
+version: "26.0811"
 license: MIT
 
 prefixes:
@@ -333,6 +333,11 @@ classes:
         range: TaskParameter
         inlined_as_list: true
         description: "Rows of the TaskParameter table."
+      TrialMeasure:
+        multivalued: true
+        range: TrialMeasure
+        inlined_as_list: true
+        description: "Rows of the TrialMeasure table."
       Score:
         multivalued: true
         range: Score
@@ -3246,6 +3251,141 @@ classes:
       value_description:
         range: string
         description: "The parameter's value when it is textual or categorical (e.g. a named reward schedule), or a human-readable rendering of a numeric value."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "string"
+  TrialMeasure:
+    description: "Task-specific per-trial *measures* — named quantities a paradigm derives per response that have no shared `Response` column: a realized SOA, an endpoint error in stage units, an attributed error type, a per-trial partial-credit score. Long format: one row per measure value. These are derived *outputs* of the trial — the mirror image of `TrialParameter`, which holds the generative inputs; summaries of a whole activity run belong in the `Score` table."
+    title: "TrialMeasure"
+    annotations:
+      notes:
+        value:
+        - "The natural key is (`runtime_id`, `response_id`, `subtrial_index`, `task_index`, `measure`, `measure_index`)."
+        - "Exactly one of `value_numeric` and `value_description` is non-null per row."
+        - "The `measure` vocabulary is open; what a measure means and how it is computed are documented per instrument in the dataset's codebook. Dataset-level summaries are derived from these rows, never separately declared."
+    attributes:
+      runtime_id:
+        any_of:
+        - range: string
+        - range: integer
+        required: true
+        description: "Identifies the activity run this row's trial belongs to. Unique dataset-wide, so rows stay distinguishable when files are concatenated."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`runtime_id` in the `StudyflowLog` table"
+      response_id:
+        any_of:
+        - range: string
+        - range: integer
+        required: true
+        description: "Refers to the `response_id` in the `Response` table: the trial this measure was derived from."
+        annotations:
+          categories:
+            value:
+            - "Key"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`response_id` in the `Response` table, within the same `runtime_id`"
+      trial_index:
+        any_of:
+        - range: string
+        - range: integer
+        description: "Refers to the `trial_index` in the `Response` table for the same trial. Redundant with `response_id`; kept because the sibling detail tables carry both."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "id"
+          range_description:
+            value: "`trial_index` in the `Response` table, within the same `runtime_id`"
+      subtrial_index:
+        range: integer
+        description: "When the measure is attributed to a specific stage of a staged trial, the 1-based `subtrial_index` of that stage (see the `Subtrial` table). Empty for trial-level measures."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based index"
+      task_index:
+        range: integer
+        description: "When `multitask_type` is not empty, the individual task this measure belongs to."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "index"
+          range_description:
+            value: "1-based index"
+      measure:
+        range: string
+        required: true
+        description: "Name of the measure (e.g., `endpoint_error`, `soa_realized`, `error_type`). What the measure means and how it is computed belong in the dataset's codebook."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "string"
+      measure_dimensions:
+        range: string
+        multivalued: true
+        description: "Names of the measure's coordinate axes, in order, for vector-valued measures. Empty for scalar measures. Repeating the names on every row keeps the file readable without a codebook lookup."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "list[string]"
+          notes:
+            value:
+            - "Use semicolon-separated names on CSV export."
+      measure_index:
+        range: integer
+        multivalued: true
+        description: "This row's coordinates within the measure's index space, in the same order as `measure_dimensions`. Empty for scalar measures. A vector-valued measure is represented as one row per element — the tidy form."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "list[index]"
+          range_description:
+            value: "1-based indices"
+      value_numeric:
+        range: float
+        description: "The measure's value when it is numeric. Mirrors the `*_numeric` / `*_description` pairing used for responses and outcomes, so each column keeps a usable type instead of collapsing to a mixed-type column."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "float"
+      value_description:
+        range: string
+        description: "The measure's value when it is textual or categorical (e.g. `perseverative`), or a human-readable rendering of a numeric value."
+        annotations:
+          categories:
+            value:
+            - "What"
+          bdm_type:
+            value: "string"
+      unit:
+        range: string
+        description: "Unit of `value_numeric` where one applies (e.g., `seconds`, `percent of content height`, `count`). Empty for unitless or categorical measures."
         annotations:
           categories:
             value:
