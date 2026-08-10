@@ -2,6 +2,18 @@
 
 All notable changes to the event schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0811] - 2026-08-11
+
+### Added
+
+- **`bdm:released`** (interaction layer, on `bdm:Option`/`bdm:UIComponent`): a pointer
+  button released after `bdm:clicked`, mirroring the `bdm:key_pressed`/`bdm:key_released`
+  pair — press duration is derivable, and drag, press-and-hold, and slider interactions
+  get their release moment as an event.
+- **`bdm:presented` documents the `bdm:image_missing` extension** (a list of unresolvable
+  media keys), carried when a presentation rendered with media missing — so the record
+  does not claim the content was shown as authored.
+
 ## [26.0808] - 2026-08-08
 
 ### Changed

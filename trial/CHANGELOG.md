@@ -2,6 +2,19 @@
 
 All notable changes to the trial schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0811] - 2026-08-11
+
+### Added
+
+- **The `TrialMeasure` table**: task-specific per-trial measures — named quantities a
+  paradigm derives per response that have no shared `Response` column (a realized SOA, an
+  endpoint error in stage units, an attributed error type, a per-trial partial-credit
+  score). Long format, one row per measure value, mirroring `TrialParameter`'s shape
+  (identity keys; `measure`; `measure_dimensions`/`measure_index` for vector values;
+  the `value_numeric`/`value_description` pairing) plus an optional `unit`. These are
+  derived *outputs* of the trial — the mirror image of `TrialParameter`'s generative
+  inputs; summaries of a whole activity run belong in `Score`, as before.
+
 ## [26.0810] - 2026-08-10
 
 ### Added
