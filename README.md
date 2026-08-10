@@ -56,6 +56,13 @@ The agent roster of a dataset: `agents.csv` at the dataset root, one row per age
 - **Namespace**: `https://behaverse.org/schemas/agents#`
 - **JSON Schema**: [`agents/schema.json`](agents/schema.json) · **Render artifact**: [`agents/field-definitions.json`](agents/field-definitions.json) · **Docs**: [`agents/README.md`](agents/README.md)
 
+### devices
+The device roster of a dataset: `devices.csv` at the dataset root, one row per recording device, holding device-lifetime facts — platform, display geometry, pixel-density calibration with provenance, capabilities. Runs reference devices via `StudyflowLog.device_id`.
+
+- **Version**: v26.0810  ·  **Source**: [`devices/schema.linkml.yaml`](devices/schema.linkml.yaml)
+- **Namespace**: `https://behaverse.org/schemas/devices#`
+- **JSON Schema**: [`devices/schema.json`](devices/schema.json) · **Render artifact**: [`devices/field-definitions.json`](devices/field-definitions.json) · **Docs**: [`devices/README.md`](devices/README.md)
+
 ### <img src="assets/img/schema_S.png" height="40" style="vertical-align: middle;"> studyflow
 Schema for defining the formal structure of studyflow diagrams - sequences of activities and resources designed to facilitate experimental research and data analysis. Used by the Studyflow Modeler app.
 
@@ -68,7 +75,7 @@ Schema for defining the formal structure of studyflow diagrams - sequences of ac
 ### trial
 Tidy, multi-table schema describing trial-level behavioral data (responses, stimuli, instruments, generative parameters, …) for cognitive tests and questionnaires, derived from raw events. Includes the run log (`StudyflowLog`) that makes every activity run addressable.
 
-- **Version**: v26.0809  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
+- **Version**: v26.0810  ·  **Source**: [`trial/schema.linkml.yaml`](trial/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/trial#`
 - **Context**: [`trial/context.jsonld`](trial/context.jsonld) · **JSON Schema**: [`trial/schema.json`](trial/schema.json) · **Render artifact**: [`trial/field-definitions.json`](trial/field-definitions.json) · **Docs**: [`trial/README.md`](trial/README.md)
 
@@ -82,7 +89,7 @@ Raw experimental events — an xAPI-style envelope (actor / verb / object) carry
 ### timeseries
 Sidecar metadata for continuous sampled signals (mouse trajectories, gaze, EEG): a small JSON document beside each payload file declaring its location, clock, sampling nature, and channels. Referenced from event streams via `attachments`.
 
-- **Version**: v26.0809  ·  **Source**: [`timeseries/schema.linkml.yaml`](timeseries/schema.linkml.yaml)
+- **Version**: v26.0810  ·  **Source**: [`timeseries/schema.linkml.yaml`](timeseries/schema.linkml.yaml)
 - **Namespace**: `https://behaverse.org/schemas/timeseries#`
 - **JSON Schema**: [`timeseries/schema.json`](timeseries/schema.json) · **Render artifact**: [`timeseries/field-definitions.json`](timeseries/field-definitions.json) · **Docs**: [`timeseries/README.md`](timeseries/README.md)
 

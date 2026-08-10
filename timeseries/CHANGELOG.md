@@ -2,6 +2,24 @@
 
 All notable changes to the timeseries schema are documented here. CalVer `vYY.MMDD`.
 
+## [26.0810] - 2026-08-10
+
+### Added
+
+- The sidecar gains an optional frame declaration — `screen_origin` (two keywords) and
+  `y_sign` (`-1`/`1`) — mirroring the trial `StudyflowLog` fields, so continuous spatial
+  channels are self-describing.
+- `CoordinateFrameEnum` gains `viewport_px` (the measured frame) and `stage` (the analysis
+  frame: center origin, y up, percent of content height, isotropic), matching the trial
+  tables' coordinate pairs.
+
+### Breaking
+
+- **`CoordinateFrameEnum.viewport_fraction` is removed**: it normalized x by width and y by
+  height — two axes in different units, the same defect removed from the trial tables —
+  and its definition referenced the now-redefined fields. Channels previously declared as
+  `viewport_fraction` should re-declare as `stage` (after transforming) or `viewport_px`.
+
 ## [26.0809] - 2026-08-09
 
 ### Added

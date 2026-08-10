@@ -8,7 +8,7 @@ id: https://behaverse.org/schemas/trial
 name: trial
 title: "Behaverse Trial Schema"
 description: "Tidy tables describing trial-level behavioral data for cognitive tests and questionnaires, derived from raw events. The component, parameter, and score tables are keyed by their natural keys and carry no surrogate primary key."
-version: "26.0809"
+version: "26.0810"
 license: MIT
 
 prefixes:
@@ -21,6 +21,31 @@ imports:
   - linkml:types
 
 enums:
+  ScreenDistanceMethodEnum:
+    description: "How a viewing-distance value was obtained. The list is not exhaustive."
+    annotations:
+      exhaustive: false
+    permissible_values:
+      blindspot:
+        description: "The virtual-chinrest blind-spot procedure."
+      webcam:
+        description: "Continuous webcam-based estimation (e.g., iris-diameter depth anchored by a one-shot measurement)."
+      arms_length:
+        description: "Estimated from self-reported body height via the arm's-length regression."
+      height_devicetype:
+        description: "Estimated from self-reported body height and device type via the natural-distance regression."
+      assumed:
+        description: "A population prior; no measurement for this run."
+      declined:
+        description: "The participant declined the measurement. Recorded, not left absent."
+  ScreenOriginKeywordEnum:
+    description: "Keywords describing the origin of a recorded pixel frame (used pairwise in `screen_origin`)."
+    permissible_values:
+      top:
+      bottom:
+      left:
+      right:
+      center:
   RunStatusEnum:
     description: "How far an activity run got. Derived from the lifecycle events (`bdm:started`, `bdm:completed`, `bdm:abandoned`) where an event stream exists, and authored directly otherwise. In a published dataset every run has reached a terminal state; `initialized`/`in_progress` describe runs recorded while still in flight."
     permissible_values:
@@ -512,6 +537,68 @@ classes:
             - "Context"
           bdm_type:
             value: "string"
+      device_id:
+        description: "Identifies the device that recorded this run. Resolves in the `Device` table of the `devices` family, shipped as `devices.csv` at the dataset root."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "string"
+      screen_distance:
+        range: float
+        description: "Distance from the participant's eyes to the screen during this run, in centimetres. It lives on the run rather than the device because posture is a property of the sitting, not the hardware. BIDS `ScreenDistance` uses metres; divide by 100 to map."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "centimetres"
+      screen_distance_method:
+        range: ScreenDistanceMethodEnum
+        description: "How the `screen_distance` value was obtained."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "enum"
+      screen_distance_uncertainty:
+        range: float
+        description: "Uncertainty of `screen_distance`, in centimetres (e.g., the method's mean absolute error)."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "centimetres"
+      screen_origin:
+        range: ScreenOriginKeywordEnum
+        multivalued: true
+        minimum_cardinality: 2
+        maximum_cardinality: 2
+        description: "Origin of the recorded pixel frames (`x_viewport`/`y_viewport` and `x_screen`/`y_screen`), as two keywords. Existing datasets are `top` and `left`."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "list[string]"
+      y_sign:
+        range: integer
+        description: "Direction of the y axis in the recorded pixel frames: `-1` when y increases downward (the default, and the value for existing datasets), `1` when upward. Together with `screen_origin` this completes the frame declaration — an origin of `center`, `center` alone cannot express axis direction."
+        annotations:
+          categories:
+            value:
+            - "Context"
+          bdm_type:
+            value: "integer"
+          range_description:
+            value: "-1 or 1"
           notes:
             value:
             - "See the `engine_seconds` and `anchor_datetime` terms in the Behaverse vocabulary."
@@ -1595,41 +1682,23 @@ classes:
             - "Where"
           bdm_type:
             value: "string"
-      x_screen:
-        range: integer
-        description: "X coordinates of the stimulus on the screen in pixels."
+      x_viewport:
+        range: float
+        description: "X position of the stimulus in the viewport frame: device pixels from the left edge of the window's drawable area — the measured frame, where the stimulus was presented. Axis directions follow the run's `screen_origin`/`y_sign` declaration in the `StudyflowLog` table (top-left origin with y increasing downward by default); under fullscreen the viewport equals the screen."
         annotations:
           categories:
             value:
             - "Where"
           bdm_type:
-            value: "integer"
+            value: "float"
+          range_description:
+            value: "device pixels"
           notes:
             value:
             - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/dataset-cards.html)."
-      y_screen:
-        range: integer
-        description: "Y coordinates of the stimulus on the screen in pixels."
-        annotations:
-          categories:
-            value:
-            - "Where"
-          bdm_type:
-            value: "integer"
-      x_viewport:
-        range: float
-        description: "X coordinates of the stimulus on the screen expressed as a fraction of the screen width."
-        annotations:
-          categories:
-            value:
-            - "Where"
-          bdm_type:
-            value: "float"
-          range_description:
-            value: "0 to 1 (inclusive)"
       y_viewport:
         range: float
-        description: "Y coordinates of the stimulus on the screen expressed as a fraction of the screen height."
+        description: "Y position of the stimulus in the viewport frame: device pixels from the top edge of the window's drawable area — the measured frame, where the stimulus was presented. Axis directions follow the run's `screen_origin`/`y_sign` declaration in the `StudyflowLog` table (top-left origin with y increasing downward by default); under fullscreen the viewport equals the screen."
         annotations:
           categories:
             value:
@@ -1637,7 +1706,51 @@ classes:
           bdm_type:
             value: "float"
           range_description:
-            value: "0 to 1 (inclusive)"
+            value: "device pixels"
+      x_screen:
+        range: float
+        description: "X position of the stimulus on the physical display the window occupied, in device pixels (the display's native raster, not OS-scaled logical pixels) from the display's left edge. Derived, not measured: equals `x_viewport` plus the window's x origin, using the window placement in force at the time; under fullscreen it equals `x_viewport`. When the window spans two displays, values are expressed against the declared display and are not clamped. Omitted, never approximated, where the platform cannot supply window placement (e.g., a browser tab)."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "device pixels"
+      y_screen:
+        range: float
+        description: "Y position of the stimulus on the physical display the window occupied, in device pixels from the display's top edge. Derived, not measured: equals `y_viewport` plus the window's y origin, using the window placement in force at the time; under fullscreen it equals `y_viewport`. When the window spans two displays, values are expressed against the declared display and are not clamped. Omitted, never approximated, where the platform cannot supply window placement (e.g., a browser tab)."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "device pixels"
+      x_stage:
+        range: float
+        description: "X position of the stimulus in the stage frame — the analysis frame: origin at the center of the content area, x increasing rightward, in percent of content height. Both axes use the same unit, so the pair is isotropic and Euclidean quantities (distances, radii, saccade amplitudes) are valid. Identical units, origin, and axis direction as task configuration. Derivable from the viewport pair and the run's geometry, so it can be backfilled."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "percent of content height"
+      y_stage:
+        range: float
+        description: "Y position of the stimulus in the stage frame — the analysis frame: origin at the center of the content area, y increasing upward (the vision-science convention: upper-visual-field positions are positive), in percent of content height. Both axes use the same unit, so the pair is isotropic and Euclidean quantities are valid. Identical units, origin, and axis direction as task configuration. Derivable from the viewport pair and the run's geometry, so it can be backfilled."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "percent of content height"
       description:
         range: string
         required: true
@@ -1830,41 +1943,23 @@ classes:
             - "Where"
           bdm_type:
             value: "string"
-      x_screen:
+      x_viewport:
         range: float
-        description: "X coordinates of the option component on the screen in pixels."
+        description: "X position of the option in the viewport frame: device pixels from the left edge of the window's drawable area — the measured frame, where the option was presented. Axis directions follow the run's `screen_origin`/`y_sign` declaration in the `StudyflowLog` table (top-left origin with y increasing downward by default); under fullscreen the viewport equals the screen."
         annotations:
           categories:
             value:
             - "Where"
           bdm_type:
             value: "float"
+          range_description:
+            value: "device pixels"
           notes:
             value:
             - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/dataset-cards.html)."
-      y_screen:
-        range: float
-        description: "Y coordinates of the option component on the screen in pixels."
-        annotations:
-          categories:
-            value:
-            - "Where"
-          bdm_type:
-            value: "float"
-      x_viewport:
-        range: float
-        description: "X coordinates of the option component on the screen expressed as a fraction of the screen width."
-        annotations:
-          categories:
-            value:
-            - "Where"
-          bdm_type:
-            value: "float"
-          range_description:
-            value: "0 to 1 (inclusive)"
       y_viewport:
         range: float
-        description: "Y coordinates of the option component on the screen expressed as a fraction of the screen height."
+        description: "Y position of the option in the viewport frame: device pixels from the top edge of the window's drawable area — the measured frame, where the option was presented. Axis directions follow the run's `screen_origin`/`y_sign` declaration in the `StudyflowLog` table (top-left origin with y increasing downward by default); under fullscreen the viewport equals the screen."
         annotations:
           categories:
             value:
@@ -1872,7 +1967,51 @@ classes:
           bdm_type:
             value: "float"
           range_description:
-            value: "0 to 1 (inclusive)"
+            value: "device pixels"
+      x_screen:
+        range: float
+        description: "X position of the option on the physical display the window occupied, in device pixels (the display's native raster, not OS-scaled logical pixels) from the display's left edge. Derived, not measured: equals `x_viewport` plus the window's x origin, using the window placement in force at the time; under fullscreen it equals `x_viewport`. When the window spans two displays, values are expressed against the declared display and are not clamped. Omitted, never approximated, where the platform cannot supply window placement (e.g., a browser tab)."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "device pixels"
+      y_screen:
+        range: float
+        description: "Y position of the option on the physical display the window occupied, in device pixels from the display's top edge. Derived, not measured: equals `y_viewport` plus the window's y origin, using the window placement in force at the time; under fullscreen it equals `y_viewport`. When the window spans two displays, values are expressed against the declared display and are not clamped. Omitted, never approximated, where the platform cannot supply window placement (e.g., a browser tab)."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "device pixels"
+      x_stage:
+        range: float
+        description: "X position of the option in the stage frame — the analysis frame: origin at the center of the content area, x increasing rightward, in percent of content height. Both axes use the same unit, so the pair is isotropic and Euclidean quantities (distances, radii, saccade amplitudes) are valid. Identical units, origin, and axis direction as task configuration. Derivable from the viewport pair and the run's geometry, so it can be backfilled."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "percent of content height"
+      y_stage:
+        range: float
+        description: "Y position of the option in the stage frame — the analysis frame: origin at the center of the content area, y increasing upward (the vision-science convention: upper-visual-field positions are positive), in percent of content height. Both axes use the same unit, so the pair is isotropic and Euclidean quantities are valid. Identical units, origin, and axis direction as task configuration. Derivable from the viewport pair and the run's geometry, so it can be backfilled."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "percent of content height"
       description:
         range: string
         required: true
@@ -2014,31 +2153,9 @@ classes:
             value: "float"
           range_description:
             value: "seconds"
-      x_screen:
-        range: integer
-        description: "X coordinates of the click relative to the left edge of the screen in pixels."
-        annotations:
-          categories:
-            value:
-            - "Where"
-          bdm_type:
-            value: "integer"
-          range_description:
-            value: "pixels"
-      y_screen:
-        range: integer
-        description: "Y coordinates of the click relative to the top edge of the screen in pixels."
-        annotations:
-          categories:
-            value:
-            - "Where"
-          bdm_type:
-            value: "integer"
-          range_description:
-            value: "pixels"
       x_viewport:
         range: float
-        description: "X coordinates of the click relative to the left edge of the screen expressed as a fraction of the screen width."
+        description: "X position of the input event in the viewport frame: device pixels from the left edge of the window's drawable area — the measured frame, what the input API reported. Axis directions follow the run's `screen_origin`/`y_sign` declaration in the `StudyflowLog` table (top-left origin with y increasing downward by default); under fullscreen the viewport equals the screen."
         annotations:
           categories:
             value:
@@ -2046,10 +2163,10 @@ classes:
           bdm_type:
             value: "float"
           range_description:
-            value: "0 to 1 (inclusive)"
+            value: "device pixels"
       y_viewport:
         range: float
-        description: "Y coordinates of the click relative to the top edge of the screen expressed as a fraction of the screen height."
+        description: "Y position of the input event in the viewport frame: device pixels from the top edge of the window's drawable area — the measured frame, what the input API reported. Axis directions follow the run's `screen_origin`/`y_sign` declaration in the `StudyflowLog` table (top-left origin with y increasing downward by default); under fullscreen the viewport equals the screen."
         annotations:
           categories:
             value:
@@ -2057,7 +2174,51 @@ classes:
           bdm_type:
             value: "float"
           range_description:
-            value: "0 to 1 (inclusive)"
+            value: "device pixels"
+      x_screen:
+        range: float
+        description: "X position of the input event on the physical display the window occupied, in device pixels (the display's native raster, not OS-scaled logical pixels) from the display's left edge. Derived, not measured: equals `x_viewport` plus the window's x origin, using the window placement in force at the time; under fullscreen it equals `x_viewport`. When the window spans two displays, values are expressed against the declared display and are not clamped. Omitted, never approximated, where the platform cannot supply window placement (e.g., a browser tab)."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "device pixels"
+      y_screen:
+        range: float
+        description: "Y position of the input event on the physical display the window occupied, in device pixels from the display's top edge. Derived, not measured: equals `y_viewport` plus the window's y origin, using the window placement in force at the time; under fullscreen it equals `y_viewport`. When the window spans two displays, values are expressed against the declared display and are not clamped. Omitted, never approximated, where the platform cannot supply window placement (e.g., a browser tab)."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "device pixels"
+      x_stage:
+        range: float
+        description: "X position of the input event in the stage frame — the analysis frame: origin at the center of the content area, x increasing rightward, in percent of content height. Both axes use the same unit, so the pair is isotropic and Euclidean quantities (distances, radii, saccade amplitudes) are valid. Identical units, origin, and axis direction as task configuration. Derivable from the viewport pair and the run's geometry, so it can be backfilled."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "percent of content height"
+      y_stage:
+        range: float
+        description: "Y position of the input event in the stage frame — the analysis frame: origin at the center of the content area, y increasing upward (the vision-science convention: upper-visual-field positions are positive), in percent of content height. Both axes use the same unit, so the pair is isotropic and Euclidean quantities are valid. Identical units, origin, and axis direction as task configuration. Derivable from the viewport pair and the run's geometry, so it can be backfilled."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "percent of content height"
       object_type:
         range: string
         required: true
@@ -2169,45 +2330,23 @@ classes:
           notes:
             value:
             - "If the presented options have no specific temporal or spatial order, leave this field empty or assign the same index to all options, e.g., `index=1`."
-      x_screen:
-        range: integer
-        description: "X coordinates of the stimulus component relative to the left edge of the screen in pixels."
+      x_viewport:
+        range: float
+        description: "X position of the stimulus component in the viewport frame: device pixels from the left edge of the window's drawable area — the measured frame, where the component was presented. Axis directions follow the run's `screen_origin`/`y_sign` declaration in the `StudyflowLog` table (top-left origin with y increasing downward by default); under fullscreen the viewport equals the screen."
         annotations:
           categories:
             value:
             - "Where"
           bdm_type:
-            value: "integer"
+            value: "float"
           range_description:
-            value: "pixels"
+            value: "device pixels"
           notes:
             value:
             - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/dataset-cards.html)."
-      y_screen:
-        range: integer
-        description: "Y coordinates of the stimulus component relative to the top edge of the screen in pixels."
-        annotations:
-          categories:
-            value:
-            - "Where"
-          bdm_type:
-            value: "integer"
-          range_description:
-            value: "pixels"
-      x_viewport:
-        range: float
-        description: "X coordinates of the stimulus component relative to the left edge of the screen expressed as a fraction of the screen width."
-        annotations:
-          categories:
-            value:
-            - "Where"
-          bdm_type:
-            value: "float"
-          range_description:
-            value: "0 to 1 (inclusive)"
       y_viewport:
         range: float
-        description: "Y coordinates of the stimulus component relative to the top edge of the screen expressed as a fraction of the screen height."
+        description: "Y position of the stimulus component in the viewport frame: device pixels from the top edge of the window's drawable area — the measured frame, where the component was presented. Axis directions follow the run's `screen_origin`/`y_sign` declaration in the `StudyflowLog` table (top-left origin with y increasing downward by default); under fullscreen the viewport equals the screen."
         annotations:
           categories:
             value:
@@ -2215,7 +2354,51 @@ classes:
           bdm_type:
             value: "float"
           range_description:
-            value: "0 to 1 (inclusive)"
+            value: "device pixels"
+      x_screen:
+        range: float
+        description: "X position of the stimulus component on the physical display the window occupied, in device pixels (the display's native raster, not OS-scaled logical pixels) from the display's left edge. Derived, not measured: equals `x_viewport` plus the window's x origin, using the window placement in force at the time; under fullscreen it equals `x_viewport`. When the window spans two displays, values are expressed against the declared display and are not clamped. Omitted, never approximated, where the platform cannot supply window placement (e.g., a browser tab)."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "device pixels"
+      y_screen:
+        range: float
+        description: "Y position of the stimulus component on the physical display the window occupied, in device pixels from the display's top edge. Derived, not measured: equals `y_viewport` plus the window's y origin, using the window placement in force at the time; under fullscreen it equals `y_viewport`. When the window spans two displays, values are expressed against the declared display and are not clamped. Omitted, never approximated, where the platform cannot supply window placement (e.g., a browser tab)."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "device pixels"
+      x_stage:
+        range: float
+        description: "X position of the stimulus component in the stage frame — the analysis frame: origin at the center of the content area, x increasing rightward, in percent of content height. Both axes use the same unit, so the pair is isotropic and Euclidean quantities (distances, radii, saccade amplitudes) are valid. Identical units, origin, and axis direction as task configuration. Derivable from the viewport pair and the run's geometry, so it can be backfilled."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "percent of content height"
+      y_stage:
+        range: float
+        description: "Y position of the stimulus component in the stage frame — the analysis frame: origin at the center of the content area, y increasing upward (the vision-science convention: upper-visual-field positions are positive), in percent of content height. Both axes use the same unit, so the pair is isotropic and Euclidean quantities are valid. Identical units, origin, and axis direction as task configuration. Derivable from the viewport pair and the run's geometry, so it can be backfilled."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "percent of content height"
       description:
         range: string
         required: true
@@ -2344,45 +2527,23 @@ classes:
             - "Where"
           bdm_type:
             value: "string"
-      x_screen:
-        range: integer
-        description: "X coordinates of the option component relative to the left edge of the screen in pixels."
+      x_viewport:
+        range: float
+        description: "X position of the option component in the viewport frame: device pixels from the left edge of the window's drawable area — the measured frame, where the component was presented. Axis directions follow the run's `screen_origin`/`y_sign` declaration in the `StudyflowLog` table (top-left origin with y increasing downward by default); under fullscreen the viewport equals the screen."
         annotations:
           categories:
             value:
             - "Where"
           bdm_type:
-            value: "integer"
+            value: "float"
           range_description:
-            value: "pixels"
+            value: "device pixels"
           notes:
             value:
             - "In BDM, the preferred position is the center of the object. However, specific implementations of the tasks may use other locations such as the top-left corner. If this is the case, it should be explicitly stated in the [dataset card](https://behaverse.org/data-model/spec/dataset-cards.html)."
-      y_screen:
-        range: integer
-        description: "Y coordinates of the option component relative to the top edge of the screen in pixels."
-        annotations:
-          categories:
-            value:
-            - "Where"
-          bdm_type:
-            value: "integer"
-          range_description:
-            value: "pixels"
-      x_viewport:
-        range: float
-        description: "X coordinates of the option component relative to the left edge of the screen expressed as a fraction of the screen width."
-        annotations:
-          categories:
-            value:
-            - "Where"
-          bdm_type:
-            value: "float"
-          range_description:
-            value: "0 to 1 (inclusive)"
       y_viewport:
         range: float
-        description: "Y coordinates of the option component relative to the top edge of the screen expressed as a fraction of the screen height."
+        description: "Y position of the option component in the viewport frame: device pixels from the top edge of the window's drawable area — the measured frame, where the component was presented. Axis directions follow the run's `screen_origin`/`y_sign` declaration in the `StudyflowLog` table (top-left origin with y increasing downward by default); under fullscreen the viewport equals the screen."
         annotations:
           categories:
             value:
@@ -2390,7 +2551,51 @@ classes:
           bdm_type:
             value: "float"
           range_description:
-            value: "0 to 1 (inclusive)"
+            value: "device pixels"
+      x_screen:
+        range: float
+        description: "X position of the option component on the physical display the window occupied, in device pixels (the display's native raster, not OS-scaled logical pixels) from the display's left edge. Derived, not measured: equals `x_viewport` plus the window's x origin, using the window placement in force at the time; under fullscreen it equals `x_viewport`. When the window spans two displays, values are expressed against the declared display and are not clamped. Omitted, never approximated, where the platform cannot supply window placement (e.g., a browser tab)."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "device pixels"
+      y_screen:
+        range: float
+        description: "Y position of the option component on the physical display the window occupied, in device pixels from the display's top edge. Derived, not measured: equals `y_viewport` plus the window's y origin, using the window placement in force at the time; under fullscreen it equals `y_viewport`. When the window spans two displays, values are expressed against the declared display and are not clamped. Omitted, never approximated, where the platform cannot supply window placement (e.g., a browser tab)."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "device pixels"
+      x_stage:
+        range: float
+        description: "X position of the option component in the stage frame — the analysis frame: origin at the center of the content area, x increasing rightward, in percent of content height. Both axes use the same unit, so the pair is isotropic and Euclidean quantities (distances, radii, saccade amplitudes) are valid. Identical units, origin, and axis direction as task configuration. Derivable from the viewport pair and the run's geometry, so it can be backfilled."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "percent of content height"
+      y_stage:
+        range: float
+        description: "Y position of the option component in the stage frame — the analysis frame: origin at the center of the content area, y increasing upward (the vision-science convention: upper-visual-field positions are positive), in percent of content height. Both axes use the same unit, so the pair is isotropic and Euclidean quantities are valid. Identical units, origin, and axis direction as task configuration. Derivable from the viewport pair and the run's geometry, so it can be backfilled."
+        annotations:
+          categories:
+            value:
+            - "Where"
+          bdm_type:
+            value: "float"
+          range_description:
+            value: "percent of content height"
       description:
         range: string
         required: true

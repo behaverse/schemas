@@ -24,6 +24,8 @@ FAMILIES: List[Dict[str, Any]] = [
     # name          source     context  field_defs  schema.json
     {"name": "agents", "source": "linkml", "emits_context": False,
      "emits_field_definitions": True, "has_schema_json": True},
+    {"name": "devices", "source": "linkml", "emits_context": False,
+     "emits_field_definitions": True, "has_schema_json": True},
     {"name": "bcsv", "source": "json", "emits_context": True,
      "emits_field_definitions": False, "has_schema_json": True},
     {"name": "catalog", "source": "linkml", "emits_context": True,
